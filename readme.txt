@@ -1,6 +1,6 @@
 === BruteProtect ===
 Contributors: hotchkissconsulting 
-Tags: security, brute force, brute force attack
+Tags: security, brute force, brute force attack, harden wp, login lockdown
 Requires at least: 3.0
 Tested up to: 3.6
 Stable tag: trunk

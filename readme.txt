@@ -27,6 +27,9 @@ This allows you to protect yourself against tradition brute force attacks AND di
 
 == Changelog ==
 
+= 0.9.3 =
+* Added hooks in for upcoming remote security and uptime scans
+
 = 0.9.2 =
 * Fixed error if Login Lockdown was installed
 * Improve admin styling (thanks Michael Cain!)

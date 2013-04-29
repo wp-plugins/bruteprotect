@@ -14,6 +14,13 @@ wp_add_dashboard_widget('bruteprotect_dashboard_widget', 'BruteProtect Stats', '
 
 function bruteprotect_dashboard_widget() {
 	$key = get_option('bruteprotect_api_key');
+	$ckval = get_option('bruteprotect_ckval');
+	if($key && !$ckval) {
+		$response = brute_call('check_key');
+		if($response['ckval']) {
+			update_option('bruteprotect_ckval', $response['ckval']);
+		}
+	}
 	$stats = file_get_contents("http://api.bruteprotect.com/get_stats.php?key=".$key,"r");
 	echo $stats;
 }
@@ -108,13 +115,16 @@ function bruteprotect_conf() {
 	$invalid_key = false;
 	delete_option('bruteprotect_error');
 	
-	$response = brute_call();
+	$response = brute_call('check_key');
 	
 	if($response['error'] == 'Invalid API Key' || $response['error'] == 'API Key Required') {
 		$invalid_key = 'invalid';
 	}
 	if($response['error'] == 'Host match error') {
 		$invalid_key = 'host';
+	}
+	if($response['ckval']) {
+		update_option('bruteprotect_ckval', $response['ckval']);
 	}
 	?>
 	<div class="wrap">

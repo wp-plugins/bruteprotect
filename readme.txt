@@ -1,5 +1,5 @@
 === BruteProtect ===
-Contributors: hotchkissconsulting 
+Contributors: hotchkissconsulting
 Tags: security, brute force, brute force attack, harden wp, login lockdown
 Requires at least: 3.0
 Tested up to: 3.6
@@ -29,4 +29,6 @@ This allows you to protect yourself against tradition brute force attacks AND di
 
 = 0.9.2 =
 * Fixed error if Login Lockdown was installed
-* Improve admin styling (thanks cainm)
+* Improve admin styling (thanks Michael Cain!)
+* Added statistics to your dashboard
+* If the API server goes down, we fall back to a math-based human verification

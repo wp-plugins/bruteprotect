@@ -1,33 +1,54 @@
 <?php 
 
+
+/////////////////////////////////////////////////////////////////////
+// Admin Dashboard Widget
+/////////////////////////////////////////////////////////////////////
+
+add_action('wp_dashboard_setup', 'bruteprotect_dashboard_widgets');
+ 
+function bruteprotect_dashboard_widgets() {
+global $wp_meta_boxes;
+wp_add_dashboard_widget('bruteprotect_dashboard_widget', 'BruteProtect Stats', 'bruteprotect_dashboard_widget');
+}
+
+function bruteprotect_dashboard_widget() {
+	$key = get_option('bruteprotect_api_key');
+	$stats = file_get_contents("http://api.bruteprotect.com/get_stats.php?key=".$key,"r");
+	echo $stats;
+}
+
+
+
+
 add_action( 'admin_menu', 'bruteprotect_admin_menu' );
 
 function bruteprotect_admin_menu() {
 	add_submenu_page('plugins.php', __('BruteProtect'), __('BruteProtect'), 'manage_options', 'bruteprotect-config', 'bruteprotect_conf');
 	$key = get_option('bruteprotect_api_key');
 	$error = get_option('bruteprotect_error');
-	if ( !$key && $_GET['page'] != 'bruteprotect-config' ) {
+	if ( ! $key && ( isset( $_GET['page'] ) && 'bruteprotect-config' != $_GET['page'] ) ) :
 		function bruteprotect_warning() {
 			echo "
-			<div id='bruteprotect-warning' class='error fade'><p><strong>".__('BruteProtect is almost ready.')."</strong> ".sprintf(__('You must <a href="%1$s">enter your BruteProtect API key</a> for it to work.  <a href="%1$s">Obtain a key for free</a>.'), "plugins.php?page=bruteprotect-config")."</p></div>
+			<div id='bruteprotect-warning' class='error fade'><p><strong>".__('BruteProtect is almost ready.')."</strong> ".sprintf(__('You must <a href="%1$s">enter your BruteProtect API key</a> for it to work.  <a href="%1$s">Obtain a key for free</a>.'), esc_url( admin_url( 'plugins.php?page=bruteprotect-config' ) ))."</p></div>
 			";
 		}
 		add_action('admin_notices', 'bruteprotect_warning');
 		return;
-	} elseif($error && $_GET['page'] != 'bruteprotect-config') {
+	elseif ($error && $_GET['page'] != 'bruteprotect-config') :
 		function bruteprotect_invalid_key_warning() {
 			echo "
-			<div id='bruteprotect-warning' class='error fade'><p><strong>".__('There is a problem with your BruteProtect API key')."</strong> ".sprintf(__(' <a href="%1$s">Please correct the error</a>, your site will not be protected until you do.'), "plugins.php?page=bruteprotect-config")."</p></div>
+			<div id='bruteprotect-warning' class='error fade'><p><strong>".__('There is a problem with your BruteProtect API key')."</strong> ".sprintf(__(' <a href="%1$s">Please correct the error</a>, your site will not be protected until you do.'), esc_url( admin_url( 'plugins.php?page=bruteprotect-config' ) ))."</p></div>
 			";
 		}
 		add_action('admin_notices', 'bruteprotect_invalid_key_warning');
 		return;
-	}
+	endif;
 	
 	if(function_exists('loginLockdown_install')) :
 		function bruteprotect_ll_warning() {
 			echo "
-			<div id='bruteprotect-warning' class='updated fade'><p><strong>".__('Please de-activate Login Lockdown')."</strong> ".sprintf(__('It is not necessary to run both BruteProtect and Login Lockdown.  We recommend that you <a href="%1$s">deactivate Login Lockdown</a> now.'), "plugins.php")."</p></div>
+			<div id='bruteprotect-warning' class='updated fade'><p><strong>".__('Please de-activate Login Lockdown')."</strong> ".sprintf(__('It is not necessary to run both BruteProtect and Login Lockdown.  We recommend that you <a href="%1$s">deactivate Login Lockdown</a> now.'), esc_url( admin_url( 'plugins.php' ) ))."</p></div>
 			";
 		}
 		add_action('admin_notices', 'bruteprotect_ll_warning');
@@ -37,7 +58,7 @@ function bruteprotect_admin_menu() {
 	if(function_exists('limit_login_setup')) :
 		function bruteprotect_limlog_warning() {
 			echo "
-			<div id='bruteprotect-warning' class='updated fade'><p><strong>".__('Please de-activate Limit Login Attempts')."</strong> ".sprintf(__('It is not necessary to run both BruteProtect and Limit Login Attempts.  We recommend that you <a href="%1$s">deactivate Limit Login Attempts</a> now.'), "plugins.php")."</p></div>
+			<div id='bruteprotect-warning' class='updated fade'><p><strong>".__('Please de-activate Limit Login Attempts')."</strong> ".sprintf(__('It is not necessary to run both BruteProtect and Limit Login Attempts.  We recommend that you <a href="%1$s">deactivate Limit Login Attempts</a> now.'), esc_url( admin_url( 'plugins.php' ) ))."</p></div>
 			";
 		}
 		add_action('admin_notices', 'bruteprotect_limlog_warning');
@@ -84,6 +105,7 @@ function bruteprotect_conf() {
 	
 	
 	$key = get_option('bruteprotect_api_key');
+	$invalid_key = false;
 	delete_option('bruteprotect_error');
 	
 	$response = brute_call();

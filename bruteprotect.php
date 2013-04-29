@@ -35,15 +35,22 @@ if ( is_admin() )
 	require_once dirname( __FILE__ ) . '/admin.php';
 
 add_action('login_head', 'brute_check_loginability');
-add_filter('authenticate', 'brute_check_loginability_filter', 1, 3);
+add_action('login_head', 'brute_check_use_math');
+add_action('wp_authenticate', 'brute_check_preauth', 1);
 add_action('wp_login_failed', 'brute_log_failed_attempt');
 
-
-function brute_check_loginability_filter($user, $username, $password) {
-	brute_check_loginability();
-	return $user;
+//Make sure that they didn't try to sneak past the login form...
+function brute_check_preauth($username) {
+	brute_check_loginability(true);
+	$bum = get_transient('brute_use_math');
+	if(1 == $bum && isset($_POST['log'])) {
+		if(false == function_exists('brute_math_authenticate'))
+			include 'math-fallback.php';
+		brute_math_authenticate();
+	}
 }
-function brute_check_loginability() {
+
+function brute_check_loginability($preauth = false) {
 	$ip = $_SERVER['REMOTE_ADDR'];
 	$transient_name = 'brute_loginable_'.str_replace('.', '_', $ip);
 	$transient_value = get_transient( $transient_name );
@@ -65,9 +72,20 @@ function brute_check_loginability() {
 	//Now we check with the bruteprotect.com servers to see if we should allow login
 	$response = brute_call($action = 'check_ip');
 	
+	if(isset($response['math']) && false == function_exists('brute_math_authenticate')) {
+		include 'math-fallback.php';
+	}
+	
 	if($response['status'] == 'blocked') { brute_kill_login(); }
 	
 	return true;
+}
+function brute_check_use_math() {
+	$bum = get_transient('brute_use_math');
+	
+	if($bum && !function_exists('brute_math_authenticate')) {
+		include 'math-fallback.php';
+	}
 }
 
 function brute_kill_login() {
@@ -109,13 +127,19 @@ function brute_call($action = 'check_ip') {
 	$transient_name = 'brute_loginable_'.str_replace('.', '_', $ip);
 	delete_transient($transient_name);
 	
-	$response = json_decode($response_json['body'], true);
+	if(is_array($response_json))
+		$response = json_decode($response_json['body'], true);
 
 	if(isset($response['status'])) :
 		$response['expire'] = time() + $response['seconds_remaining'];
 		set_transient($transient_name, $response, $response['seconds_remaining']);
+		delete_transient('brute_use_math');
+		
 	else :
+		//no response from the API host?  Let's use math!
+		set_transient('brute_use_math', 1, 600);
 		$response['status'] = 'ok';
+		$response['math'] = true;
 	endif;
 	
 	if($response['error']) :

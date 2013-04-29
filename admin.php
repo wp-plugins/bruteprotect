@@ -30,7 +30,7 @@ function bruteprotect_admin_menu() {
 			<div id='bruteprotect-warning' class='updated fade'><p><strong>".__('Please de-activate Login Lockdown')."</strong> ".sprintf(__('It is not necessary to run both BruteProtect and Login Lockdown.  We recommend that you <a href="%1$s">deactivate Login Lockdown</a> now.'), "plugins.php")."</p></div>
 			";
 		}
-		add_action('admin_notices', 'bruteprotect_warning');
+		add_action('admin_notices', 'bruteprotect_ll_warning');
 		return;
 	endif;
 	
@@ -97,15 +97,15 @@ function bruteprotect_conf() {
 	?>
 	<div class="wrap">
 	<h2><?php _e('BruteProtect Configuration'); ?></h2>
-	<?php if ($key && $invalid_key == 'invalid'): ?>
+	<?php if (false != $key && $invalid_key == 'invalid'): ?>
 		<div class="error below-h2" id="message"><p><?php _e( '<strong>Invalid API Key!</strong> You have entered an invalid API key. Please copy and paste it from the email you have received, or request a new key.' ); ?></p></div>
 	<?php endif ?>
-	<?php if ($key && $invalid_key == 'host'): ?>
+	<?php if (false != $key && $invalid_key == 'host'): ?>
 		<div class="error below-h2" id="message"><p><?php _e( '<strong>Invalid API Key!</strong> You have entered an API key which is not valid for this server.  Every site must have its own API key.' ); ?></p></div>
 	<?php endif ?>
-	<?php if ($invalid_key): ?>
-	<div style="display: block; width: 500px; float: left; padding: 10px; border: 3px solid green; border-radius: 5px; background-color: #eaffd6; margin-right: 20px;">
-		<h3 style="display: block;background-color: green;color: #fff;margin-top: -10px;padding: 10px;margin-left: -10px;margin-right: -10px;">I <em>need</em> an API key for BruteProtect</h3>
+	<?php if (false != $invalid_key): ?>
+		<div style="display: block; width: 500px; float: left; padding: 10px; border: 1px solid green; background-color: #eaffd6; margin-right: 20px; margin-bottom:20px;">
+			<h3 style="display: block; background-color: green; color: #fff; margin: -10px -10px 1em -10px; padding: 10px;">I <em>need</em> an API key for BruteProtect</h3>
 		<form action="" method="post">
 
 			<?php if ($_GET['get_key'] == 'success'): ?>
@@ -115,7 +115,7 @@ function bruteprotect_conf() {
 				<p>You must obtain an API key for every site you wish to protect with BruteProtect.  You will be generating a BruteProtect.com key for use on <strong><?php echo $host ?></strong>.  There is no cost for an BruteProtect key, and we will never sell your email.</p>
 				
 				<strong>Email Address</strong><br />
-				<input type="text" name="email_address" value="<?php echo $current_user->user_email ?>" id="brute_get_api_key" style="font-size: 18px; border: 2px solid #ccc; padding: 4px; width: 450px;" />
+				<input type="text" name="email_address" value="<?php echo $current_user->user_email ?>" id="brute_get_api_key" style="font-size: 18px; border: 1px solid #ccc; padding: 4px; width: 450px;" />
 				<input type="hidden" name="brute_action" value="get_api_key" />
 				<input type="submit" value="Get an API Key" class="button" style="margin-top: 10px;margin-bottom: 10px;" />
 			<?php endif ?>
@@ -125,11 +125,11 @@ function bruteprotect_conf() {
 		<div class="updated below-h2" id="message" style="border-color: green; color: green; background-color: #eaffd6;"><p><?php _e( '<strong>API key verified!</strong> Your BruteProtect account is active and your site is protected, you don\'t need to do anything else!' ); ?></p></div>
 	<?php endif ?>
 	
-	<div style="display: block; width: 500px; float: left; padding: 10px; border: 3px solid #0649fe; border-radius: 5px; background-color: #cdf0fe;">
-		<h3 style="display: block;background-color: #0649fe;color: #fff;margin-top: -10px;padding: 10px;margin-left: -10px;margin-right: -10px;">I <em>have</em> an API key for BruteProtect</h3>
+	<div style="display: block; width: 500px; float: left; padding: 10px; border: 1px solid #0649fe; background-color: #cdf0fe;">
+		<h3 style="display: block; background-color: #0649fe; color: #fff; margin: -10px -10px 1em -10px; padding: 10px;">I <em>have</em> an API key for BruteProtect</h3>
 	<form action="" method="post">
 		<strong>Enter your key: </strong><br />
-		<input type="text" name="brute_api_key" value="<?php echo get_option('bruteprotect_api_key') ?>" id="brute_api_key" style="font-size: 18px; border: 2px solid #ccc; padding: 4px; width: 450px;" />
+		<input type="text" name="brute_api_key" value="<?php echo get_option('bruteprotect_api_key') ?>" id="brute_api_key" style="font-size: 18px; border: 1px solid #ccc; padding: 4px; width: 450px;" />
 		<input type="hidden" name="brute_action" value="update_key" />
 		<input type="submit" value="Save API Key" class="button" style="margin-top: 10px;margin-bottom: 10px;" />
 	</form>

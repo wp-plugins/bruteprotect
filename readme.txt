@@ -24,3 +24,9 @@ This allows you to protect yourself against tradition brute force attacks AND di
 1. Simply create an API key...
 
 2. If a blocked user shows up on your login page, they will see this message
+
+== Changelog ==
+
+= 0.9.2 =
+* Fixed error if Login Lockdown was installed
+* Improve admin styling (thanks cainm)

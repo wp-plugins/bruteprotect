@@ -1,5 +1,5 @@
 === BruteProtect ===
-Contributors: hotchkissconsulting
+Contributors: hotchkissconsulting, roccotripaldi
 Tags: security, brute force, brute force attack, harden wp, login lockdown
 Requires at least: 3.0
 Tested up to: 3.6
@@ -26,6 +26,9 @@ This allows you to protect yourself against tradition brute force attacks AND di
 2. If a blocked user shows up on your login page, they will see this message
 
 == Changelog ==
+
+= 0.9.4 =
+* Changed domain check method to reduce API key errors
 
 = 0.9.3 =
 * Added hooks in for upcoming remote security and uptime scans

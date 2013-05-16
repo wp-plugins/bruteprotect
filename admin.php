@@ -21,7 +21,7 @@ function bruteprotect_dashboard_widget() {
 			update_option('bruteprotect_ckval', $response['ckval']);
 		}
 	}
-	$stats = file_get_contents("http://api.bruteprotect.com/get_stats.php?key=".$key,"r");
+	$stats = file_get_contents(get_bruteprotect_host()."get_stats.php?key=".$key,"r");
 	echo $stats;
 }
 
@@ -81,7 +81,7 @@ function bruteprotect_conf() {
 	if (isset($_POST['brute_action']) && $_POST['brute_action'] == 'get_api_key' && is_email($_POST['email_address'])) {
 		global $wp_version;
 		
-		$post_host = 'http://api.bruteprotect.com/get_key.php';
+		$post_host = get_bruteprotect_host().'/get_key.php';
 		$brute_ua = "WordPress/{$wp_version} | ";
 		$brute_ua .= 'BruteProtect/' . constant( 'BRUTEPROTECT_VERSION' );
 	

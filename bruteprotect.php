@@ -6,7 +6,7 @@
 Plugin Name: Brute Protect
 Plugin URI: http://bruteprotect.com/
 Description: Brute Protect allows the millions of WordPress bloggers to work together to defeat Brute Force attacks. It keeps your site protected from brute force security attacks even while you sleep. To get started: 1) Click the "Activate" link to the left of this description, 2) Sign up for a Brute Protect API key, and 3) Go to your Brute Protect configuration page, and save your API key.
-Version: 0.9.3
+Version: 0.9.4
 Author: Hotchkiss Consulting Group
 Author URI: http://hotchkissconsulting.com/
 License: GPLv2 or later
@@ -28,7 +28,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-define('BRUTEPROTECT_VERSION', '1.0');
+define('BRUTEPROTECT_VERSION', '0.9.4');
 define('BRUTEPROTECT_PLUGIN_URL', plugin_dir_url( __FILE__ ));
 
 if ( is_admin() )
@@ -102,7 +102,11 @@ function brute_log_failed_attempt() {
 }
 
 function brute_get_host() {
-	return preg_replace('#^www\.(.+\.)#i', '$1', $_SERVER['HTTP_HOST']);
+	return preg_replace('#^https?://#', '', preg_replace('#^www\.(.+\.)#i', '$1', get_site_url(1)));
+}
+
+function get_bruteprotect_host() {
+	return 'http://api.bruteprotect.com/';
 }
 
 function brute_call($action = 'check_ip') {
@@ -110,7 +114,8 @@ function brute_call($action = 'check_ip') {
 		
 	$api_key = get_option('bruteprotect_api_key');
 
-	$host = 'http://api.bruteprotect.com/';
+	$host = get_bruteprotect_host();
+	
 	$brute_ua = "WordPress/{$wp_version} | ";
 	$brute_ua .= 'BruteProtect/' . constant( 'BRUTEPROTECT_VERSION' );
 	
@@ -135,11 +140,10 @@ function brute_call($action = 'check_ip') {
 	if(is_array($response_json))
 		$response = json_decode($response_json['body'], true);
 
-	if(isset($response['status'])) :
+	if(isset($response['status']) && !$response['error']) :
 		$response['expire'] = time() + $response['seconds_remaining'];
 		set_transient($transient_name, $response, $response['seconds_remaining']);
 		delete_transient('brute_use_math');
-		
 	else :
 		//no response from the API host?  Let's use math!
 		set_transient('brute_use_math', 1, 600);
@@ -149,6 +153,8 @@ function brute_call($action = 'check_ip') {
 	
 	if($response['error']) :
 		update_option('bruteprotect_error', $response['error']);
+	else :
+		delete_option('bruteprotect_error');
 	endif;
 	
 	return $response;

@@ -11,7 +11,7 @@ BruteProtect is a cloud-powered Brute Force attack prevention plugin.  We levera
 
 BruteProtect tracks failed login attempts across all installed users of the plugin.  If any single IP has too many failed attempts in a short period of time, they are blocked from logging in to any site with this plugin installed.  Once you install the plugin, you will need to get a free BruteProtect API key, which you can do directly from your WordPress dashboard.
 
-This allows you to protect yourself against tradition brute force attacks AND distributed brute force attacks that use many servers and many IPs
+This allows you to protect yourself against traditional brute force attacks AND distributed brute force attacks that use many servers and many IPs
 
 == Installation ==
 

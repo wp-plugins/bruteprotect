@@ -27,6 +27,12 @@ This allows you to protect yourself against traditional brute force attacks AND 
 
 == Changelog ==
 
+= 0.9.5 =
+* Changed API server to HTTPS for increased security
+* Improved domain check method even further
+* Added a "Settings" link to the Plugins page
+* Made things prettier
+
 = 0.9.4 =
 * Changed domain check method to reduce API key errors
 

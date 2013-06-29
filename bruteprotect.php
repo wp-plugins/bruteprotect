@@ -6,7 +6,7 @@
 Plugin Name: Brute Protect
 Plugin URI: http://bruteprotect.com/
 Description: Brute Protect allows the millions of WordPress bloggers to work together to defeat Brute Force attacks. It keeps your site protected from brute force security attacks even while you sleep. To get started: 1) Click the "Activate" link to the left of this description, 2) Sign up for a Brute Protect API key, and 3) Go to your Brute Protect configuration page, and save your API key.
-Version: 0.9.4
+Version: 0.9.5
 Author: Hotchkiss Consulting Group
 Author URI: http://hotchkissconsulting.com/
 License: GPLv2 or later
@@ -28,7 +28,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-define('BRUTEPROTECT_VERSION', '0.9.4');
+define('BRUTEPROTECT_VERSION', '0.9.5');
 define('BRUTEPROTECT_PLUGIN_URL', plugin_dir_url( __FILE__ ));
 
 if ( is_admin() )
@@ -102,11 +102,29 @@ function brute_log_failed_attempt() {
 }
 
 function brute_get_host() {
-	return preg_replace('#^https?://#', '', preg_replace('#^www\.(.+\.)#i', '$1', get_site_url(1)));
+	$host = 'http://'.strtolower($_SERVER['HTTP_HOST']);
+	
+	$hostdata = parse_url($host);
+	
+	$domain = $hostdata['host'];
+	
+	//if we still don't have it, get the site_url
+	if (!$domain) {
+		$host = get_site_url(1);
+		$hostdata = parse_url($host);
+		$domain = $hostdata['host'];
+	}
+	
+	if(strpos($domain, 'www.') === 0) {
+		$ct = 1;
+		$domain = str_replace('www.', '', $domain, $ct);
+	}
+
+	return $domain;
 }
 
 function get_bruteprotect_host() {
-	return 'http://api.bruteprotect.com/';
+	return 'https://api.bruteprotect.com/';
 }
 
 function brute_call($action = 'check_ip') {

@@ -25,6 +25,14 @@ function bruteprotect_dashboard_widget() {
 	echo $stats;
 }
 
+function bruteprotect_plugin_action_links( $links, $file ) {
+	if ( $file == plugin_basename( dirname(__FILE__).'/bruteprotect.php' ) ) {
+		$links[] = '<a href="' . admin_url( 'plugins.php?page=bruteprotect-config' ) . '">'.__( 'Settings' ).'</a>';
+	}
+
+	return $links;
+}
+add_filter( 'plugin_action_links', 'bruteprotect_plugin_action_links', 10, 2 );
 
 
 
@@ -117,6 +125,7 @@ function bruteprotect_conf() {
 	
 	$response = brute_call('check_key');
 	
+	
 	if($response['error'] == 'Invalid API Key' || $response['error'] == 'API Key Required') {
 		$invalid_key = 'invalid';
 	}
@@ -128,7 +137,7 @@ function bruteprotect_conf() {
 	}
 	?>
 	<div class="wrap">
-	<h2><?php _e('BruteProtect Configuration'); ?></h2>
+	<h2 style="clear: both; margin-bottom: 15px;"><img src="<?php echo BRUTEPROTECT_PLUGIN_URL ?>/BruteProtect-Logo-Text-Only-75.png" alt="BruteProtect" width="250" height="40" style="margin-bottom: -2px;"/> &nbsp; Configuration Options</h2>
 	<?php if (false != $key && $invalid_key == 'invalid'): ?>
 		<div class="error below-h2" id="message"><p><?php _e( '<strong>Invalid API Key!</strong> You have entered an invalid API key. Please copy and paste it from the email you have received, or request a new key.' ); ?></p></div>
 	<?php endif ?>

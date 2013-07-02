@@ -27,6 +27,9 @@ This allows you to protect yourself against traditional brute force attacks AND 
 
 == Changelog ==
 
+= 0.9.6 =
+* Admin-side updates for better compatibility and readability -- Thanks again, Michael Cain!
+
 = 0.9.5 =
 * Changed API server to HTTPS for increased security
 * Improved domain check method even further

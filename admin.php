@@ -5,6 +5,7 @@
 /////////////////////////////////////////////////////////////////////
 
 add_action( 'wp_dashboard_setup', 'bruteprotect_dashboard_widgets' );
+add_action( 'wp_network_dashboard_setup', 'bruteprotect_dashboard_widgets' );
 function bruteprotect_dashboard_widgets() {
 	global $wp_meta_boxes;
 	wp_add_dashboard_widget( 'bruteprotect_dashboard_widget', 'BruteProtect Stats', 'bruteprotect_dashboard_widget' );

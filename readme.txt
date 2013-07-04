@@ -29,6 +29,12 @@ This allows you to protect yourself against traditional brute force attacks AND 
 
 == Changelog ==
 
+= 0.9.7.2 =
+* Fixed a minor display issue in 0.9.7.1
+
+= 0.9.7.1 =
+* Fixed a minor display issue in 0.9.7
+
 = 0.9.7 =
 * BruteProtect now supports multisite networks!  One key will protect every site in your network, and will always be free for small networks!
 * Fixed API URI logic so that we fall back to non-https if your server doesn't support SSL

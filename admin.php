@@ -11,20 +11,22 @@ function bruteprotect_dashboard_widgets() {
 }
 
 function bruteprotect_dashboard_widget() {
-	$key = get_option( 'bruteprotect_api_key' );
-	$ckval = get_option( 'bruteprotect_ckval' );
+	$key = get_site_option( 'bruteprotect_api_key' );
+	$ckval = get_site_option( 'bruteprotect_ckval' );
 
 	if( $key && !$ckval ) {
 		$response = brute_call( 'check_key' );
 
 		if( $response['ckval'] )
-			update_option( 'bruteprotect_ckval', $response['ckval'] );
+			update_site_option( 'bruteprotect_ckval', $response['ckval'] );
 	}
 
 	$stats = wp_remote_get( get_bruteprotect_host() . "get_stats.php?key=" . $key );
 
-	if( !is_wp_error( $stats ) )
+	if( !is_wp_error( $stats ) ) {
 		print_r( $stats['body'] );
+		return;
+	}
 }
 
 function bruteprotect_plugin_action_links( $links, $file ) {
@@ -36,13 +38,21 @@ function bruteprotect_plugin_action_links( $links, $file ) {
 add_filter( 'plugin_action_links', 'bruteprotect_plugin_action_links', 10, 2 );
 
 
+add_action( 'admin_menu', 'bruteprotect_admin_menu_non_multisite' );
+add_action( 'network_admin_menu', 'bruteprotect_admin_menu' );
 
-add_action( 'admin_menu', 'bruteprotect_admin_menu' );
+function bruteprotect_admin_menu_non_multisite() {
+	if(is_multisite()) {
+		add_submenu_page( 'plugins.php', __( 'BruteProtect' ), __( 'BruteProtect' ), 'manage_options', 'bruteprotect-config', 'bruteprotect_conf_ms_notice' );
+		return;
+	}
+	bruteprotect_admin_menu();
+}
 function bruteprotect_admin_menu() {
 	add_submenu_page( 'plugins.php', __( 'BruteProtect' ), __( 'BruteProtect' ), 'manage_options', 'bruteprotect-config', 'bruteprotect_conf' );
 
-	$key = get_option( 'bruteprotect_api_key' );
-	$error = get_option( 'bruteprotect_error' );
+	$key = get_site_option( 'bruteprotect_api_key' );
+	$error = get_site_option( 'bruteprotect_error' );
 
 	if ( !$key && ( isset( $_GET['page'] ) && 'bruteprotect-config' != $_GET['page'] ) ) {
 		function bruteprotect_warning() {
@@ -118,12 +128,12 @@ function bruteprotect_conf() {
 	}
 
 	if ( isset( $_POST['brute_action'] ) && $_POST['brute_action'] == 'update_key' )
-		update_option( 'bruteprotect_api_key', $_POST['brute_api_key'] );
+		update_site_option( 'bruteprotect_api_key', $_POST['brute_api_key'] );
 
 
-	$key = get_option( 'bruteprotect_api_key' );
+	$key = get_site_option( 'bruteprotect_api_key' );
 	$invalid_key = false;
-	delete_option( 'bruteprotect_error' );
+	delete_site_option( 'bruteprotect_error' );
 
 	$response = brute_call( 'check_key' );
 
@@ -134,10 +144,10 @@ function bruteprotect_conf() {
 		$invalid_key = 'host';
 
 	if( $response['ckval'] )
-		update_option( 'bruteprotect_ckval', $response['ckval'] );
+		update_site_option( 'bruteprotect_ckval', $response['ckval'] );
 	?>
 <div class="wrap">
-	<h2 style="clear: both; margin-bottom: 15px;"><img src="<?php echo BRUTEPROTECT_PLUGIN_URL ?>/BruteProtect-Logo-Text-Only-75.png" alt="BruteProtect" width="250" height="40" style="margin-bottom: -2px;"/> &nbsp; Configuration Options</h2>
+	<h2 style="clear: both; margin-bottom: 15px;"><img src="<?php echo BRUTEPROTECT_PLUGIN_URL ?>/BruteProtect-Logo-Text-Only-40.png" alt="BruteProtect" width="250" height="40" style="margin-bottom: -2px;"/> &nbsp; Configuration Options</h2>
 
 	<?php if ( false != $key && $invalid_key == 'invalid' ) : ?>
 		<div class="error below-h2" id="message"><p><?php _e( '<strong>Invalid API Key!</strong> You have entered an invalid API key. Please copy and paste it from the email you have received, or request a new key.' ); ?></p></div>
@@ -156,7 +166,7 @@ function bruteprotect_conf() {
 
 			<?php else : ?>
 
-				<p><?php _e( 'You must obtain an API key for every site you wish to protect with BruteProtect.  You will be generating a BruteProtect.com key for use on <strong><?php echo $host ?></strong>.  There is no cost for an BruteProtect key, and we will never sell your email.' ); ?></p>
+				<p><?php _e( 'You must obtain an API key for every site or network you wish to protect with BruteProtect.  You will be generating a BruteProtect.com key for use on <strong><?php echo $host ?></strong>.  There is no cost for an BruteProtect key, and we will never sell your email.' ); ?></p>
 
 				<strong><?php _e( 'Email Address' ); ?></strong><br />
 				<input type="text" name="email_address" value="<?php echo $current_user->user_email ?>" id="brute_get_api_key" style="font-size: 18px; border: 1px solid #ccc; padding: 4px; width: 450px;" />
@@ -173,11 +183,26 @@ function bruteprotect_conf() {
 		<h3 style="display: block; background-color: #0649fe; color: #fff; margin: -10px -10px 1em -10px; padding: 10px;"><?php _e( 'I <em>have</em> an API key for BruteProtect' ); ?></h3>
 		<form action="" method="post">
 			<strong><?php _e( 'Enter your key: ' ); ?></strong><br />
-			<input type="text" name="brute_api_key" value="<?php echo get_option('bruteprotect_api_key') ?>" id="brute_api_key" style="font-size: 18px; border: 1px solid #ccc; padding: 4px; width: 450px;" />
+			<input type="text" name="brute_api_key" value="<?php echo get_site_option('bruteprotect_api_key') ?>" id="brute_api_key" style="font-size: 18px; border: 1px solid #ccc; padding: 4px; width: 450px;" />
 			<input type="hidden" name="brute_action" value="update_key" />
 			<input type="submit" value="Save API Key" class="button" style="margin-top: 10px;margin-bottom: 10px;" />
 		</form>
 	</div>
 </div>
 	<?php
+}
+
+function bruteprotect_conf_ms_notice() {
+	?>
+	<div class="wrap">
+		<h2 style="clear: both; margin-bottom: 15px;"><img src="<?php echo BRUTEPROTECT_PLUGIN_URL ?>/BruteProtect-Logo-Text-Only-40.png" alt="BruteProtect" width="250" height="40" style="margin-bottom: -2px;"/> &nbsp; Configuration Options</h2>
+		<p style="font-size: 18px; padding-top: 20px;">
+		<?php if (current_user_can('manage_network')): ?>
+			<strong>BruteProtect only needs one API key per network.</strong>  <a href="<?php echo network_home_url('/wp-admin/network/plugins.php?page=bruteprotect-config') ?>">Manage your key here.</a>
+		<?php else: ?>
+			<strong>Sorry!</strong> Only super admins can configure BruteProtect.
+		<?php endif ?>
+		</p>
+	</div>
+	<?php 
 }

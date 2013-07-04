@@ -27,6 +27,12 @@ This allows you to protect yourself against traditional brute force attacks AND 
 
 == Changelog ==
 
+= 0.9.7 =
+* BruteProtect now supports multisite networks!  One key will protect every site in your network, and will always be free for small networks!
+* Fixed API URI logic so that we fall back to non-https if your server doesn't support SSL
+* Fixed admin config page image (thanks, flick!)
+* Added index.php to prevent directory contents from being displayed (thanks, flick!)
+
 = 0.9.6 =
 * Admin-side updates for better compatibility and readability -- Thanks again, Michael Cain!
 

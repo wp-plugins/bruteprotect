@@ -9,7 +9,7 @@ add_action('login_form', 'brute_math_form');
 
 // Protection function for submitted login form
 function brute_math_authenticate() {
-	$salt = get_option('bruteprotect_api_key').get_option('siteurl');
+	$salt = get_site_option('bruteprotect_api_key').get_site_option('siteurl');
 	$ans = (int)$_POST['brute_num'];
 	$salted_ans = sha1($salt.$ans);
 	$correct_ans = $_POST['brute_ck'];
@@ -22,7 +22,7 @@ function brute_math_authenticate() {
 }
 
 function brute_math_form() {
-	$salt = get_option('bruteprotect_api_key').get_option('siteurl');
+	$salt = get_site_option('bruteprotect_api_key').get_site_option('siteurl');
 	$num1 = rand(0, 10);
 	$num2 = rand(0, 10);
 	$sum = $num1 + $num2;

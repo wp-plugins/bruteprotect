@@ -6,7 +6,7 @@
 Plugin Name: Brute Protect
 Plugin URI: http://bruteprotect.com/
 Description: Brute Protect allows the millions of WordPress bloggers to work together to defeat Brute Force attacks. It keeps your site protected from brute force security attacks even while you sleep. To get started: 1) Click the "Activate" link to the left of this description, 2) Sign up for a Brute Protect API key, and 3) Go to your Brute Protect configuration page, and save your API key.
-Version: 0.9.6
+Version: 0.9.7
 Author: Hotchkiss Consulting Group
 Author URI: http://hotchkissconsulting.com/
 License: GPLv2 or later
@@ -28,7 +28,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-define('BRUTEPROTECT_VERSION', '0.9.6');
+define('BRUTEPROTECT_VERSION', '0.9.7');
 define('BRUTEPROTECT_PLUGIN_URL', plugin_dir_url( __FILE__ ));
 
 if ( is_admin() )
@@ -47,7 +47,7 @@ function brute_init_securewatch() {
 //Make sure that they didn't try to sneak past the login form...
 function brute_check_preauth($username) {
 	brute_check_loginability(true);
-	$bum = get_transient('brute_use_math');
+	$bum = get_site_transient('brute_use_math');
 	if(1 == $bum && isset($_POST['log'])) {
 		if(false == function_exists('brute_math_authenticate'))
 			include 'math-fallback.php';
@@ -58,7 +58,7 @@ function brute_check_preauth($username) {
 function brute_check_loginability($preauth = false) {
 	$ip = $_SERVER['REMOTE_ADDR'];
 	$transient_name = 'brute_loginable_'.str_replace('.', '_', $ip);
-	$transient_value = get_transient( $transient_name );
+	$transient_value = get_site_transient( $transient_name );
 	
 	//This IP has been OKed, proceed to login
 	if(isset($transient_value) && $transient_value['status'] == 'ok') { return true; }
@@ -66,7 +66,7 @@ function brute_check_loginability($preauth = false) {
 	if(isset($transient_value) && $transient_value['status'] == 'blocked') { 
 		if($transient_value['expire'] < time()) {
 			//the block is expired but the transient didn't go away naturally, clear it out and allow login.
-			delete_transient($transient_name);
+			delete_site_transient($transient_name);
 			return true;
 		}
 		//there is a current block-- prevent login
@@ -86,7 +86,7 @@ function brute_check_loginability($preauth = false) {
 	return true;
 }
 function brute_check_use_math() {
-	$bum = get_transient('brute_use_math');
+	$bum = get_site_transient('brute_use_math');
 	
 	if($bum && !function_exists('brute_math_authenticate')) {
 		include 'math-fallback.php';
@@ -103,6 +103,10 @@ function brute_log_failed_attempt() {
 
 function brute_get_host() {
 	$host = 'http://'.strtolower($_SERVER['HTTP_HOST']);
+	
+	if(is_multisite()) {
+		$host = network_home_url();
+	}
 	
 	$hostdata = parse_url($host);
 	
@@ -124,13 +128,27 @@ function brute_get_host() {
 }
 
 function get_bruteprotect_host() {
-	return 'https://api.bruteprotect.com/';
+	//Some servers can't access https-- we'll check once a day to see if we can.
+	$use_https = get_site_transient('bruteprotect_use_https');
+	if(!$use_https) {
+		$test = wp_remote_get( 'https://api.bruteprotect.com/https_check.php' );
+		$use_https = 'no';
+		if( !is_wp_error( $test ) && $test['body'] == 'ok' ) {
+			$use_https = 'yes';
+		}
+		set_site_transient('bruteprotect_use_https', $use_https, 86400);
+	}
+	if($use_https == 'yes') {
+		return 'https://api.bruteprotect.com/';
+	} else {
+		return 'http://api.bruteprotect.com/';
+	}
 }
 
 function brute_call($action = 'check_ip') {
 	global $wp_version;
 		
-	$api_key = get_option('bruteprotect_api_key');
+	$api_key = get_site_option('bruteprotect_api_key');
 
 	$host = get_bruteprotect_host();
 	
@@ -141,6 +159,10 @@ function brute_call($action = 'check_ip') {
 	$request['ip'] = $_SERVER['REMOTE_ADDR'];
 	$request['host'] = brute_get_host();
 	$request['api_key'] = $api_key;
+	$request['multisite'] = 0;
+	if(is_multisite()) {
+		$request['multisite'] = get_blog_count();
+	}
 	
 	$args = array(
 		'body' => $request,
@@ -153,26 +175,26 @@ function brute_call($action = 'check_ip') {
 	
 	$ip = $_SERVER['REMOTE_ADDR'];
 	$transient_name = 'brute_loginable_'.str_replace('.', '_', $ip);
-	delete_transient($transient_name);
+	delete_site_transient($transient_name);
 	
 	if(is_array($response_json))
 		$response = json_decode($response_json['body'], true);
 
 	if(isset($response['status']) && !$response['error']) :
 		$response['expire'] = time() + $response['seconds_remaining'];
-		set_transient($transient_name, $response, $response['seconds_remaining']);
-		delete_transient('brute_use_math');
+		set_site_transient($transient_name, $response, $response['seconds_remaining']);
+		delete_site_transient('brute_use_math');
 	else :
 		//no response from the API host?  Let's use math!
-		set_transient('brute_use_math', 1, 600);
+		set_site_transient('brute_use_math', 1, 600);
 		$response['status'] = 'ok';
 		$response['math'] = true;
 	endif;
 	
 	if($response['error']) :
-		update_option('bruteprotect_error', $response['error']);
+		update_site_option('bruteprotect_error', $response['error']);
 	else :
-		delete_option('bruteprotect_error');
+		delete_site_option('bruteprotect_error');
 	endif;
 	
 	return $response;

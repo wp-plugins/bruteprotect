@@ -4,7 +4,7 @@ if(isset($_GET['bruteprotect_checkin']))
 	bruteprotect_checkin();
 
 function bruteprotect_checkin() {
-	$ckval = get_option('bruteprotect_ckval');
+	$ckval = get_site_option('bruteprotect_ckval');
 
 	if(!$ckval || $ckval != $_GET['bruteprotect_checkin']) {
 		return false;
@@ -14,7 +14,7 @@ function bruteprotect_checkin() {
 	    require_once ABSPATH . 'wp-admin/includes/admin.php';
 	}
 
-	$plugins = get_option('active_plugins');
+	$plugins = get_site_option('active_plugins');
 		$t = plugin_dir_path(__FILE__);
 	
 		$t = preg_replace('/'. preg_quote('bruteprotect/', '/') . '$/', '', $t);

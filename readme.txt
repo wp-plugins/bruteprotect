@@ -29,6 +29,10 @@ This allows you to protect yourself against traditional brute force attacks AND 
 
 == Changelog ==
 
+= 0.9.8 =
+* Added a fallback for failed multisite blog count reporting
+* Added the ability to hide BruteProtect stats from network blog dashboards
+
 = 0.9.7.2 =
 * Fixed a minor display issue in 0.9.7.1
 

@@ -6,7 +6,14 @@
 
 add_action( 'wp_dashboard_setup', 'bruteprotect_dashboard_widgets' );
 add_action( 'wp_network_dashboard_setup', 'bruteprotect_dashboard_widgets' );
+
 function bruteprotect_dashboard_widgets() {
+	
+	if(is_multisite() && !is_network_admin()) {
+		$brute_dashboard_widget_hide = get_site_option('brute_dashboard_widget_hide');
+		if($brute_dashboard_widget_hide == 1) { return; }
+	}
+	
 	global $wp_meta_boxes;
 	wp_add_dashboard_widget( 'bruteprotect_dashboard_widget', 'BruteProtect Stats', 'bruteprotect_dashboard_widget' );
 }
@@ -130,7 +137,11 @@ function bruteprotect_conf() {
 
 	if ( isset( $_POST['brute_action'] ) && $_POST['brute_action'] == 'update_key' )
 		update_site_option( 'bruteprotect_api_key', $_POST['brute_api_key'] );
-
+	
+	if ( isset( $_POST['brute_action'] ) && $_POST['brute_action'] == 'update_brute_dashboard_widget_settings' )
+		update_site_option( 'brute_dashboard_widget_hide', $_POST['brute_dashboard_widget_hide'] );
+	
+	$brute_dashboard_widget_hide = get_site_option('brute_dashboard_widget_hide');
 
 	$key = get_site_option( 'bruteprotect_api_key' );
 	$invalid_key = false;
@@ -189,6 +200,23 @@ function bruteprotect_conf() {
 			<input type="submit" value="Save API Key" class="button" style="margin-top: 10px;margin-bottom: 10px;" />
 		</form>
 	</div>
+	
+	<?php if (is_multisite()): ?>
+		<br class="clear" />
+		<div style="display: block; width: 500px; float: left; padding: 10px; border: 1px solid #ccc; background-color: #e5e5e5; margin-top: 30px;">
+			<h3 style="display: block; background-color: #555; color: #fff; margin: -10px -10px 1em -10px; padding: 10px;"><?php _e( 'Dashboard Widget Display' ); ?></h3>
+			<form action="" method="post">
+				<strong><?php _e( 'Display BruteProtect statistics: ' ); ?></strong><br />
+				<select name="brute_dashboard_widget_hide" id="brute_dashboard_widget_hide">
+					<option value="0">On network admin dashboard and on all blog dashboards</option>
+					<option value="1" <?php if (isset($brute_dashboard_widget_hide) && $brute_dashboard_widget_hide == 1) { echo 'selected="selected"'; } ?>>On network admin dashboard only</option>
+				</select>
+				<input type="hidden" name="brute_action" value="update_brute_dashboard_widget_settings" /><br />
+				<input type="submit" value="Save API Key" class="button" style="margin-top: 10px;margin-bottom: 10px;" />
+			</form>
+		</div>
+	<?php endif ?>
+	
 </div>
 	<?php
 }

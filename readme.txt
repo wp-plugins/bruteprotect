@@ -29,6 +29,10 @@ This allows you to protect yourself against traditional brute force attacks AND 
 
 == Changelog ==
 
+= 0.9.8.1 =
+* Admin can now prevent other users from seeing BruteProtect statistics
+* Fixed a typo in the admin panel
+
 = 0.9.8 =
 * Added a fallback for failed multisite blog count reporting
 * Added the ability to hide BruteProtect stats from network blog dashboards

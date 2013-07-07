@@ -14,6 +14,9 @@ function bruteprotect_dashboard_widgets() {
 		if($brute_dashboard_widget_hide == 1) { return; }
 	}
 	
+	$brute_dashboard_widget_admin_only = get_site_option('brute_dashboard_widget_admin_only');
+	if($brute_dashboard_widget_admin_only == 1  && !current_user_can('manage_options')) { return; }
+	
 	global $wp_meta_boxes;
 	wp_add_dashboard_widget( 'bruteprotect_dashboard_widget', 'BruteProtect Stats', 'bruteprotect_dashboard_widget' );
 }
@@ -141,7 +144,14 @@ function bruteprotect_conf() {
 	if ( isset( $_POST['brute_action'] ) && $_POST['brute_action'] == 'update_brute_dashboard_widget_settings' )
 		update_site_option( 'brute_dashboard_widget_hide', $_POST['brute_dashboard_widget_hide'] );
 	
+	if ( isset( $_POST['brute_action'] ) && $_POST['brute_action'] == 'update_brute_dashboard_widget_settings_2' )
+		update_site_option( 'brute_dashboard_widget_admin_only', $_POST['brute_dashboard_widget_admin_only'] );
+	
+	
+	
 	$brute_dashboard_widget_hide = get_site_option('brute_dashboard_widget_hide');
+	$brute_dashboard_widget_admin_only = get_site_option('brute_dashboard_widget_admin_only');
+	
 
 	$key = get_site_option( 'bruteprotect_api_key' );
 	$invalid_key = false;
@@ -212,7 +222,22 @@ function bruteprotect_conf() {
 					<option value="1" <?php if (isset($brute_dashboard_widget_hide) && $brute_dashboard_widget_hide == 1) { echo 'selected="selected"'; } ?>>On network admin dashboard only</option>
 				</select>
 				<input type="hidden" name="brute_action" value="update_brute_dashboard_widget_settings" /><br />
-				<input type="submit" value="Save API Key" class="button" style="margin-top: 10px;margin-bottom: 10px;" />
+				<input type="submit" value="Save" class="button" style="margin-top: 10px;margin-bottom: 10px;" />
+			</form>
+		</div>
+	<?php endif ?>
+	<?php if (current_user_can('manage_options')): ?>
+		<br class="clear" />
+		<div style="display: block; width: 500px; float: left; padding: 10px; border: 1px solid #ccc; background-color: #e5e5e5; margin-top: 30px;">
+			<h3 style="display: block; background-color: #555; color: #fff; margin: -10px -10px 1em -10px; padding: 10px;"><?php _e( 'Dashboard Widget Display' ); ?></h3>
+			<form action="" method="post">
+				<strong><?php _e( 'BruteProtect statistics display to: ' ); ?></strong><br />
+				<select name="brute_dashboard_widget_admin_only" id="brute_dashboard_widget_admin_only">
+					<option value="0">All users who can see the dashboard</option>
+					<option value="1" <?php if (isset($brute_dashboard_widget_admin_only) && $brute_dashboard_widget_admin_only == 1) { echo 'selected="selected"'; } ?>>Admins Only</option>
+				</select>
+				<input type="hidden" name="brute_action" value="update_brute_dashboard_widget_settings_2" /><br />
+				<input type="submit" value="Save" class="button" style="margin-top: 10px;margin-bottom: 10px;" />
 			</form>
 		</div>
 	<?php endif ?>

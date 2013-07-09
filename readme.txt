@@ -29,6 +29,9 @@ This allows you to protect yourself against traditional brute force attacks AND 
 
 == Changelog ==
 
+= 0.9.8.2 =
+* Remove unused code from upcoming functionality.
+
 = 0.9.8.1 =
 * Admin can now prevent other users from seeing BruteProtect statistics
 * Fixed a typo in the admin panel

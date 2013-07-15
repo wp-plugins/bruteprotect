@@ -6,7 +6,7 @@
 Plugin Name: Brute Protect
 Plugin URI: http://bruteprotect.com/
 Description: Brute Protect allows the millions of WordPress bloggers to work together to defeat Brute Force attacks. It keeps your site protected from brute force security attacks even while you sleep. To get started: 1) Click the "Activate" link to the left of this description, 2) Sign up for a Brute Protect API key, and 3) Go to your Brute Protect configuration page, and save your API key.
-Version: 0.9.8.2
+Version: 0.9.8.3
 Author: Hotchkiss Consulting Group
 Author URI: http://hotchkissconsulting.com/
 License: GPLv2 or later
@@ -28,7 +28,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-define('BRUTEPROTECT_VERSION', '0.9.8.2');
+define('BRUTEPROTECT_VERSION', '0.9.8.3');
 define('BRUTEPROTECT_PLUGIN_URL', plugin_dir_url( __FILE__ ));
 
 if ( is_admin() )
@@ -76,7 +76,9 @@ function brute_check_loginability($preauth = false) {
 		include 'math-fallback.php';
 	}
 	
-	if($response['status'] == 'blocked') { brute_kill_login(); }
+	if($response['status'] == 'blocked') { 
+		brute_kill_login();
+	}
 	
 	return true;
 }
@@ -89,10 +91,12 @@ function brute_check_use_math() {
 }
 
 function brute_kill_login() {
+	do_action('brute_kill_login', $_SERVER['REMOTE_ADDR']);
 	wp_die('Your IP ('.$_SERVER['REMOTE_ADDR'].') has been flagged for potential security violations.  Please try again in a little while...');
 }
 
 function brute_log_failed_attempt() {
+	do_action('brute_log_failed_attempt', $_SERVER['REMOTE_ADDR']);
 	brute_call('failed_attempt');
 }
 

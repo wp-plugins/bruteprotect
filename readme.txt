@@ -23,11 +23,15 @@ This allows you to protect yourself against traditional brute force attacks AND 
 4.  Follow the simple instructions to obtain and enter a free API key
 
 == Screenshots ==
-1. Simply create an API key...
-
-2. If a blocked user shows up on your login page, they will see this message
+1. Simply create an API key directly from your WordPress Admin panel...
+2. Enter your API key, it will be verified instantly so that you know you're protected
+3. On your WordPress dashboard, you can see just how many attackers BruteProtect has blocked
+4. If a blocked user shows up on your login page, they will see this message
 
 == Changelog ==
+
+= 0.9.8.3 =
+* Added hooks: brute_log_failed_attempt and brute_kill_login -- both are passed the offending IP address
 
 = 0.9.8.2 =
 * Remove unused code from upcoming functionality.

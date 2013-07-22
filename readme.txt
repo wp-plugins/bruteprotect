@@ -30,6 +30,9 @@ This allows you to protect yourself against traditional brute force attacks AND 
 
 == Changelog ==
 
+= 0.9.8.4 =
+* Fixed a few PHP parsing notices, thanks Till and clwill!
+
 = 0.9.8.3 =
 * Added hooks: brute_log_failed_attempt and brute_kill_login -- both are passed the offending IP address
 

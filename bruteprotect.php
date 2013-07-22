@@ -6,7 +6,7 @@
 Plugin Name: Brute Protect
 Plugin URI: http://bruteprotect.com/
 Description: Brute Protect allows the millions of WordPress bloggers to work together to defeat Brute Force attacks. It keeps your site protected from brute force security attacks even while you sleep. To get started: 1) Click the "Activate" link to the left of this description, 2) Sign up for a Brute Protect API key, and 3) Go to your Brute Protect configuration page, and save your API key.
-Version: 0.9.8.3
+Version: 0.9.8.4
 Author: Hotchkiss Consulting Group
 Author URI: http://hotchkissconsulting.com/
 License: GPLv2 or later
@@ -182,7 +182,7 @@ function brute_call($action = 'check_ip') {
 	if(is_array($response_json))
 		$response = json_decode($response_json['body'], true);
 
-	if(isset($response['status']) && !$response['error']) :
+	if(isset($response['status']) && !isset($response['error'])) :
 		$response['expire'] = time() + $response['seconds_remaining'];
 		set_site_transient($transient_name, $response, $response['seconds_remaining']);
 		delete_site_transient('brute_use_math');
@@ -193,7 +193,7 @@ function brute_call($action = 'check_ip') {
 		$response['math'] = true;
 	endif;
 	
-	if($response['error']) :
+	if(isset($response['error'])) :
 		update_site_option('bruteprotect_error', $response['error']);
 	else :
 		delete_site_option('bruteprotect_error');

@@ -73,7 +73,7 @@ function bruteprotect_admin_menu() {
 		}
 		add_action( 'admin_notices', 'bruteprotect_warning' );
 		return;
-	} elseif ( $error && $_GET['page'] != 'bruteprotect-config' ) {
+	} elseif ( $error && isset( $_GET['page'] ) && $_GET['page'] != 'bruteprotect-config' ) {
 		function bruteprotect_invalid_key_warning() {
 			echo "
 			<div id='bruteprotect-warning' class='error fade'><p><strong>" . __( 'There is a problem with your BruteProtect API key' ) . "</strong> " . sprintf( __( ' <a href="%1$s">Please correct the error</a>, your site will not be protected until you do.' ), esc_url( admin_url( 'plugins.php?page=bruteprotect-config' ) ) )."</p></div>
@@ -158,14 +158,17 @@ function bruteprotect_conf() {
 	delete_site_option( 'bruteprotect_error' );
 
 	$response = brute_call( 'check_key' );
-
-	if( $response['error'] == 'Invalid API Key' || $response['error'] == 'API Key Required' )
-		$invalid_key = 'invalid';
-
-	if( $response['error'] == 'Host match error' )
-		$invalid_key = 'host';
-
-	if( $response['ckval'] )
+	
+	if(isset($response['error'])) :
+		if( $response['error'] == 'Invalid API Key' || $response['error'] == 'API Key Required' ) :
+			$invalid_key = 'invalid';
+		endif;
+		if( $response['error'] == 'Host match error' ) :
+			$invalid_key = 'host';
+		endif;
+	endif;
+	
+	if( isset($response['ckval']) )
 		update_site_option( 'bruteprotect_ckval', $response['ckval'] );
 	?>
 <div class="wrap">
@@ -183,7 +186,7 @@ function bruteprotect_conf() {
 		<div style="display: block; width: 500px; float: left; padding: 10px; border: 1px solid green; background-color: #eaffd6; margin-right: 20px; margin-bottom:20px;">
 			<h3 style="display: block; background-color: green; color: #fff; margin: -10px -10px 1em -10px; padding: 10px;">I <em>need</em> an API key for BruteProtect</h3>
 			<form action="" method="post">
-			<?php if ( $_GET['get_key'] == 'success' ) : ?>
+			<?php if ( isset($_GET['get_key']) && $_GET['get_key'] == 'success' ) : ?>
 				<strong style="font-size: 18px;"><?php _e( 'You have successfully requested an API key.  It should be arriving in your email shortly.<br /><br />Once you receive your key, you must enter it on this page to finish activating BruteProtect.' ); ?></strong>
 
 			<?php else : ?>

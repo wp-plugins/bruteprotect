@@ -30,6 +30,9 @@ This allows you to protect yourself against traditional brute force attacks AND 
 
 == Changelog ==
 
+= 0.9.8.6 =
+* Expired transients now get cleaned up-- thanks KirkM, Tevya, David Anderson, and Seebz!
+
 = 0.9.8.4 =
 * Fixed a few PHP parsing notices, thanks Till and clwill!
 

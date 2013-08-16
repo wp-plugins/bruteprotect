@@ -30,6 +30,9 @@ This allows you to protect yourself against traditional brute force attacks AND 
 
 == Changelog ==
 
+= 0.9.8.6.2 =
+* Don't ever block localhost
+
 = 0.9.8.6.1 =
 * Fixed typo
 

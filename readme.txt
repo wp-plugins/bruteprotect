@@ -30,6 +30,10 @@ This allows you to protect yourself against traditional brute force attacks AND 
 
 == Changelog ==
 
+= 0.9.9 =
+* Add in the ability to whitelist IPs or IP blocks
+* Improve wp-login.php performance via $pagenow -- thanks Mark Barnes!
+
 = 0.9.8.6.2 =
 * Don't ever block localhost
 

@@ -6,7 +6,7 @@
 Plugin Name: BruteProtect
 Plugin URI: http://bruteprotect.com/
 Description: BruteProtect allows the millions of WordPress bloggers to work together to defeat Brute Force attacks. It keeps your site protected from brute force security attacks even while you sleep. To get started: 1) Click the "Activate" link to the left of this description, 2) Sign up for a BruteProtect API key, and 3) Go to your BruteProtect configuration page, and save your API key.
-Version: 0.9.8.6.2
+Version: 0.9.9
 Author: Hotchkiss Consulting Group
 Author URI: http://hotchkissconsulting.com/
 License: GPLv2 or later
@@ -28,7 +28,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-define('BRUTEPROTECT_VERSION', '0.9.8.6.2');
+define('BRUTEPROTECT_VERSION', '0.9.9');
 define('BRUTEPROTECT_PLUGIN_URL', plugin_dir_url( __FILE__ ));
 
 if ( is_admin() )
@@ -36,8 +36,13 @@ if ( is_admin() )
 
 require_once dirname( __FILE__ ) . '/clear_transients.php';
 
+if (isset($pagenow) && $pagenow == 'wp-login.php') {
+	brute_check_loginability();
+} else {
+	//	This is in case the wp-login.php pagenow variable fails
+	add_action('login_head', 'brute_check_loginability');
+}
 
-add_action('login_head', 'brute_check_loginability');
 add_action('login_head', 'brute_check_use_math');
 add_action('wp_authenticate', 'brute_check_preauth', 1);
 add_action('wp_login_failed', 'brute_log_failed_attempt');
@@ -55,13 +60,34 @@ function brute_check_preauth($username) {
 
 function brute_check_loginability($preauth = false) {
 	$ip = $_SERVER['REMOTE_ADDR'];
+	$iplong = ip2long( $ip );
 	$transient_name = 'brute_loginable_'.str_replace('.', '_', $ip);
 	$transient_value = get_site_transient( $transient_name );
-	
+
 	//Never block login from localhost
 	if($ip == '127.0.0.1') {
 		return true;
 	}
+	
+	//Never block login from whitelisted IPs
+	$whitelist = get_site_option( 'brute_ip_whitelist' );
+	$wl_items = explode(PHP_EOL, $whitelist);
+	
+	if( is_array( $wl_items ) ) :  foreach( $wl_items as $item ) :
+		if( $ip == $item )
+			return true;
+		
+		if(strpos($item, '*') === false)
+			continue;
+			
+		$ip_low = ip2long( str_replace('*', '0', $item) );
+		$ip_high = ip2long( str_replace('*', '255', $item) );
+		
+		if( $iplong >= $ip_low && $iplong <= $ip_high )
+			return true;
+		
+	endforeach; endif;
+
 	
 	//This IP has been OKed, proceed to login
 	if(isset($transient_value) && $transient_value['status'] == 'ok') { return true; }

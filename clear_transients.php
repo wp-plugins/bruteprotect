@@ -4,8 +4,6 @@ Adapted from Purge Transients by Seebz
 https://github.com/Seebz/Snippets/tree/master/Wordpress/plugins/purge-transients
 */
 
-
-
 if ( ! function_exists('bp_purge_transients') ) {
 function bp_purge_transients($older_than = '7 days') {
 global $wpdb;
@@ -49,14 +47,14 @@ return $transients;
 
 
 function bp_purge_transients_activation () {
-if (!wp_next_scheduled('bp_purge_transients_cron')) {	
-wp_schedule_event( time(), 'daily', 'bp_purge_transients_cron');
-}
+	if (!wp_next_scheduled('bp_purge_transients_cron')) {	
+		wp_schedule_event( time(), 'daily', 'bp_purge_transients_cron');
+	}
 }
 // register_activation_hook(__FILE__, 'bp_purge_transients_activation');
 add_action('admin_init', 'bp_purge_transients_activation');
 
 function do_bp_purge_transients_cron () {
- $o = bp_purge_transients();
+	$o = bp_purge_transients();
 }
 add_action('bp_purge_transients_cron', 'do_bp_purge_transients_cron');

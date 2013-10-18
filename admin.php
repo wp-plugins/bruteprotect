@@ -82,7 +82,7 @@ if( !class_exists( 'BruteProtect_Admin' ) ) {
 			if($brute_dashboard_widget_admin_only == 1  && !current_user_can('manage_options')) { return; }
 	
 			global $wp_meta_boxes;
-			wp_add_dashboard_widget( 'bruteprotect_dashboard_widget', 'BruteProtect Stats', 'bruteprotect_dashboard_widget' );
+			wp_add_dashboard_widget( 'bruteprotect_dashboard_widget', 'BruteProtect Stats', array(&$this, 'bruteprotect_dashboard_widget') );
 		}
 
 		function bruteprotect_dashboard_widget() {

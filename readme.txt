@@ -30,7 +30,10 @@ This allows you to protect yourself against traditional brute force attacks AND 
 
 == Changelog ==
 
-= 0.9.5 =
+= 0.9.9.6 =
+* Fix bug on local environments
+
+= 0.9.9.5 =
 * Major code rewrite!  Every line of code was reviewed, optimized, and made prettier.  It can be prettier, though, and we're going to keep working on that
 * Blocked users from obtaining a key on a local environment
 * Laid groundwork for Clef Integration

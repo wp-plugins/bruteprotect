@@ -13,12 +13,7 @@ if( !class_exists( 'BruteProtect_Admin' ) ) {
 			$key = get_site_option( 'bruteprotect_api_key' );
 			
 			if( ( $ip == '127.0.0.1' || $ip == '::1' ) && !$key ) {
-				function bruteprotect_localhost_warning() {
-					echo "
-					<div id='bruteprotect-warning' class='updated fade'><p><strong>" . __( 'BruteProtect not enabled.' ) . "</strong> You have installed BruteProtect, but we have detected that you are running it on a local installation.   You can leave BruteProtect turned on, we will prompt you to generate a key when you migrate to a live server.</p></div>";
-				}
-				add_action( 'admin_notices', 'bruteprotect_localhost_warning' );
-				return;
+				add_action( 'admin_notices', array( &$this, 'bruteprotect_localhost_warning' ) );
 			}
 			
 			add_action( 'admin_init', array( &$this, 'check_bruteprotect_access' ) );
@@ -36,6 +31,11 @@ if( !class_exists( 'BruteProtect_Admin' ) ) {
 		
 		function enqueue_bruteprotect_admin() {
 			wp_enqueue_style( 'bruteprotect-css', plugins_url( '/admin/bruteprotect-admin.css', __FILE__ ), array(), BRUTEPROTECT_VERSION );
+		}
+		
+		function bruteprotect_localhost_warning() {
+			echo "
+			<div id='bruteprotect-warning' class='updated fade'><p><strong>" . __( 'BruteProtect not enabled.' ) . "</strong> You have installed BruteProtect, but we have detected that you are running it on a local installation.   You can leave BruteProtect turned on, we will prompt you to generate a key when you migrate to a live server.</p></div>";
 		}
 		
 		/////////////////////////////////////////////////////////////////////
@@ -145,7 +145,7 @@ if( !class_exists( 'BruteProtect_Admin' ) ) {
 					echo "<div id='bruteprotect-warning' class='error fade'><p><strong>" . __( 'BruteProtect is almost ready.' ) . "</strong> " . sprintf( __( 'You must <a href="%1$s">enter your BruteProtect API key</a> for it to work.  <a href="%1$s">Obtain a key for free</a>.' ), esc_url( admin_url( 'admin.php?page=bruteprotect-api' ) ) ) . "</p></div>
 					";
 				}
-				add_action( 'admin_notices', 'bruteprotect_warning' );
+				add_action( 'admin_notices', array( &$this, 'bruteprotect_warning' ) );
 				return;
 			} elseif ( $error && isset( $_GET['page'] ) && $_GET['page'] != 'bruteprotect-api' ) {
 				function bruteprotect_invalid_key_warning() {

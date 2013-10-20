@@ -6,7 +6,7 @@
 Plugin Name: BruteProtect
 Plugin URI: http://bruteprotect.com/
 Description: BruteProtect allows the millions of WordPress bloggers to work together to defeat Brute Force attacks. It keeps your site protected from brute force security attacks even while you sleep. To get started: 1) Click the "Activate" link to the left of this description, 2) Sign up for a BruteProtect API key, and 3) Go to your BruteProtect configuration page, and save your API key.
-Version: 0.9.9.6
+Version: 0.9.9.7
 Author: Hotchkiss Consulting Group
 Author URI: http://hotchkissconsulting.com/
 License: GPLv2 or later
@@ -281,19 +281,8 @@ class BruteProtect
 $bruteProtect = new BruteProtect;
 
 if (isset($pagenow) && $pagenow == 'wp-login.php') {
-	$bruteProtect->brute_check_loginability();
+	$bruteProtect->brute_check_loginability();	
 } else {
 	//	This is in case the wp-login.php pagenow variable fails
-	add_action( 'login_head', array( &$this, 'brute_check_loginability' ) );
+	add_action( 'login_head', array( &$bruteProtect, 'brute_check_loginability' ) );
 }
-
-
-
-
-
-
-
-
-
-
-

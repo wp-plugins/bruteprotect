@@ -30,6 +30,9 @@ This allows you to protect yourself against traditional brute force attacks AND 
 
 == Changelog ==
 
+= 0.9.9.8 =
+* Fix error with cached blocks
+
 = 0.9.9.7 =
 * page-now fallback fix
 

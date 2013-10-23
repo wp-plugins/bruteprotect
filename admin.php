@@ -137,27 +137,28 @@ if( !class_exists( 'BruteProtect_Admin' ) ) {
 			$error = get_site_option( 'bruteprotect_error' );
 
 			if ( !$key ) {
-				function bruteprotect_warning() {
-					//Don't trigger the warning on the config page
-					if ( isset( $_GET['page'] ) && 'bruteprotect-api' == $_GET['page'] )
-						return;
-					
-					echo "<div id='bruteprotect-warning' class='error fade'><p><strong>" . __( 'BruteProtect is almost ready.' ) . "</strong> " . sprintf( __( 'You must <a href="%1$s">enter your BruteProtect API key</a> for it to work.  <a href="%1$s">Obtain a key for free</a>.' ), esc_url( admin_url( 'admin.php?page=bruteprotect-api' ) ) ) . "</p></div>
-					";
-				}
 				add_action( 'admin_notices', array( &$this, 'bruteprotect_warning' ) );
 				return;
 			} elseif ( $error && isset( $_GET['page'] ) && $_GET['page'] != 'bruteprotect-api' ) {
-				function bruteprotect_invalid_key_warning() {
-					echo "
-					<div id='bruteprotect-warning' class='error fade'><p><strong>" . __( 'There is a problem with your BruteProtect API key' ) . "</strong> " . sprintf( __( ' <a href="%1$s">Please correct the error</a>, your site will not be protected until you do.' ), esc_url( admin_url( 'admin.php?page=bruteprotect-api' ) ) )."</p></div>
-					";
-				}
 				add_action( 'admin_notices', array( &$this, 'bruteprotect_invalid_key_warning' ) );
 				return;
 			}
 		}
 
+		function bruteprotect_warning() {
+			//Don't trigger the warning on the config page
+			if ( isset( $_GET['page'] ) && 'bruteprotect-api' == $_GET['page'] )
+				return;
+			
+			echo "<div id='bruteprotect-warning' class='error fade'><p><strong>" . __( 'BruteProtect is almost ready.' ) . "</strong> " . sprintf( __( 'You must <a href="%1$s">enter your BruteProtect API key</a> for it to work.  <a href="%1$s">Obtain a key for free</a>.' ), esc_url( admin_url( 'admin.php?page=bruteprotect-api' ) ) ) . "</p></div>
+			";
+		}
+		
+		function bruteprotect_invalid_key_warning() {
+			echo "
+			<div id='bruteprotect-warning' class='error fade'><p><strong>" . __( 'There is a problem with your BruteProtect API key' ) . "</strong> " . sprintf( __( ' <a href="%1$s">Please correct the error</a>, your site will not be protected until you do.' ), esc_url( admin_url( 'admin.php?page=bruteprotect-api' ) ) )."</p></div>
+			";
+		}
 
 		function bruteprotect_general_settings() {
 			include 'admin/settings.php';

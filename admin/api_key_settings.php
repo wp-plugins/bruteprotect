@@ -21,13 +21,13 @@ if ( isset( $_POST['brute_action'] ) && $_POST['brute_action'] == 'get_api_key' 
 
 	$response_json = wp_remote_post( $post_host, $args );
 
-	?>
-	<script type="text/javascript">
-	<!--
-	window.location = "admin.php?page=bruteprotect-config&get_key=success"
-	//-->
-	</script>
-	<?php
+?>
+<script type="text/javascript">
+<!--
+window.location = "admin.php?page=bruteprotect-api&get_key=success"
+//-->
+</script>
+<?php
 	exit;
 }
 
@@ -83,6 +83,12 @@ $invalid_key = false;
 delete_site_option( 'bruteprotect_error' );
 
 $response = $this->brute_call( 'check_key' );
+
+/////////////////////////////////////////////////////////////////////
+echo 'Displaying Array $response <br/><pre>';
+print_r($response);
+echo '</pre>';
+/////////////////////////////////////////////////////////////////////
 
 if(isset($response['error'])) :
 	if( $response['error'] == 'Invalid API Key' || $response['error'] == 'API Key Required' ) :

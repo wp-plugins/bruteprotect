@@ -32,6 +32,9 @@ BruteProtect FULLY SUPPORTS multisite networks
 
 == Changelog ==
 
+= 0.9.9.9b =
+* Remove left over debug code
+
 = 0.9.9.9 =
 * Fix error with server identification and errors in older versions of PHP
 * Version Codename: I really don't want to say 1.0

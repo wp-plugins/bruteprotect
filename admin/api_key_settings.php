@@ -84,12 +84,6 @@ delete_site_option( 'bruteprotect_error' );
 
 $response = $this->brute_call( 'check_key' );
 
-/////////////////////////////////////////////////////////////////////
-echo 'Displaying Array $response <br/><pre>';
-print_r($response);
-echo '</pre>';
-/////////////////////////////////////////////////////////////////////
-
 if(isset($response['error'])) :
 	if( $response['error'] == 'Invalid API Key' || $response['error'] == 'API Key Required' ) :
 		$invalid_key = 'invalid';

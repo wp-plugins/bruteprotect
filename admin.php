@@ -5,6 +5,7 @@ if( !class_exists( 'BruteProtect_Admin' ) ) {
 	{
 		
 		private $error_reporting_data;
+		private static $_clef_active;
 	
 		function __construct()
 		{
@@ -26,7 +27,10 @@ if( !class_exists( 'BruteProtect_Admin' ) ) {
 			add_action( 'network_admin_menu', array( &$this, 'bruteprotect_admin_menu' )  );
 			
 			add_action( 'admin_enqueue_scripts', array( &$this, 'enqueue_bruteprotect_admin' ) );
-			
+
+			if (!$this->clef_active()) {
+				add_action( 'admin_init', array( &$this, 'install_clef') );
+			}
 		}
 		
 		function enqueue_bruteprotect_admin() {
@@ -64,6 +68,10 @@ if( !class_exists( 'BruteProtect_Admin' ) ) {
 			$this->error_reporting_data = base64_encode( serialize( $report ) );
 	
 			return false;
+		}
+		
+		function get_error_reporting_data() {
+			return unserialize( base64_decode ( $this->error_reporting_data ) );
 		}
 
 
@@ -129,9 +137,10 @@ if( !class_exists( 'BruteProtect_Admin' ) ) {
 			add_submenu_page( 'bruteprotect-config', __( 'API Key' ), __( 'API Key' ), 'manage_options', 'bruteprotect-api', array( &$this, 'bruteprotect_api_key_settings' ) );			
 			
 			add_submenu_page( 'bruteprotect-config', __( 'IP White List' ), __( 'IP White List' ), 'manage_options', 'bruteprotect-whitelist', array( &$this, 'bruteprotect_whitelist_settings' ) );
-			
-			add_submenu_page( 'bruteprotect-config', __( 'Clef' ), __( 'Clef' ), 'manage_options', 'bruteprotect-clef', array( &$this, 'bruteprotect_clef_settings' ) );
-			
+		
+			if ( !$this->clef_active() ) {
+				add_submenu_page( 'bruteprotect-config', __( 'Clef' ), __( 'Clef' ), 'manage_options', 'bruteprotect-clef', array( &$this, 'bruteprotect_clef_settings' ) );
+			}	
 			
 			$key = get_site_option( 'bruteprotect_api_key' );
 			$error = get_site_option( 'bruteprotect_error' );
@@ -149,6 +158,12 @@ if( !class_exists( 'BruteProtect_Admin' ) ) {
 			//Don't trigger the warning on the config page
 			if ( isset( $_GET['page'] ) && 'bruteprotect-api' == $_GET['page'] )
 				return;
+			
+			$ip = $this->brute_get_ip();
+			//Don't trigger the warning on localhost, since we're not going to let them set up the API yet anyway...
+			if( $ip == '127.0.0.1' || $ip == '::1' )
+				return;
+			
 			
 			echo "<div id='bruteprotect-warning' class='error fade'><p><strong>" . __( 'BruteProtect is almost ready.' ) . "</strong> " . sprintf( __( 'You must <a href="%1$s">enter your BruteProtect API key</a> for it to work.  <a href="%1$s">Obtain a key for free</a>.' ), esc_url( admin_url( 'admin.php?page=bruteprotect-api' ) ) ) . "</p></div>
 			";
@@ -172,10 +187,6 @@ if( !class_exists( 'BruteProtect_Admin' ) ) {
 			include 'admin/whitelist.php';
 		}
 
-		function bruteprotect_clef_settings() {
-			include 'admin/clef/clef_settings.php';
-		}
-
 		function bruteprotect_conf_ms_notice() {
 			?>
 			<div class="wrap">
@@ -189,6 +200,129 @@ if( !class_exists( 'BruteProtect_Admin' ) ) {
 				</p>
 			</div>
 			<?php 
+		}
+
+		function bruteprotect_clef_settings() {
+            $url = wp_nonce_url(
+                add_query_arg(
+                    array(
+                        'page'          => 'bruteprotect-clef',
+                        'bruteprotect-clef-action' => 'install',
+                    ),
+                    admin_url( 'admin.php' )
+                ),
+                'bruteprotect-clef-install'
+            );
+
+			include 'admin/clef/clef_settings.php';
+		}
+
+		function install_clef() {
+
+			if (isset($_GET['bruteprotect-clef-action'])) {
+				$clef_path = "wpclef/wpclef.php";
+
+				if ($_GET['bruteprotect-clef-action'] == "install") {
+					if (!isset(get_plugins()[$clef_path])) {
+						$plugin = array(
+							"name" => "Clef",
+							"slug" => "wpclef",
+						);
+
+						require_once ABSPATH . 'wp-admin/includes/plugin-install.php'; // Need for plugins_api
+                		require_once ABSPATH . 'wp-admin/includes/class-wp-upgrader.php'; // Need for upgrade classes
+                		require_once "admin/inc/plugin-install.php";
+
+                		$api = plugins_api( 'plugin_information', array( 'slug' => $plugin['slug'], 'fields' => array( 'sections' => false ) ) );
+
+	                    if ( is_wp_error( $api ) ) {
+	                        $this->clef_install_errors = array( $api->get_error_message() );
+							add_action("admin_notices", array(&$this, "clef_install_errors"));
+	                        return;
+	                    } else if ( isset( $api->download_link ) ) {
+	                        $plugin['source'] = $api->download_link;
+	                    } else {
+							$this->clef_install_errors = array( "Error trying to download Clef" );
+							add_action("admin_notices", array(&$this, "clef_install_errors"));
+	                        return;
+	                    }
+
+		                /** Pass all necessary information via URL if WP_Filesystem is needed */
+		                $url = wp_nonce_url(
+		                    add_query_arg(
+		                        array(
+		                            'page'          => 'bruteprotect-clef',
+		                            'bruteprotect-clef-action' => 'install',
+		                        ),
+		                        admin_url( 'admin.php' )
+		                    ),
+		                    'bruteprotect-clef-install'
+		                );
+		                $method = ''; // Leave blank so WP_Filesystem can populate it as necessary
+		                $fields = array( sanitize_key( 'bruteprotect-clef-install' ) ); // Extra fields to pass to WP_Filesystem
+
+		                if ( false === ( $creds = request_filesystem_credentials( $url, $method, false, false, $fields ) ) ) {
+		                    return;
+		                }
+
+		                if ( ! WP_Filesystem( $creds ) ) {
+		                    request_filesystem_credentials( $url, $method, true, false, $fields ); // Setup WP_Filesystem
+		                    return;
+		                }
+
+		                /** Set type, based on whether the source starts with http:// or https:// */
+		                $type = preg_match( '|^http(s)?://|', $plugin['source'] ) ? 'web' : 'upload';
+
+		                /** Prep variables for Plugin_Installer_Skin class */
+		                $title = sprintf( "Installing %s", $plugin['name'] );
+		                $url   = add_query_arg( array( 'action' => 'install-plugin', 'plugin' => $plugin['slug'] ), 'update.php' );
+		                if ( isset( $_GET['from'] ) )
+		                    $url .= add_query_arg( 'from', urlencode( stripslashes( $_GET['from'] ) ), $url );
+
+		                $nonce = 'install-plugin_' . $plugin['slug'];
+
+		                $source = $plugin['source'];
+
+		                /** Create a new instance of Plugin_Upgrader */
+		                $upgrader = new Plugin_Upgrader( $skin = new Silent_Plugin_Installer_Skin( compact( 'type', 'title', 'url', 'nonce', 'plugin', 'api' ) ) );
+
+		                /** Perform the action and install the plugin from the $source urldecode() */
+		                $upgrader->install( $source );
+
+		                if (!empty($skin->errors)) {
+		                	$this->clef_install_errors = $skin->errors;
+							add_action("admin_notices", array(&$this, "clef_install_errors"));
+							return;
+		                }
+
+		                /** Flush plugins cache so we can make sure that the installed plugins list is always up to date */
+		                wp_cache_flush();
+					}
+
+					$activate = activate_plugin($clef_path);
+					if (is_wp_error($activate)) {
+						$this->clef_install_errors = array( $activate->get_error_message() );
+						add_action("admin_notices", array(&$this, "clef_install_errors"));
+						return;
+					} else {
+						return wp_redirect('plugins.php');
+					}
+				}
+			}
+		}
+
+		function clef_active() {
+			if ( is_null($this::$_clef_active) ) {
+                $this::$_clef_active = in_array( 'wpclef/wpclef.php', apply_filters( 'active_plugins', get_option( 'active_plugins' ) ) );
+			}
+            return self::$_clef_active;
+		}
+
+		function clef_install_errors() {
+			foreach ($this->clef_install_errors as $error) {
+				echo "
+				<div id='bruteprotect-warning' class='error fade'><p>Something went wrong activating Clef: <strong>" . __( $error ) . "</strong></p></div>";
+			}
 		}
 	}
 }

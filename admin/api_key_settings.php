@@ -1,5 +1,6 @@
 <?php
 $host = $this->brute_get_local_host();
+
 global $current_user;
 
 if ( isset( $_POST['brute_action'] ) && $_POST['brute_action'] == 'get_api_key' && is_email( $_POST['email_address'] ) ) {
@@ -113,6 +114,10 @@ if( isset($response['ckval']) )
 
 <?php if ( $invalid_key == 'server_access' ) : 
 	include 'inc/api_access_error.php';
+	return; 
+endif; ?>
+
+<?php if ( $this->is_on_localhost() ) : 
 	return; 
 endif; ?>
 

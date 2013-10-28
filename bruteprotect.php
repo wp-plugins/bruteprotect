@@ -6,7 +6,7 @@
 Plugin Name: BruteProtect
 Plugin URI: http://bruteprotect.com/
 Description: BruteProtect allows the millions of WordPress bloggers to work together to defeat Brute Force attacks. It keeps your site protected from brute force security attacks even while you sleep. To get started: 1) Click the "Activate" link to the left of this description, 2) Sign up for a BruteProtect API key, and 3) Go to your BruteProtect configuration page, and save your API key.
-Version: 0.9.9.9b
+Version: 0.9.9.9c
 Author: Hotchkiss Consulting Group
 Author URI: http://hotchkissconsulting.com/
 License: GPLv2 or later
@@ -28,7 +28,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-define('BRUTEPROTECT_VERSION', '0.9.9.9b');
+define('BRUTEPROTECT_VERSION', '0.9.9.9c');
 define('BRUTEPROTECT_PLUGIN_URL', plugin_dir_url( __FILE__ ));
 
 if ( is_admin() ) :
@@ -50,6 +50,7 @@ class BruteProtect
 	function __construct()
 	{
 		add_action( 'login_head', array( &$this, 'brute_check_use_math' ) );
+		add_action( 'init', array( &$this, 'brute_access_check_generator' ) );
 		add_action( 'wp_authenticate', array( &$this, 'brute_check_preauth' ) , 1);
 		add_action( 'wp_login_failed', array( &$this, 'brute_log_failed_attempt' ) );
 	}
@@ -78,6 +79,57 @@ class BruteProtect
 		return $this->user_ip;
 	}
 	
+	function get_privacy_key() {
+		return substr(md5( NONCE_SALT ), 5, 10);
+	}
+	
+	function brute_access_check_generator() {
+		if( !isset( $_GET['bpc'] ) )
+			return;
+		
+		if( $_GET['bpc'] != $this->get_privacy_key() ) 
+			return;
+		
+		require_once dirname( __FILE__ ) . '/admin.php';
+		$bpadmin = new BruteProtect_Admin;
+		
+		$can_access = $bpadmin->check_bruteprotect_access();
+		if( $can_access ) {
+			wp_die( '<h2 style="clear: both; margin-bottom: 15px;"><img src="' . BRUTEPROTECT_PLUGIN_URL . '/BruteProtect-Logo-Text-Only-40.png" alt="BruteProtect" width="250" height="40" style="margin-bottom: -2px;"/> &nbsp; All Clear</h2>Everything is working perfectly, thanks for getting it fixed!' );
+		}
+		
+		$data = $bpadmin->get_error_reporting_data();
+		
+		echo '<h2 style="clear: both; margin-bottom: 15px;"><img src="' . BRUTEPROTECT_PLUGIN_URL . '/BruteProtect-Logo-Text-Only-40.png" alt="BruteProtect" width="250" height="40" style="margin-bottom: -2px;"/> &nbsp; Error Report</h2>';
+		echo '<h3 style="margin-top: 20px;">Installation Basics:</h3>';
+		echo '<strong>WordPress Version</strong>: ' . $data['wp_version'] . '<br />';
+		echo '<strong>BruteProtect Version</strong>: ' . BRUTEPROTECT_VERSION . '<br />';
+		echo '<strong>BruteProtect API Server</strong>: https://api.bruteprotect.com/<br />';
+		echo '<strong>Current Domain</strong>: ' . $this->brute_get_local_host() . '<br />';
+		echo '<strong>Current IP</strong>: ' . $this->brute_get_ip() . '<br />';
+		echo '<strong>If you can visit this URL, BruteProtect is currently online</strong>: <a href="http://api.bruteprotect.com/up.php">http://api.bruteprotect.com/up.php</a><br />';
+		
+		echo '<h3 style="margin-top: 20px;">Connection Errors:</h3>';
+		/////////////////////////////////////////////////////////////////////
+		echo '<pre>';
+		print_r($data['error']);
+		echo '</pre>';
+		/////////////////////////////////////////////////////////////////////
+		
+		wp_die();
+	}
+	
+	function is_on_localhost() {
+		$ip = $this->brute_get_ip();
+		
+		//Never block login from localhost
+		if( $ip == '127.0.0.1' || $ip == '::1' ) {
+			return true;
+		}
+		
+		return false;
+	}
+	
 	/////////////////////////////////////////////////////////////////////
 	// This function checks the status for a given IP. API results are
 	// cached as transients in the wp_options table
@@ -86,7 +138,7 @@ class BruteProtect
 		$ip = $this->brute_get_ip();
 
 		//Never block login from localhost
-		if( $ip == '127.0.0.1' || $ip == '::1' ) {
+		if( $this->is_on_localhost() ) {
 			return true;
 		}
 		

@@ -1,32 +1,36 @@
+<?php
+$reporting_data = unserialize(base64_decode($this->error_reporting_data));
+$error_rows = @$reporting_data['error']->errors;
+$privacy_key = $this->get_privacy_key();
+?>
 <div class="error below-h2" id="message" style="padding-bottom: 20px;">
 	<h2>API access error :(</h2>
 	<h3>In order for BruteProtect to work, your site needs to be able to contact our servers.  This isn't working right now, but we're going to help you figure out the problem. Please follow the steps below:</h3>
 	<ol style="max-width: 600px;">
-		<li>Click <a href="http://api.bruteprotect.com/up.php" target="_blank">this link</a> (<a href="http://api.bruteprotect.com/up.php" target="_blank">http://api.bruteprotect.com/up.php</a>). <br />If this link <strong>DOES NOT</strong> work, our servers are currently offline, and you can disregard this message.  We'll be back online soon!  <br />If this link <strong>DOES</strong> work, the please continue to the next step</li>
-		<li>Select all of the following text, and copy it to your clipboard:<br />
-			<textarea style="width: 100%; height: 35px; font-size: 10px; line-height: 11px;"><?php echo $this->error_reporting_data ?></textarea>
+		<li>Click <a href="http://api.bruteprotect.com/up.php" target="_blank">this link</a> (<a href="http://api.bruteprotect.com/up.php" target="_blank">http://api.bruteprotect.com/up.php</a>). <br />If this link <strong>DOES NOT</strong> work, our servers are currently offline, and you can disregard this message.  We'll be back online soon!  <br />If this link <strong>DOES</strong> work, then please continue to the next step</li>
+		<li>Copy all of the following text to your cliboard and paste it into a new support request to your hosting company:<br />
+			<textarea style="width: 100%; height: 250px; font-size: 12px; line-height: 14px;">Hello!  I am submitting this support ticket because I am having trouble with your server and the domain <?php echo $this->brute_get_local_host(); ?>
+
+				
+I have copied and pasted this message from a WordPress security plugin called BruteProtect (http://bruteprotect.com/).  If you're not familiar with BruteProtect, it is the most effective tool available to keep WordPress sites from being infiltrated by distributed brute force attacks.  It has also been shown to reduce server load by up to 70% and decrease bandwidth usage by up to 85%, so it's good for everyone!
+
+The problem we are experiencing is an inability to access the BruteProtect API (https://api.bruteprotect.com/) from within the plugin. When we attempt to reach the API, the following error(s) are returned:
+
+<?php if(is_array($error_rows)) :  foreach($error_rows as $key => $msg) : ?>
+<?php echo $key ?>: <?php echo $msg[0] ?>
+<?php endforeach; endif;  ?>
+
+
+For more information, or to test to see if this issue is fixed, you can visit:
+http://<?php echo $this->brute_get_local_host(); ?>/?bpc=<?php echo $privacy_key ?>
+
+
+If you have any questions, feel free to reach out to the team at BruteProtect:
+help@bruteprotect.com</textarea>
 		</li>
-		<li>Email that text to: <a href="mailto:help@bruteprotect.com">help@bruteprotect.com</a></li>
 	</ol>
 	
-	What does this text tell us?  It tells us the version of WordPress you are running, the error received when you try to access our servers, what web server you're using, your server's IP address, your IP address, your domain name, and your web server directory name. It does NOT give us access to any personal information, usernames, passwords, etc.
+	If you have an exceptionally good (or an exceptionally bad) experience with your host, let us know by sending an email to <a href="mailto:help@bruteprotect.com">help@bruteprotect.com</a>.  Thank you!
 	
-</div>
-<br />
-<h3>Want to troubleshoot this yourself?</h3>
-<p>Thanks&mdash; we're really busy working on new features, so we appreciate it!</p>
-<p>
-	When we try to access <em>http://api.bruteprotect.com/api_check.php</em>, we're not able to get out to the server.  The following error(s) are returned:
-</p>
-	<ul style="margin-left: 20px;">
-		<?php 
-		$reporting_data = unserialize(base64_decode($this->error_reporting_data));
-		$error_rows = @$reporting_data['error']->errors;
-		if(is_array($error_rows)) :  foreach($error_rows as $key => $msg) : ?>
-		<li><pre><strong><?php echo $key ?></strong>: <?php echo $msg[0] ?></pre></li>
-		<?php endforeach; endif; ?>
-	</ul>
-	<p>If you aren't able to resolve this yourself, you can contact your host with this information and they should be able to help you resolve the issue.</p>
-	<?php //Include our closing DIVs, because we don't want to load the rest of the page. ?>
 </div>
 </div>

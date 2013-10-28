@@ -218,12 +218,18 @@ if( !class_exists( 'BruteProtect_Admin' ) ) {
 		}
 
 		function install_clef() {
+			
+			if ( !isset( $_GET[ 'bruteprotect-clef-action' ] ) )
+				return;
 
-			if (isset($_GET['bruteprotect-clef-action'])) {
 				$clef_path = "wpclef/wpclef.php";
 
 				if ($_GET['bruteprotect-clef-action'] == "install") {
-					if (!isset(get_plugins()[$clef_path])) {
+					$plugins = get_plugins();
+					if ( !isset( $plugins[ $clef_path ] ) ) {
+						if ( !wp_verify_nonce( $_REQUEST['_wpnonce'], "bruteprotect-clef-install" ) ) :
+						     die("Unauthorized");
+						 endif;
 						$plugin = array(
 							"name" => "Clef",
 							"slug" => "wpclef",
@@ -308,7 +314,6 @@ if( !class_exists( 'BruteProtect_Admin' ) ) {
 						return wp_redirect('plugins.php');
 					}
 				}
-			}
 		}
 
 		function clef_active() {

@@ -30,6 +30,9 @@ BruteProtect FULLY SUPPORTS multisite networks
 
 == Changelog ==
 
+= 0.9.10 =
+* More backwards compatibility
+
 = 0.9.9.9d =
 * Squash a bug which caused an error in older versions of PHP
 

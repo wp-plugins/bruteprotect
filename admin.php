@@ -28,9 +28,7 @@ if( !class_exists( 'BruteProtect_Admin' ) ) {
 			
 			add_action( 'admin_enqueue_scripts', array( &$this, 'enqueue_bruteprotect_admin' ) );
 
-			if (!$this->clef_active()) {
-				add_action( 'admin_init', array( &$this, 'install_clef') );
-			}
+			add_action( 'admin_init', array( &$this, 'install_clef') );
 		}
 		
 		function enqueue_bruteprotect_admin() {
@@ -218,6 +216,8 @@ if( !class_exists( 'BruteProtect_Admin' ) ) {
 		}
 
 		function install_clef() {
+			if ( $this->clef_active() ) 
+				return;
 			
 			if ( !isset( $_GET[ 'bruteprotect-clef-action' ] ) )
 				return;
@@ -317,10 +317,7 @@ if( !class_exists( 'BruteProtect_Admin' ) ) {
 		}
 
 		function clef_active() {
-			if ( is_null($this::$_clef_active) ) {
-                $this::$_clef_active = in_array( 'wpclef/wpclef.php', apply_filters( 'active_plugins', get_option( 'active_plugins' ) ) );
-			}
-            return self::$_clef_active;
+			return is_plugin_active( 'wpclef/wpclef.php' );
 		}
 
 		function clef_install_errors() {

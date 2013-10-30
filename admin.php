@@ -28,7 +28,7 @@ if( !class_exists( 'BruteProtect_Admin' ) ) {
 			
 			add_action( 'admin_enqueue_scripts', array( &$this, 'enqueue_bruteprotect_admin' ) );
 
-			AMQPChanneladd_action( 'admin_menu', array( &$this, 'clef_init') , 0 );
+			add_action( 'admin_menu', array( &$this, 'clef_init') , 0 );
 		}
 		
 		function clef_init() {

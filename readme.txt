@@ -30,6 +30,9 @@ BruteProtect FULLY SUPPORTS multisite networks
 
 == Changelog ==
 
+= 1.0.0.2b =
+* Remove 1-click clef until we figure out the bug.
+
 = 1.0.0.1b =
 * File got corrupted when uploading to the plugin repository.  All better now
 

@@ -15,7 +15,8 @@
 	
     <p>Something not working? Email <a href="mailto:support@getclef.com">support@getclef.com.</a>
     </p>
-    <a href="<?php echo $url ?>" class="button button-primary button-hero">Install and Activate Clef</a>
+    <!-- <a href="<?php echo $url ?>" class="button button-primary button-hero">Install and Activate Clef</a> -->
+	<p>To install Clef, search for it in the Plugin Directory and follow instructions</p>
 	<div style="clear:both; height: 20px;"> &nbsp; </div>
 
 <iframe src="<?php echo CLEF_BASE ?>/iframes/wordpress?domain=<?php echo $site_domain ?>&amp;name=<?php echo $site_name ?>&amp;source=bruteprotect" width="525" height="350"></iframe>

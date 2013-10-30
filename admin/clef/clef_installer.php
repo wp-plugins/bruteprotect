@@ -78,7 +78,7 @@ class BP_Clef extends BruteProtect
 
 		require_once ABSPATH . 'wp-admin/includes/plugin-install.php'; // Need for plugins_api
 		require_once ABSPATH . 'wp-admin/includes/class-wp-upgrader.php'; // Need for upgrade classes
-		require_once 'admin/inc/plugin-install.php';
+		require_once 'plugin-install.php';
 
 		$api = plugins_api( 'plugin_information', array( 'slug' => $plugin['slug'], 'fields' => array( 'sections' => false ) ) );
 

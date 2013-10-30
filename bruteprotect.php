@@ -6,7 +6,7 @@
 Plugin Name: BruteProtect
 Plugin URI: http://bruteprotect.com/
 Description: BruteProtect allows the millions of WordPress bloggers to work together to defeat Brute Force attacks. It keeps your site protected from brute force security attacks even while you sleep. To get started: 1) Click the "Activate" link to the left of this description, 2) Sign up for a BruteProtect API key, and 3) Go to your BruteProtect configuration page, and save your API key.
-Version: 0.9.10
+Version: 1.0b
 Author: Hotchkiss Consulting Group
 Author URI: http://hotchkissconsulting.com/
 License: GPLv2 or later
@@ -28,7 +28,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-define('BRUTEPROTECT_VERSION', '0.9.10');
+define('BRUTEPROTECT_VERSION', '1.0b');
 define('BRUTEPROTECT_PLUGIN_URL', plugin_dir_url( __FILE__ ));
 
 if ( is_admin() ) :
@@ -46,6 +46,7 @@ class BruteProtect
 	private $api_key;
 	private $local_host;
 	private $api_endpoint;
+	private $admin;
 	
 	function __construct()
 	{
@@ -91,16 +92,18 @@ class BruteProtect
 			return;
 		
 		require_once dirname( __FILE__ ) . '/admin.php';
-		$bpadmin = new BruteProtect_Admin;
 		
-		$can_access = $bpadmin->check_bruteprotect_access();
+		$this->admin = new BruteProtect_Admin;
+		
+		$can_access = $this->admin->check_bruteprotect_access();
+		
 		if( $can_access ) {
-			wp_die( '<h2 style="clear: both; margin-bottom: 15px;"><img src="' . BRUTEPROTECT_PLUGIN_URL . '/BruteProtect-Logo-Text-Only-40.png" alt="BruteProtect" width="250" height="40" style="margin-bottom: -2px;"/> &nbsp; All Clear</h2>Everything is working perfectly, thanks for getting it fixed!' );
+			wp_die( '<h2 style="clear: both; margin-bottom: 15px;"><img src="' . BRUTEPROTECT_PLUGIN_URL . 'images/BruteProtect-Logo-Text-Only-40.png" alt="BruteProtect" width="250" height="40" style="margin-bottom: -2px;"/> &nbsp; All Clear</h2>Everything is working perfectly, thanks for getting it fixed!' );
 		}
 		
-		$data = $bpadmin->get_error_reporting_data();
+		$data = $this->admin->get_error_reporting_data();
 		
-		echo '<h2 style="clear: both; margin-bottom: 15px;"><img src="' . BRUTEPROTECT_PLUGIN_URL . '/BruteProtect-Logo-Text-Only-40.png" alt="BruteProtect" width="250" height="40" style="margin-bottom: -2px;"/> &nbsp; Error Report</h2>';
+		echo '<h2 style="clear: both; margin-bottom: 15px;"><img src="' . BRUTEPROTECT_PLUGIN_URL . 'images/BruteProtect-Logo-Text-Only-40.png" alt="BruteProtect" width="250" height="40" style="margin-bottom: -2px;"/> &nbsp; Error Report</h2>';
 		echo '<h3 style="margin-top: 20px;">Installation Basics:</h3>';
 		echo '<strong>WordPress Version</strong>: ' . $data['wp_version'] . '<br />';
 		echo '<strong>BruteProtect Version</strong>: ' . BRUTEPROTECT_VERSION . '<br />';

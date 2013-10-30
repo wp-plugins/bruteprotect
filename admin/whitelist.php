@@ -36,7 +36,7 @@ $brute_ip_whitelist = get_site_option('brute_ip_whitelist');
 ?>
 
 <div class="wrap">
-<h2 style="clear: both; margin-bottom: 15px;"><img src="<?php echo BRUTEPROTECT_PLUGIN_URL ?>/BruteProtect-Logo-Text-Only-40.png" alt="BruteProtect" width="250" height="40" style="margin-bottom: -2px;"/> &nbsp; IP White List</h2>
+<h2 style="clear: both; margin-bottom: 15px;"><img src="<?php echo BRUTEPROTECT_PLUGIN_URL ?>images/BruteProtect-Logo-Text-Only-40.png" alt="BruteProtect" width="250" height="40" style="margin-bottom: -2px;"/> &nbsp; IP White List</h2>
 
 <br class="clear" />
 <div style="display: block; width: 500px; float: left; padding: 10px; border: 1px solid #ccc; background-color: #e5e5e5; margin-right: 20px;">

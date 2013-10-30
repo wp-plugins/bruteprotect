@@ -30,6 +30,9 @@ BruteProtect FULLY SUPPORTS multisite networks
 
 == Changelog ==
 
+= 1.0.0.1b =
+* File got corrupted when uploading to the plugin repository.  All better now
+
 = 1.0b =
 * Bite the bullet and say 1.0
 * Code stabilization and optimization

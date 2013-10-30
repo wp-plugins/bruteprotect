@@ -2,7 +2,7 @@
 Contributors: hotchkissconsulting, roccotripaldi, sdquirk
 Tags: security, brute force, brute force attack, harden wp, login lockdown, multisite
 Requires at least: 3.0
-Tested up to: 3.6
+Tested up to: 3.8
 Stable tag: trunk
 
 BruteProtect is a cloud-powered Brute Force attack prevention plugin.  We leverage the millions of WordPress sites to identify and block malicious IPs.  Once you install the plugin, you will need to get a free BruteProtect API key, which you can do directly from your WordPress dashboard.

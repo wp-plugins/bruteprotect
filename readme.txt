@@ -1,5 +1,5 @@
 === BruteProtect ===
-Contributors: hotchkissconsulting, roccotripaldi, sdquirk
+Contributors: samhotchkiss, roccotripaldi, sdquirk
 Tags: security, brute force, brute force attack, harden wp, login lockdown, multisite
 Requires at least: 3.0
 Tested up to: 3.8

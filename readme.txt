@@ -30,6 +30,14 @@ BruteProtect FULLY SUPPORTS multisite networks
 
 == Changelog ==
 
+= 1.1 =
+* Continued code improvements
+* Improve troubleshooting options
+* Improve methodology for fetching remote IP... using X_FORWARDED_FOR and HTTP_CLIENT_IP if available
+* Add options for privacy
+* Update icon for 3.8
+* Update interface
+
 = 1.0.0.2b =
 * Remove 1-click clef until we figure out the bug.
 

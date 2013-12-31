@@ -6,7 +6,7 @@
 Plugin Name: BruteProtect
 Plugin URI: http://bruteprotect.com/
 Description: BruteProtect allows the millions of WordPress bloggers to work together to defeat Brute Force attacks. It keeps your site protected from brute force security attacks even while you sleep. To get started: 1) Click the "Activate" link to the left of this description, 2) Sign up for a BruteProtect API key, and 3) Go to your BruteProtect configuration page, and save your API key.
-Version: 1.0.0.2b
+Version: 1.1
 Author: Hotchkiss Consulting Group
 Author URI: http://hotchkissconsulting.com/
 License: GPLv2 or later
@@ -28,7 +28,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-define('BRUTEPROTECT_VERSION', '1.0.0.2b');
+define('BRUTEPROTECT_VERSION', '1.1');
 define('BRUTEPROTECT_PLUGIN_URL', plugin_dir_url( __FILE__ ));
 
 if ( is_admin() ) :
@@ -75,7 +75,12 @@ class BruteProtect
 		if( isset( $this->user_ip ) )
 			return $this->user_ip;
 		
-		$this->user_ip = trim( $_SERVER[ 'REMOTE_ADDR' ] );
+		if( isset( $_SERVER[ 'HTTP_CLIENT_IP' ] ) )
+			$this->user_ip = trim( $_SERVER[ 'HTTP_CLIENT_IP' ] );
+		if( isset( $_SERVER[ 'HTTP_X_FORWARDED_FOR' ] ) )
+			$this->user_ip = trim( $_SERVER[ 'HTTP_X_FORWARDED_FOR' ] );
+		else
+			$this->user_ip = trim( $_SERVER[ 'REMOTE_ADDR' ] );
 				
 		return $this->user_ip;
 	}
@@ -124,7 +129,7 @@ class BruteProtect
 	
 	function is_on_localhost() {
 		$ip = $this->brute_get_ip();
-		
+		return false;
 		//Never block login from localhost
 		if( $ip == '127.0.0.1' || $ip == '::1' ) {
 			return true;
@@ -195,7 +200,7 @@ class BruteProtect
 		}
 	
 		if( $response['status'] == 'blocked' ) { 
-			$this->brute_kill_login();
+			$this->brute_kill_login( $response[ 'blocked_attempts' ] );
 		}
 	
 		return true;
@@ -274,6 +279,20 @@ class BruteProtect
 		
 		return $this->api_endpoint;
 	}
+	
+	function brute_get_blocked_attempts() {
+		return get_site_option( 'bruteprotect_blocked_attempt_count' );
+	}
+	
+	function brute_log_blocked_attempt( $api_count = 0 ) {
+		$attempt_count = $this->brute_get_blocked_attempts();
+		if( $attempt_count < $api_count ) {
+			$attempt_count = $api_count;
+		}
+		$attempt_count++;
+		update_site_option( 'bruteprotect_blocked_attempt_count', $attempt_count );
+		return $attempt_count;
+	}
 
 	function brute_call( $action = 'check_ip' ) {
 		global $wp_version, $wpdb;
@@ -286,6 +305,10 @@ class BruteProtect
 		$request['action'] = $action;
 		$request['ip'] = $this->brute_get_ip();
 		$request['host'] = $this->brute_get_local_host();
+		$request['blocked_attempts'] = $this->brute_get_blocked_attempts();
+		$request['privacy_settings'] = serialize( get_site_option( 'brute_privacy_opt_in' ) );
+		$request['bruteprotect_version'] = constant( 'BRUTEPROTECT_VERSION' );
+		$request['wordpress_version'] = $wp_version;
 		$request['api_key'] = $api_key;
 		$request['multisite'] = 0;
 		if(is_multisite()) {
@@ -317,7 +340,7 @@ class BruteProtect
 			delete_site_transient('brute_use_math');
 		else :
 			//no response from the API host?  Let's use math!
-			set_site_transient('brute_use_math', 1, 600);
+			set_site_transient( 'brute_use_math', 1, 600 );
 			$response['status'] = 'ok';
 			$response['math'] = true;
 		endif;

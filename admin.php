@@ -6,6 +6,7 @@ if( !class_exists( 'BruteProtect_Admin' ) ) {
 		
 		private $error_reporting_data;
 		public $clef;
+		public $menu_icon;
 	
 		function __construct()
 		{
@@ -16,6 +17,8 @@ if( !class_exists( 'BruteProtect_Admin' ) ) {
 			if( ( $ip == '127.0.0.1' || $ip == '::1' ) && !$key ) {
 				add_action( 'admin_notices', array( &$this, 'bruteprotect_localhost_warning' ) );
 			}
+			
+			add_action( 'admin_head', array(&$this, 'set_custom_font_icon') );
 			
 			add_action( 'admin_init', array( &$this, 'check_bruteprotect_access' ) );
 			add_action( 'wp_dashboard_setup', array( &$this, 'bruteprotect_dashboard_widgets' ) );
@@ -34,6 +37,22 @@ if( !class_exists( 'BruteProtect_Admin' ) ) {
 		function clef_init() {
 			include 'admin/clef/clef_installer.php';
 			$this->clef = new BP_Clef;
+		}
+		
+		function set_custom_font_icon() {
+			if( version_compare( get_bloginfo('version'), '3.7.99', '>'  )) :
+			?>
+			        <style type="text/css">
+
+			                /* for top level menu pages replace `{menu-slug}` with the slug name passed to `add_menu_page()` */
+			                #toplevel_page_bruteprotect-config .wp-menu-image:before {
+			                        font-family: bruteprotect !important;
+			                        content: "a" !important;
+			                }
+
+			        </style>
+			<?php 
+			endif;
 		}
 		
 		function enqueue_bruteprotect_admin() {
@@ -127,15 +146,28 @@ if( !class_exists( 'BruteProtect_Admin' ) ) {
 
 
 		function bruteprotect_admin_menu_non_multisite() {
+			if( version_compare( get_bloginfo('version'), '3.7.99', '>'  )) { 
+				$this->menu_icon = ''; // no need for icon .png if in mp6
+				
+			} else {
+				$this->menu_icon = plugins_url( '/images/menu_icon.png', __FILE__ );
+			}
 			if(is_multisite()) {
-				add_menu_page( __( 'BruteProtect' ), __( 'BruteProtect' ), 'manage_options', 'bruteprotect-config', array( &$this, 'bruteprotect_conf_ms_notice' ), plugins_url( '/images/menu_icon.png', __FILE__ ) );
+				add_menu_page( __( 'BruteProtect' ), __( 'BruteProtect' ), 'manage_options', 'bruteprotect-config', array( &$this, 'bruteprotect_conf_ms_notice' ), $this->menu_icon  );
 				return;
 			}
 			$this->bruteprotect_admin_menu();
 		}
 		
 		function bruteprotect_admin_menu() {
-			add_menu_page( __( 'BruteProtect' ), __( 'BruteProtect' ), 'manage_options', 'bruteprotect-config', array( &$this, 'bruteprotect_general_settings' ), plugins_url( '/images/menu_icon.png', __FILE__ ) );
+			if( version_compare( get_bloginfo('version'), '3.7.99', '>'  )) { 
+				$this->menu_icon = ''; // no need for icon .png if in mp6
+				
+			} else {
+				$this->menu_icon = plugins_url( '/images/menu_icon.png', __FILE__ );
+			}
+			add_menu_page( __( 'BruteProtect' ), __( 'BruteProtect' ), 'manage_options', 'bruteprotect-config', array( &$this, 'bruteprotect_general_settings' ), $this->menu_icon );
+			
 			
 			add_submenu_page( 'bruteprotect-config', __( 'General Settings' ), __( 'General Settings' ), 'manage_options', 'bruteprotect-config', array( &$this, 'bruteprotect_general_settings' ) );
 			

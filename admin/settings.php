@@ -2,6 +2,13 @@
 $host = $this->brute_get_local_host();
 global $current_user;
 
+$remote_security_options = array(
+	'remote_monitoring' => __( 'Yes, BruteProtect may remotely monitor my site uptime and scan for malware' ),
+	'remote_version' => __( 'Yes, BruteProtect may remotely track the versions of plugins I have installed' ),
+	'remote_update' => __( 'Yes, BruteProtect may remotely update my site' ),
+	'remote_login' => __( 'Yes, BruteProtect may provide a secure login gateway for my site' ),
+);
+
 if ( isset( $_POST['brute_action'] ) && $_POST['brute_action'] == 'get_api_key' && is_email( $_POST['email_address'] ) ) {
 	global $wp_version;
 
@@ -31,18 +38,24 @@ if ( isset( $_POST['brute_action'] ) && $_POST['brute_action'] == 'get_api_key' 
 	exit;
 }
 
-if ( isset( $_POST['brute_action'] ) && $_POST['brute_action'] == 'update_key' )
-	update_site_option( 'bruteprotect_api_key', $_POST['brute_api_key'] );
 
-if ( isset( $_POST['brute_action'] ) && $_POST['brute_action'] == 'update_brute_dashboard_widget_settings' )
-	update_site_option( 'brute_dashboard_widget_hide', $_POST['brute_dashboard_widget_hide'] );
-
-if ( isset( $_POST['brute_action'] ) && $_POST['brute_action'] == 'update_brute_dashboard_widget_settings_2' )
-	update_site_option( 'brute_dashboard_widget_admin_only', $_POST['brute_dashboard_widget_admin_only'] );
-
+if ( isset( $_POST['brute_action'] ) && $_POST['brute_action'] == 'general_update' && current_user_can( 'manage_options' ) ) :
+	if( isset( $_POST[ 'brute_dashboard_widget_hide' ] ) )
+		update_site_option( 'brute_dashboard_widget_hide', $_POST[ 'brute_dashboard_widget_hide' ] );
+	
+	if( isset( $_POST[ 'brute_dashboard_widget_admin_only' ] ) )
+		update_site_option( 'brute_dashboard_widget_admin_only', $_POST[ 'brute_dashboard_widget_admin_only' ] );
+	
+	if( isset( $_POST[ 'privacy_opt_in' ][ 'submitted' ] ) ) :
+		unset( $_POST[ 'privacy_opt_in' ][ 'submitted' ] );
+		update_site_option( 'brute_privacy_opt_in', $_POST[ 'privacy_opt_in' ] );
+	endif;
+	
+endif;
 
 $brute_dashboard_widget_hide = get_site_option('brute_dashboard_widget_hide');
 $brute_dashboard_widget_admin_only = get_site_option('brute_dashboard_widget_admin_only');
+$privacy_opt_in = get_site_option('brute_privacy_opt_in');
 
 
 $key = get_site_option( 'bruteprotect_api_key' );
@@ -83,40 +96,82 @@ if( isset($response['ckval']) )
 	return; 
 endif; ?>
 
-
-<?php if (is_multisite()): ?>
-	<br class="clear" />
-	<div style="display: block; width: 500px; float: left; padding: 10px; border: 1px solid #ccc; background-color: #e5e5e5; margin-top: 30px;">
-		<h3 style="display: block; background-color: #555; color: #fff; margin: -10px -10px 1em -10px; padding: 10px;"><?php _e( 'Dashboard Widget Display' ); ?></h3>
-		<form action="" method="post">
-			<strong><?php _e( 'Display BruteProtect statistics: ' ); ?></strong><br />
-			<select name="brute_dashboard_widget_hide" id="brute_dashboard_widget_hide">
-				<option value="0">On network admin dashboard and on all blog dashboards</option>
-				<option value="1" <?php if (isset($brute_dashboard_widget_hide) && $brute_dashboard_widget_hide == 1) { echo 'selected="selected"'; } ?>>On network admin dashboard only</option>
-			</select>
-			<input type="hidden" name="brute_action" value="update_brute_dashboard_widget_settings" /><br />
-			<input type="submit" value="Save" class="button" style="margin-top: 10px;margin-bottom: 10px;" />
-		</form>
-	</div>
-<?php endif ?>
 <?php if ( current_user_can('manage_options') ) : ?>
-	<br class="clear" />
-	<div style="display: block; width: 500px; float: left; padding: 10px; border: 1px solid #ccc; background-color: #e5e5e5;">
-		<h3 style="display: block; background-color: #555; color: #fff; margin: -10px -10px 1em -10px; padding: 10px;"><?php _e( 'Dashboard Widget Display' ); ?></h3>
-		<form action="" method="post">
-			<strong><?php _e( 'BruteProtect statistics display to: ' ); ?></strong><br />
-			<select name="brute_dashboard_widget_admin_only" id="brute_dashboard_widget_admin_only">
-				<option value="0">All users who can see the dashboard</option>
-				<option value="1" <?php if (isset($brute_dashboard_widget_admin_only) && $brute_dashboard_widget_admin_only == 1) { echo 'selected="selected"'; } ?>>Admins Only</option>
-			</select>
-			<input type="hidden" name="brute_action" value="update_brute_dashboard_widget_settings_2" /><br />
-			<input type="submit" value="Save" class="button" style="margin-top: 10px;margin-bottom: 10px;" />
-		</form>
-	</div>
-<?php endif ?>
+
+	<form action="" method="post" accept-charset="utf-8" id="bp-settings-form">
+
+<h3 class="title"><?php _e( 'Remote Integration', 'bruteprotect' ) ?></h3>
+<div style="background-color: #d8ecda; padding: 20px; border: 2px solid #336633; margin-bottom: 20px;" id="bruteprotect_permissions_description"><?php _e( 'With your permission, <strong>BruteProtect</strong> can remotely interact with your server to', 'bruteprotect' ) ?>:
+	<ul style="margin-left: 40px;list-style: initial;">
+		<li style="margin-bottom: 1px"><?php _e( 'Notify you of downtime', 'bruteprotect' ) ?></li>
+		<li style="margin-bottom: 1px"><?php _e( 'Notify you of the existance of malware on your site', 'bruteprotect' ) ?></li>
+		<li style="margin-bottom: 1px"><?php _e( 'Notify you of out of date plugins which pose a security vulnerability', 'bruteprotect' ) ?></li>
+		<li style="margin-bottom: 1px"><?php _e( 'Notify you of other potential security vulnerabilities', 'bruteprotect' ) ?></li>
+		<li style="margin-bottom: 1px"><?php _e( 'Automatically update plugins you select', 'bruteprotect' ) ?></li>		
+		<li style="margin-bottom: 1px"><?php _e( 'Allow you and your users to login through a secure gateway', 'bruteprotect' ) ?></li>		
+		<li style="margin-bottom: 1px"><?php _e( 'Allow you to whitelist an IP across all of your BruteProtected websites', 'bruteprotect' ) ?></li>		
+	</ul>
+	<em><?php _e( 'Some of these options may require a pro subscription which will be available in early 2014', 'bruteprotect' ) ?></em>
+	<h3 style="margin-bottom: 0;"><a href="#" onclick="jQuery('.bp_privacy_opt_in_checkbox').attr('checked', 'checked'); jQuery('#bruteprotect_permissions_description').slideUp(); jQuery('#bp-settings-form').submit(); return false;">Click here</a> to allow these permissions.</h3>
+</div>
+
+<input type="hidden" name="privacy_opt_in[submitted]" value="1" id="privacy_opt_in[submitted]" />
+<table class="form-table">
+<tbody>
+	<tr valign="top">
+	<th scope="row"><?php _e( 'Remote Permissions', 'bruteprotect' ) ?></th>
+	<td>
+<?php if(is_array($remote_security_options)) :  foreach($remote_security_options as $key => $desc) : ?>
+	<label for="privacy_opt_in[<?php echo $key ?>]"><input name="privacy_opt_in[<?php echo $key ?>]" type="checkbox" value="1" class="bp_privacy_opt_in_checkbox" <?php if( isset( $privacy_opt_in[ $key ] ) ) echo 'checked="checked"'; ?>> <?php echo $desc ?></label><br />
+<?php endforeach; endif; ?>
+</td>
+</tbody>
+</table>
+
+<input type="submit" value="<?php _e( 'Save Changes' ) ?>" class="button button-primary" style="margin-top: 10px;margin-bottom: 10px;" />
+<br />
+<h3 class="title"><?php _e( 'Widget Settings', 'bruteprotect' ) ?></h3>
+<table class="form-table">
+<tbody>
+<?php if ( is_multisite() ): ?>
+	<tr valign="top">
+	<th scope="row"><label for="default_category"><?php _e( 'Multisite Widget Display', 'bruteprotect' ) ?></label></th>
+	<td>
+		<select name="brute_dashboard_widget_hide" id="brute_dashboard_widget_hide">
+			<option value="0"><?php _e( 'On network admin dashboard and on all blog dashboards', 'bruteprotect' ) ?></option>
+			<option value="1" <?php if (isset($brute_dashboard_widget_hide) && $brute_dashboard_widget_hide == 1) { echo 'selected="selected"'; } ?>><?php _e( 'On network admin dashboard only', 'bruteprotect' ) ?></option>
+		</select>
+	</td>
+	</tr>
+<?php endif; ?>
+	<tr valign="top">
+	<th scope="row"><label for="default_category"><?php _e( 'Dashboard Widget Display', 'bruteprotect' ) ?></label></th>
+	<td>
+		<select name="brute_dashboard_widget_admin_only" id="brute_dashboard_widget_admin_only">
+			<option value="0"><?php _e( 'All users who can see the dashboard', 'bruteprotect' ) ?></option>
+			<option value="1" <?php if (isset($brute_dashboard_widget_admin_only) && $brute_dashboard_widget_admin_only == 1) { echo 'selected="selected"'; } ?>><?php _e( 'Admins Only', 'bruteprotect' ) ?></option>
+		</select>
+	</td>
+	</tr>
+</tbody></table>
+<input type="hidden" name="brute_action" value="general_update" id="brute_action">
+<input type="submit" value="<?php _e( 'Save Changes' ) ?>" class="button button-primary" style="margin-top: 10px;margin-bottom: 10px;" />
+</form>
+
+<script type="text/javascript" charset="utf-8">
+	jQuery(document).ready(function() {
+		var checked_boxes = jQuery('.bp_privacy_opt_in_checkbox:checked').length;
+		if( checked_boxes == <?php echo count( $remote_security_options ) ?> ) {
+			jQuery("#bruteprotect_permissions_description").hide();
+		}
+	});
+	
+</script>
+
+<?php endif; ?>
+
 <div style="clear: both;">
 	&nbsp;
 </div>
-<h3>We know it's looking a little empty here right now, but we're working on some cool new stuff that's going to land here, so stay tuned!</h3>
 
 </div>

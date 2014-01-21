@@ -2,7 +2,7 @@
 /*
 If the API is unavailable, we fall back and block spam by math!
 */
-if( !class_exists( 'BruteProtect_Math_Authenticate' ) ) {
+if( ! class_exists( 'BruteProtect_Math_Authenticate' ) ) {
 	class BruteProtect_Math_Authenticate extends BruteProtect
 	{
 	

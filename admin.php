@@ -121,7 +121,7 @@ if( !class_exists( 'BruteProtect_Admin' ) ) {
 			$ckval = get_site_option( 'bruteprotect_ckval' );
 
 			if( $key && !$ckval ) {
-				$response = brute_call( 'check_key' );
+				$response = $this->brute_call( 'check_key' );
 
 				if( $response['ckval'] )
 					update_site_option( 'bruteprotect_ckval', $response['ckval'] );

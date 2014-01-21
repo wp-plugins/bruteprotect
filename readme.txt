@@ -30,6 +30,9 @@ BruteProtect FULLY SUPPORTS multisite networks
 
 == Changelog ==
 
+= 1.1.1 =
+* Minor bug fixes
+
 = 1.1 =
 * Continued code improvements
 * Improve troubleshooting options

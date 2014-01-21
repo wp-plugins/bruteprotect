@@ -129,7 +129,7 @@ class BruteProtect
 	
 	function is_on_localhost() {
 		$ip = $this->brute_get_ip();
-		return false;
+		//return false;
 		//Never block login from localhost
 		if( $ip == '127.0.0.1' || $ip == '::1' ) {
 			return true;
@@ -216,6 +216,7 @@ class BruteProtect
 
 	function brute_kill_login() {
 		do_action( 'brute_kill_login', $this->brute_get_ip() );
+		$this->brute_log_blocked_attempt();
 		wp_die( 'Your IP (' . $this->brute_get_ip() . ') has been flagged for potential security violations.  Please try again in a little while...' );
 	}
 

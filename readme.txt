@@ -1,11 +1,11 @@
 === BruteProtect ===
-Contributors: samhotchkiss, roccotripaldi, sdquirk
+Contributors: samhotchkiss, roccotripaldi, sdquirk, professor44
 Tags: security, brute force, brute force attack, harden wp, login lockdown, multisite, botnet, wordfence, best security
 Requires at least: 3.0
 Tested up to: 3.8
 Stable tag: trunk
 
-BruteProtect is a cloud-powered Brute Force attack prevention plugin.  This is the ONLY SECURITY PLUGIN that is able to guard against the most prevalent type of WordPress attack: botnet brute force attacks.  BruteProtect is safe to use alongside other security plugins, if you so desire.  Once you install the plugin, you will need to get a free BruteProtect API key, which you can do directly from your WordPress dashboard.
+BruteProtect is a cloud-powered Brute Force attack prevention plugin.  This is the ONLY SECURITY PLUGIN able to guard against botnet attacks.
 
 == Description ==
 
@@ -13,7 +13,7 @@ BruteProtect tracks failed login attempts across all installed users of the plug
 
 This allows you to protect yourself against traditional brute force attacks AND distributed brute force attacks that use many servers and many IPs
 
-BruteProtect FULLY SUPPORTS multisite networks
+BruteProtect FULLY SUPPORTS multisite networks and is safe to use alongside other security plugins, if you so desire.  Once you install the plugin, you will need to get a free BruteProtect API key, which you can do directly from your WordPress dashboard.
 
 == Installation ==
 

@@ -130,7 +130,7 @@ endif; ?>
 
 		<?php else : ?>
 
-			<p><?php _e( 'You must obtain an API key for every site or network you wish to protect with BruteProtect.  You will be generating a BruteProtect.com key for use on <strong><?php echo $host ?></strong>.  There is no cost for an BruteProtect key, and we will never sell your email.' ); ?></p>
+			<p><?php _e( 'You must obtain an API key for every site or network you wish to protect with BruteProtect.  You will be generating a BruteProtect.com key for use on <strong><?php echo $host ?></strong>.  There is no cost for an BruteProtect key, and we will never sell your email.  We may contact you up to 4 times a year to let you know about new features or products we are offering, and potentially more often than that if there is a problem with your site.' ); ?></p>
 
 			<strong><?php _e( 'Email Address' ); ?></strong><br />
 			<input type="text" name="email_address" value="<?php echo $current_user->user_email ?>" id="brute_get_api_key" style="font-size: 18px; border: 1px solid #ccc; padding: 4px; width: 450px;" />

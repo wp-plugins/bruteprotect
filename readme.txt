@@ -27,22 +27,29 @@ BruteProtect FULLY SUPPORTS multisite networks, and you’ll only need one API k
 
 
 == Frequently Asked Questions ==
+
 = How do I get an API Key? =
+
 Once the plugin is installed, you’ll be prompted to request an API Key via the Dashboard.  If you do not receive an API Key, please visit the BruteProtect WordPress support forum to let us know.
 
 = Do I need a different key for each site? =
+
 Yes, each site needs a different key (this is not the case with multisite networks).  Many API keys can be associated with one email address.
 
 = Does it work with other WordPress security plugins? = 
+
 We haven’t received any reports of plugin incompatibility.  Please visit the BruteProtect WordPress support forum to report any issues.
 
 = Is it free? =
+
 Everything that we currently offer will always be free to individuals and small businesses. We may, some day, ask for a (very small) fee from our highest-activity users. We will offer additional “premium” services in spring 2014.
 
 = Does BruteProtect support Multisite Networks? =
+
 Yes.
 
 = How many failed attempts before an IP address will be blocked? =
+
 8 failed attempts in 8 hours = 8 hour block
 15 failed attempts in 24 hours = 48 hour block
 25 failed attempts in 7 days = 14 day block
@@ -50,6 +57,7 @@ Yes.
 65 failed attempts in 1 year = 2 year block
 
 = Can I whitelist certain IP addresses? =
+
 Yes, you may add IP addresses under the “whitelist” setting of BruteProtect.  This list only applies to your installation of WordPress.
 
 

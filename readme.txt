@@ -22,15 +22,29 @@ When an IP has too many failed attempts in a specific period of time BruteProtec
 BruteProtect FULLY SUPPORTS multisite networks, and you’ll only need one API key. Go to the installation tab to learn more about how easy it is to install and use BruteProtect.  You can even use it alongside other security plugins, if you so desire. 
 
 == Installation ==
-1. Under the Plugins tab in your WordPress admin click the Add New Button
-2. Type BruteProtect into the search field
-3. Click “Install Now” under the BruteProtect plugin name
+
+Figures for the below instructions can be found under the Screenshots tab <http://wordpress.org/plugins/bruteprotect/screenshots>
+
+1. Under the Plugins tab in your WordPress admin click the Add New Button - Figure 1
+2. Type BruteProtect into the search field - Figure 2
+3. Click “Install Now” under the BruteProtect plugin name - Figure 3
 4. Once the plugin is installed click “Activate Now”
-5. Now you’ll see the new “BruteProtect” tab on the left, click the “API Key” button
-6. To get your required API Key confirm your email address in the green box and click “Get an API Key”
-7. Your API key is free and will be emailed to you
+5. Now you’ll see the new “BruteProtect” tab on the left, click the “API Key” button - Figure 5
+6. To get your required API Key confirm your email address in the green box and click “Get an API Key” - Figure 6
+7. Your API key is free and will be emailed to you - Figure 7
 8. Simply copy your API key out of your email and paste it into the blue box on the right. Once you click “Save API Key” BruteProtect will be up and running
-9. Watch for BruteProtect data on failed attempts in your dashboard
+9. Watch for BruteProtect data on failed attempts in your dashboard - Figure 9
+
+== Screenshots ==
+
+1. Figure 1
+2. Figure 2
+3. Figure 3
+5. Figure 5
+6. Figure 6
+7. Figure 7
+9. Figure 9
+10. The message shown to those locked out by BruteProtect
 
 
 == Frequently Asked Questions ==

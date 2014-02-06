@@ -26,7 +26,7 @@ BruteProtect FULLY SUPPORTS multisite networks, and you’ll only need one API k
 9. Watch for BruteProtect data on failed attempts in your dashboard
 
 
->== Frequently Asked Questions ==
+== Frequently Asked Questions ==
 = How do I get an API Key? =
 Once the plugin is installed, you’ll be prompted to request an API Key via the Dashboard.  If you do not receive an API Key, please visit the BruteProtect WordPress support forum to let us know.
 

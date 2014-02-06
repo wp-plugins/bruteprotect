@@ -40,11 +40,11 @@ Figures for the below instructions can be found under the Screenshots tab <http:
 1. Figure 1
 2. Figure 2
 3. Figure 3
-5. Figure 5
-6. Figure 6
-7. Figure 7
-9. Figure 9
-10. The message shown to those locked out by BruteProtect
+4. Figure 5
+5. Figure 6
+6. Figure 7
+7. Figure 9
+8. The message shown to those locked out by BruteProtect
 
 
 == Frequently Asked Questions ==

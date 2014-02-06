@@ -6,7 +6,7 @@ global $current_user;
 if ( isset( $_POST['brute_action'] ) && $_POST['brute_action'] == 'get_api_key' && is_email( $_POST['email_address'] ) ) {
 	global $wp_version;
 
-	$post_host = $this->get_bruteprotect_host() . '/index.php/get_key';
+	$post_host = $this->get_bruteprotect_host() . 'index.php/get_key';
 	$brute_ua = "WordPress/{$wp_version} | ";
 	$brute_ua .= 'BruteProtect/' . constant( 'BRUTEPROTECT_VERSION' );
 

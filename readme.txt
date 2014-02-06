@@ -84,6 +84,9 @@ Yes, you may add IP addresses under the “whitelist” setting of BruteProtect.
 
 == Changelog ==
 
+= 1.1.3 = 
+* Bug fix to the API Endpoint
+
 = 1.1.2 = 
 * Update API Endpoints
 

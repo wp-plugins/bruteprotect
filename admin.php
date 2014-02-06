@@ -127,7 +127,7 @@ if( !class_exists( 'BruteProtect_Admin' ) ) {
 					update_site_option( 'bruteprotect_ckval', $response['ckval'] );
 			}
 
-			$stats = wp_remote_get( $this->get_bruteprotect_host() . "get_stats.php?key=" . $key );
+			$stats = wp_remote_get( $this->get_bruteprotect_host() . "index.php/dashboard/index/" . $key );
 
 			if( !is_wp_error( $stats ) ) {
 				print_r( $stats['body'] );

@@ -5,30 +5,58 @@ Requires at least: 3.0
 Tested up to: 3.8
 Stable tag: trunk
 
-BruteProtect is a cloud-powered Brute Force attack prevention plugin.  This is the ONLY SECURITY PLUGIN able to guard against botnet attacks.
+BruteProtect is a cloud-powered Brute Force attack prevention plugin and the ONLY SECURITY PLUGIN able to guard against botnet attacks.
 
 == Description ==
+Botnets attack millions of websites everyday using their Internet-connected programs. BruteProtect is the only security plugin that guards against botnets by connecting its users to track every failed login attempt across all installed users of the plugin. When you activate BruteProtect you become apart of a Internet-connected counter-force that works against botnets.
 
-BruteProtect tracks failed login attempts across all installed users of the plugin.  If any single IP has too many failed attempts in a short period of time, they are blocked from logging in to any site with this plugin installed.  Once you install the plugin, you will need to get a free BruteProtect API key, which you can do directly from your WordPress dashboard.
+When an IP has too many failed attempts in a specific period of time BruteProtect logs and blocks that IP across the entire BruteProtect network (your site included). The more users of BruteProtect the safer we all are from traditional brute force attacks, and distributed brute force attacks that use many differnet servers and IP addresses
 
-This allows you to protect yourself against traditional brute force attacks AND distributed brute force attacks that use many servers and many IPs
-
-BruteProtect FULLY SUPPORTS multisite networks and is safe to use alongside other security plugins, if you so desire.  Once you install the plugin, you will need to get a free BruteProtect API key, which you can do directly from your WordPress dashboard.
+BruteProtect FULLY SUPPORTS multisite networks, and you’ll only need one API key. Go to the installation tab to learn more about how easy it is to install and use BruteProtect.  You can even use alongside other security plugins, if you so desire. 
 
 == Installation ==
+1. Under the Plugins tab in your WordPress admin click the Add New Button
+2. Type BruteProtect into the search field
+3. Click “Install Now” under the BruteProtect plugin name
+4. Once the plugin is installed click “Activate Now”
+5. Now you’ll see the new “BruteProtect” tab on the left, click the “API Key” button
+6. To get your required API Key confirm your email address in the green box and click “Get an API Key”
+7. Your API key is free and will be emailed to you
+8. Simply copy your API key out of your email and paste it into the blue box on the right. Once you click “Save API Key” BruteProtect will be up and running
+9. Watch for BruteProtect data on failed attempts in your dashboard
 
-1.  Extract the zip file and just drop the contents in the wp-content/plugins/ directory of your WordPress installation
-2.  Activate the Plugin from Plugins page
-3.  Open the BruteProtect settings under the \"Plugin\" section of the WordPress dashboard
-4.  Follow the simple instructions to obtain and enter a free API key
 
-== Screenshots ==
-1. Simply create an API key directly from your WordPress Admin panel...
-2. Enter your API key, it will be verified instantly so that you know you're protected
-3. On your WordPress dashboard, you can see just how many attackers BruteProtect has blocked
-4. If a blocked user shows up on your login page, they will see this message
+== FAQ ==
+1. How do I get an API Key?
+Once the plugin is installed, you’ll be prompted to request an API Key via the Dashboard.  If you do not receive an API Key, please visit the BruteProtect WordPress support forum to let us know.
+
+2. Do I need a different key for each site?
+Yes, each site needs a different key (this is not the case with multisite networks).  Many API keys can be associated with one email address.
+
+3. Does it work with other WordPress security plugins?
+We haven’t received any reports of plugin incompatibility.  Please visit the BruteProtect WordPress support forum to report any issues.
+
+4. Is it free?
+Everything that we currently offer will always be free to individuals and small businesses. We may, some day, ask for a (very small) fee from our highest-activity users. We will offer additional “premium” services in spring 2014.
+
+5. Does BruteProtect support Multisite Networks?
+Yes.
+
+6. How many failed attempts before an IP address will be blocked?
+8 failed attempts in 8 hours = 8 hour block
+15 failed attempts in 24 hours = 48 hour block
+25 failed attempts in 7 days = 14 day block
+40 failed attempts in 1 month = 2 month block
+65 failed attempts in 1 year = 2 year block
+
+7. Can I whitelist certain IP addresses?
+Yes, you may add IP addresses under the “whitelist” setting of BruteProtect.  This list only applies to your installation of WordPress.
+
 
 == Changelog ==
+
+= 1.1.2 = 
+* Update API Endpoints
 
 = 1.1.1 =
 * Minor bug fixes

@@ -8,11 +8,15 @@ Stable tag: trunk
 BruteProtect is a cloud-powered Brute Force attack prevention plugin and the ONLY SECURITY PLUGIN able to guard against botnet attacks.
 
 == Description ==
-Botnets attack millions of websites everyday using their Internet-connected programs. BruteProtect is the only security plugin that guards against botnets by connecting its users to track every failed login attempt across all installed users of the plugin. When you activate BruteProtect you become apart of a Internet-connected counter-force that works against botnets.
 
-When an IP has too many failed attempts in a specific period of time BruteProtect logs and blocks that IP across the entire BruteProtect network (your site included). The more users of BruteProtect the safer we all are from traditional brute force attacks, and distributed brute force attacks that use many differnet servers and IP addresses
+=Botnets attack millions of websites everyday using their Internet-connected programs.=
+BruteProtect is the only security plugin that guards against botnets by connecting its users to track every failed login attempt across all installed users of the plugin. When you activate BruteProtect you become apart of a Internet-connected counter-force that works against botnets.
 
-BruteProtect FULLY SUPPORTS multisite networks, and you’ll only need one API key. Go to the installation tab to learn more about how easy it is to install and use BruteProtect.  You can even use alongside other security plugins, if you so desire. 
+=BruteProtect logs every failed attempt community-wide=
+When an IP has too many failed attempts in a specific period of time BruteProtect logs and blocks that IP across the entire BruteProtect network (your site included). The more users of BruteProtect the safer we all are from traditional brute force attacks, and distributed brute force attacks that use many different servers and IP addresses
+
+=BruteProtect is safe for MultiSite and compatible with other security plugins=
+BruteProtect FULLY SUPPORTS multisite networks, and you’ll only need one API key. Go to the installation tab to learn more about how easy it is to install and use BruteProtect.  You can even use it alongside other security plugins, if you so desire. 
 
 == Installation ==
 1. Under the Plugins tab in your WordPress admin click the Add New Button

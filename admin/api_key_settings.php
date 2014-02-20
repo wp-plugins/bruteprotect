@@ -21,14 +21,26 @@ if ( isset( $_POST['brute_action'] ) && $_POST['brute_action'] == 'get_api_key' 
 	);
 
 	$response_json = wp_remote_post( $post_host, $args );
-
-?>
-<script type="text/javascript">
-<!--
-window.location = "admin.php?page=bruteprotect-api&get_key=success"
-//-->
-</script>
-<?php
+	
+	if( $response_json[ 'response' ][ 'code' ] == 200 ) {
+		$key = $response_json[ 'body' ];
+		update_site_option( 'bruteprotect_api_key', $key );
+		?>
+		<script type="text/javascript">
+		<!--
+		window.location = "admin.php?page=bruteprotect-api&get_key=success"
+		//-->
+		</script>
+		<?php
+	} else {
+		?>
+		<script type="text/javascript">
+		<!--
+		window.location = "admin.php?page=bruteprotect-api&get_key=fail"
+		//-->
+		</script>
+		<?php
+	}
 	exit;
 }
 
@@ -125,8 +137,8 @@ endif; ?>
 	<div style="display: block; width: 500px; float: left; padding: 10px; border: 1px solid green; background-color: #eaffd6; margin-right: 20px; margin-bottom:20px;">
 		<h3 style="display: block; background-color: green; color: #fff; margin: -10px -10px 1em -10px; padding: 10px;">I <em>need</em> an API key for BruteProtect</h3>
 		<form action="" method="post">
-		<?php if ( isset($_GET['get_key']) && $_GET['get_key'] == 'success' ) : ?>
-			<strong style="font-size: 18px;"><?php _e( 'You have successfully requested an API key.  It should be arriving in your email shortly.<br /><br />Once you receive your key, you must enter it on this page to finish activating BruteProtect.' ); ?></strong>
+			<?php if ( isset($_GET['get_key']) && $_GET['get_key'] == 'fail' ) : ?>
+			<strong style="font-size: 18px;"><?php _e( 'There was an error generating your API key.  Please try again later.  Sorry!' ); ?></strong>
 
 		<?php else : ?>
 
@@ -141,6 +153,8 @@ endif; ?>
 	</div>
 <?php else : ?>
 	<div class="updated below-h2" id="message" style="border-color: green; color: green; background-color: #eaffd6;"><p><?php _e( '<strong>API key verified!</strong> Your BruteProtect account is active and your site is protected, you don\'t need to do anything else!' ); ?></p></div>
+	<?php if ( isset($_GET['get_key']) && $_GET['get_key'] == 'success' ) : ?>
+		<strong style="font-size: 18px;"><?php _e( 'You have successfully generated an API key. BruteProtect is now activated and ready to keep you safe!' ); ?></strong><br /><br /><?php endif; ?>
 <?php endif; ?>
 
 <div style="display: block; width: 500px; float: left; padding: 10px; border: 1px solid #0649fe; background-color: #cdf0fe;">

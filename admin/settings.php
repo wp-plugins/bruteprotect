@@ -4,7 +4,7 @@ global $current_user;
 
 $remote_security_options = array(
 	'remote_monitoring' => __( 'Yes, BruteProtect may remotely monitor my site uptime and scan for malware' ),
-	'remote_version' => __( 'Yes, BruteProtect may remotely track the versions of plugins I have installed' ),
+	'remote_version' => __( 'Yes, BruteProtect may remotely track the versions of WordPress, plugins and themes I have installed' ),
 	'remote_update' => __( 'Yes, BruteProtect may remotely update my site' ),
 	'remote_login' => __( 'Yes, BruteProtect may provide a secure login gateway for my site' ),
 );

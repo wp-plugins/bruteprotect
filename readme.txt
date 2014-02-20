@@ -11,15 +11,15 @@ BruteProtect is a cloud-powered Brute Force attack prevention plugin and the ONL
 
 = Botnets attack millions of websites everyday using their Internet-connected programs =
 
-BruteProtect is the only security plugin that guards against botnets by connecting its users to track every failed login attempt across all installed users of the plugin. When you activate BruteProtect you become apart of a Internet-connected counter-force that works against botnets.
- 
+BruteProtect is a security plugin that guards against botnets by connecting its users to track every failed login attempt across all installed users of the plugin. When you activate BruteProtect you become a part of an Internet-connected counter force that works against botnets.
+
 = BruteProtect logs every failed attempt community-wide =
 
-When an IP has too many failed attempts in a specific period of time BruteProtect logs and blocks that IP across the entire BruteProtect network (your site included). The more users of BruteProtect the safer we all are from traditional brute force attacks, and distributed brute force attacks that use many different servers and IP addresses
+When an IP has too many failed attempts in a specific period of time, BruteProtect logs and blocks that IP across the entire BruteProtect network (your site included). The more users of BruteProtect, the safer we all are from traditional brute force attacks, and distributed brute force attacks that use many different servers and IP addresses.
 
 = BruteProtect is safe for MultiSite and compatible with other security plugins =
 
-BruteProtect FULLY SUPPORTS multisite networks, and you’ll only need one API key. Go to the installation tab to learn more about how easy it is to install and use BruteProtect.  You can even use it alongside other security plugins, if you so desire. 
+BruteProtect FULLY SUPPORTS multisite networks, and you’ll only need one API key. Go to the Installation tab to learn more about how easy it is to install and use BruteProtect. You can even use it alongside other security plugins, if you so desire.
 
 == Installation ==
 
@@ -59,7 +59,11 @@ Yes, each site needs a different key (this is not the case with multisite networ
 
 = Does it work with other WordPress security plugins? = 
 
-We haven’t received any reports of plugin incompatibility.  Please visit the BruteProtect WordPress support forum to report any issues.
+Yes! We haven’t received any reports of plugin incompatibility.  Please visit the BruteProtect WordPress support forum to report any issues.
+
+= Are there any known compatibility issues? = 
+
+No!  We've had no reported compatibility issues with any plugins.
 
 = Is it free? =
 
@@ -71,11 +75,7 @@ Yes.
 
 = How many failed attempts before an IP address will be blocked? =
 
-8 failed attempts in 8 hours = 8 hour block
-15 failed attempts in 24 hours = 48 hour block
-25 failed attempts in 7 days = 14 day block
-40 failed attempts in 1 month = 2 month block
-65 failed attempts in 1 year = 2 year block
+This number varies based on a number of factors, there isn't a fixed number of failed attempts that equal a block.
 
 = Can I whitelist certain IP addresses? =
 
@@ -83,6 +83,15 @@ Yes, you may add IP addresses under the “whitelist” setting of BruteProtect.
 
 
 == Changelog ==
+
+= 1.1.4 = 
+* Allow for graceful fallback if filter_var isn't available
+* Corrected CloudFlare header
+
+= 1.1.4 = 
+* Updated API key process to make it even easier (API key is auto-added)
+* Updated Math CAPTCHA error handling to help teach people about login form best practices
+* Updated IP retrieval function to ensure as few false readings as possible
 
 = 1.1.3 = 
 * Bug fix to the API Endpoint

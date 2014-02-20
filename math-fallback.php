@@ -18,8 +18,10 @@ if( ! class_exists( 'BruteProtect_Math_Authenticate' ) ) {
 			$salted_ans = sha1( $salt . $ans );
 			$correct_ans = $_POST[ 'brute_ck' ];
 	
-			if( $salted_ans != $correct_ans ) {
-				wp_die( 'You have not proven your humanity!' );
+			if( !$correct_ans ) {
+				wp_die( __('<strong>Error BP100: This site is not properly configured.</strong> Please ask this site\'s web developer to review <a href="http://bruteprotect.com/faqs/error-bp100/">for information on how to resolve this issue</a>.') );
+			} elseif ( $salted_ans != $correct_ans ) {
+				wp_die( __('<strong>You failed to correctly answer the math problem.</strong>  This is used to combat spam when the BruteProtect API is unavailable.  Please use your browser\'s back button to return to the login form, press the "refresh" button to generate a new math problem, and try to log in again.') );
 			} else {
 				return true;
 			}

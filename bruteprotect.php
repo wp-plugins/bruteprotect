@@ -6,7 +6,7 @@
 Plugin Name: BruteProtect
 Plugin URI: http://bruteprotect.com/
 Description: BruteProtect allows the millions of WordPress bloggers to work together to defeat Brute Force attacks. It keeps your site protected from brute force security attacks even while you sleep. To get started: 1) Click the "Activate" link to the left of this description, 2) Sign up for a BruteProtect API key, and 3) Go to your BruteProtect configuration page, and save your API key.
-Version: 1.1.3
+Version: 1.1.4
 Author: Hotchkiss Consulting Group
 Author URI: http://hotchkissconsulting.com/
 License: GPLv2 or later
@@ -28,7 +28,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-define('BRUTEPROTECT_VERSION', '1.1.3');
+define('BRUTEPROTECT_VERSION', '1.1.4.1');
 define('BRUTEPROTECT_PLUGIN_URL', plugin_dir_url( __FILE__ ));
 
 if ( is_admin() ) :
@@ -75,14 +75,40 @@ class BruteProtect
 		if( isset( $this->user_ip ) )
 			return $this->user_ip;
 		
-		if( isset( $_SERVER[ 'HTTP_CLIENT_IP' ] ) )
-			$this->user_ip = trim( $_SERVER[ 'HTTP_CLIENT_IP' ] );
-		if( isset( $_SERVER[ 'HTTP_X_FORWARDED_FOR' ] ) )
-			$this->user_ip = trim( $_SERVER[ 'HTTP_X_FORWARDED_FOR' ] );
-		else
-			$this->user_ip = trim( $_SERVER[ 'REMOTE_ADDR' ] );
-				
-		return $this->user_ip;
+		$server_headers = array( 'HTTP_CLIENT_IP',
+								 'HTTP_CF_CONNECTING_IP',
+							     'HTTP_X_FORWARDED_FOR', 
+							     'HTTP_X_FORWARDED', 
+							     'HTTP_X_CLUSTER_CLIENT_IP', 
+							     'HTTP_FORWARDED_FOR', 
+							     'HTTP_FORWARDED', 
+							     'REMOTE_ADDR' );
+		
+		if( function_exists( 'filter_var' ) ) :
+		    foreach ( $server_headers as $key ) :
+		        if (array_key_exists($key, $_SERVER) === true) :
+		            foreach (explode(',', $_SERVER[$key]) as $ip) :
+		                $ip = trim($ip); // just to be safe
+
+		                if (filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE) !== false) :
+		                    $this->user_ip = $ip;
+							return $this->user_ip;
+						endif;
+					endforeach;
+				endif;
+			endforeach;
+		else : // PHP filter extension isn't available
+		    foreach ( $server_headers as $key ) :
+		        if (array_key_exists($key, $_SERVER) === true) :
+		            foreach (explode(',', $_SERVER[$key]) as $ip) :
+		                $ip = trim($ip); // just to be safe
+	                    $this->user_ip = $ip;
+						return $this->user_ip;
+					endforeach;
+				endif;
+			endforeach;
+		endif;
+		
 	}
 	
 	function get_privacy_key() {

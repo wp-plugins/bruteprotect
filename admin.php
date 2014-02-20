@@ -201,6 +201,10 @@ if( !class_exists( 'BruteProtect_Admin' ) ) {
 			if( $ip == '127.0.0.1' || $ip == '::1' )
 				return;
 			
+			$selfinstalling = get_option( 'bp_selfinstall_attempt' );
+			if( $selfinstalling )
+				return;
+			
 			
 			echo "<div id='bruteprotect-warning' class='error fade'><p><strong>" . __( 'BruteProtect is almost ready.' ) . "</strong> " . sprintf( __( 'You must <a href="%1$s">enter your BruteProtect API key</a> for it to work.  <a href="%1$s">Obtain a key for free</a>.' ), esc_url( admin_url( 'admin.php?page=bruteprotect-api' ) ) ) . "</p></div>
 			";
@@ -230,7 +234,7 @@ if( !class_exists( 'BruteProtect_Admin' ) ) {
 				<h2 style="clear: both; margin-bottom: 15px;"><img src="<?php echo BRUTEPROTECT_PLUGIN_URL ?>images/BruteProtect-Logo-Text-Only-40.png" alt="BruteProtect" width="250" height="40" style="margin-bottom: -2px;"/> &nbsp; General Settings</h2>
 				<p style="font-size: 18px; padding-top: 20px;">
 				<?php if (current_user_can('manage_network')): ?>
-					<strong>BruteProtect only needs one API key per network.</strong>  <a href="<?php echo network_home_url('/wp-admin/network/admin.php?page=bruteprotect-config') ?>">Manage your key here.</a>
+					<strong>BruteProtect only needs one API key per network.</strong>  <a href="<?php echo network_home_url('/wp-admin/network/admin.php?page=bruteprotect-api') ?>">Manage your key here.</a>
 				<?php else: ?>
 					<strong>Sorry!</strong> Only super admins can configure BruteProtect.
 				<?php endif ?>

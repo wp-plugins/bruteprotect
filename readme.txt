@@ -84,7 +84,7 @@ Yes, you may add IP addresses under the “whitelist” setting of BruteProtect.
 
 == Changelog ==
 
-= 1.1.4 = 
+= 1.1.4.1 = 
 * Allow for graceful fallback if filter_var isn't available
 * Corrected CloudFlare header
 

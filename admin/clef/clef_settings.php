@@ -1,24 +1,15 @@
-<?php
-	define( 'CLEF_BASE', 'https://clef.io' );
-    $site_name = urlencode(get_option('blogname'));
-    $site_domain = urlencode(get_option('siteurl'));
-	
-?>
+<div class="wrap bruteprotect-clef">
+   
+    <div class="header">
+        <img src="<?php echo BRUTEPROTECT_PLUGIN_URL ?>images/clef.png" alt="Clef">
+    </div>  
 
-<div class="wrap">
-    
-    <h2 style="clear: both; margin-bottom: 15px;">
-        <img src="<?php echo BRUTEPROTECT_PLUGIN_URL ?>images/BruteProtect-CLEF-Logo-Text-Only-40.png" alt="BruteProtect" width="447" height="40" style="margin-bottom: -2px;" /> 
-    </h2>
-	
-	<p>Clef is a free WordPress plugin that allows you to use your phone to log in to your website.  It only takes about 30 seconds to set up, and it is a great compliment to BruteProtect in securing your website.</p>
-	
-    <p>Something not working? Email <a href="mailto:support@getclef.com">support@getclef.com.</a>
-    </p>
-    <!-- <a href="<?php echo $url ?>" class="button button-primary button-hero">Install and Activate Clef</a> -->
-	<p>To install Clef, search for it in the Plugin Directory and follow instructions</p>
-	<div style="clear:both; height: 20px;"> &nbsp; </div>
+    <div class="content">
+        <h3>Clef is a <b>free</b> security plugin that replaces your password in less than 60 seconds.</h3>
+        <h3 class="subheader">Recommended by BruteProtect, <a href="https://support.cloudflare.com/hc/en-us/articles/200908270-Can-CloudFlare-protect-me-against-WordPress-brute-force-attacks-">CloudFlare</a>, the <a href="bits.blogs.nytimes.com/2013/12/18/new-clef-plug-in-lets-you-forget-about-your-password/">New York Times</a>, and others.</h3>
 
-<iframe src="<?php echo CLEF_BASE ?>/iframes/wordpress?domain=<?php echo $site_domain ?>&amp;name=<?php echo $site_name ?>&amp;source=bruteprotect" width="525" height="350"></iframe>
+        <a href="<?php echo $install_url ?>" class="button button-primary button-hero">Install and set up Clef in 30 seconds</a>
 
+        <p>At BruteProtect, we're constantly searching for ways to improve the security of our customers sites. When we first tried Clef, we knew that we had to find a way to work with them. A little over 6 months later, Clef and BruteProtect work perfectly hand-in-hand. With the pair, you'll never have to worry about passwords again!</p>
+    </div>
 </div>

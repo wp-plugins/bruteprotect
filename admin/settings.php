@@ -3,10 +3,10 @@ $host = $this->brute_get_local_host();
 global $current_user;
 
 $remote_security_options = array(
-	'remote_monitoring' => __( 'Yes, BruteProtect may remotely monitor my site uptime and scan for malware (coming soon)' ),
-	'remote_version' => __( 'Yes, BruteProtect may remotely track the versions of WordPress, plugins and themes I have installed (coming soon)' ),
-	'remote_update' => __( 'Yes, BruteProtect may remotely update my site (coming soon)' ),
-	'remote_login' => __( 'Yes, BruteProtect may provide a secure login gateway for my site (coming soon)' ),
+	'remote_monitoring' => __( 'Yes, BruteProtect may remotely monitor my site uptime and scan for malware' ),
+	'remote_version' => __( 'Yes, BruteProtect may remotely track the versions of WordPress, plugins and themes I have installed' ),
+	'remote_update' => __( 'Yes, BruteProtect may remotely update my site' ),
+	'remote_login' => __( 'Yes, BruteProtect may provide a secure login gateway for my site' ),
 );
 
 if ( isset( $_POST['brute_action'] ) && $_POST['brute_action'] == 'get_api_key' && is_email( $_POST['email_address'] ) ) {
@@ -97,11 +97,12 @@ if( isset($response['ckval']) )
 endif; ?>
 
 <?php if ( current_user_can('manage_options') ) : ?>
+	<img src="<?php echo BRUTEPROTECT_PLUGIN_URL ?>images/wp-pro-ad.png" alt="BruteProtect Pro is Coming!" style="float: right;">
 
 	<form action="" method="post" accept-charset="utf-8" id="bp-settings-form">
 
 <h3 class="title"><?php _e( 'Remote Integration', 'bruteprotect' ) ?></h3>
-<div style="background-color: #d8ecda; padding: 20px; border: 2px solid #336633; margin-bottom: 20px;" id="bruteprotect_permissions_description"><?php _e( 'With your permission, <strong>BruteProtect</strong> can remotely interact with your server to', 'bruteprotect' ) ?>:
+<div style="background-color: #d8ecda; padding: 20px; border: 2px solid #336633; margin-bottom: 20px; width: 660px;" id="bruteprotect_permissions_description"><?php _e( 'With your permission, <strong>BruteProtect</strong> can remotely interact with your server to...', 'bruteprotect' ) ?>:
 	<ul style="margin-left: 40px;list-style: initial;">
 		<li style="margin-bottom: 1px"><?php _e( 'Notify you of downtime', 'bruteprotect' ) ?></li>
 		<li style="margin-bottom: 1px"><?php _e( 'Notify you of the existance of malware on your site', 'bruteprotect' ) ?></li>
@@ -109,14 +110,13 @@ endif; ?>
 		<li style="margin-bottom: 1px"><?php _e( 'Notify you of other potential security vulnerabilities', 'bruteprotect' ) ?></li>
 		<li style="margin-bottom: 1px"><?php _e( 'Automatically update plugins you select', 'bruteprotect' ) ?></li>		
 		<li style="margin-bottom: 1px"><?php _e( 'Allow you and your users to login through a secure gateway', 'bruteprotect' ) ?></li>		
-		<li style="margin-bottom: 1px"><?php _e( 'Allow you to whitelist an IP across all of your BruteProtected websites', 'bruteprotect' ) ?></li>		
 	</ul>
 	<em><?php _e( 'Some of these options may require a pro subscription which will be available in April 2014', 'bruteprotect' ) ?></em>
 	<h3 style="margin-bottom: 0;"><a href="#" onclick="jQuery('.bp_privacy_opt_in_checkbox').attr('checked', 'checked'); jQuery('#bruteprotect_permissions_description').slideUp(); jQuery('#bp-settings-form').submit(); return false;">Click here</a> to allow these permissions.</h3>
 </div>
 
 <input type="hidden" name="privacy_opt_in[submitted]" value="1" id="privacy_opt_in[submitted]" />
-<table class="form-table">
+<table class="form-table" style="clear: none; width: auto;">
 <tbody>
 	<tr valign="top">
 	<th scope="row"><?php _e( 'Remote Permissions', 'bruteprotect' ) ?></th>
@@ -131,7 +131,7 @@ endif; ?>
 <input type="submit" value="<?php _e( 'Save Changes' ) ?>" class="button button-primary" style="margin-top: 10px;margin-bottom: 10px;" />
 <br />
 <h3 class="title"><?php _e( 'Widget Settings', 'bruteprotect' ) ?></h3>
-<table class="form-table">
+<table class="form-table" style="clear: none; width: auto;">
 <tbody>
 <?php if ( is_multisite() ): ?>
 	<tr valign="top">

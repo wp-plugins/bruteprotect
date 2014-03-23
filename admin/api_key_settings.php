@@ -116,6 +116,14 @@ if( isset($response['ckval']) )
 <div class="wrap">
 <h2 style="clear: both; margin-bottom: 15px;"><img src="<?php echo BRUTEPROTECT_PLUGIN_URL ?>images/BruteProtect-Logo-Text-Only-40.png" alt="BruteProtect" width="250" height="40" style="margin-bottom: -2px;"/> &nbsp; API Key</h2>
 
+<?php
+if (!get_site_option('bruteprotect_api_key')) :
+	?>
+		<div class="updated below-h2" id="message"><p><?php _e( '<strong>Almost there!</strong> Just fill in your email address and click "Get an API Key" below, and you be protected from brute force attacks.' ); ?></p></div>
+	<?php 
+endif;
+?>
+
 <?php if ( false != $key && $invalid_key == 'invalid' ) : ?>
 	<div class="error below-h2" id="message"><p><?php _e( '<strong>Invalid API Key!</strong> You have entered an invalid API key. Please copy and paste it from the email you have received, or request a new key.' ); ?></p></div>
 <?php endif ?>

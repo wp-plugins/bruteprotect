@@ -32,11 +32,20 @@ if( !class_exists( 'BruteProtect_Admin' ) ) {
 			add_action( 'admin_enqueue_scripts', array( &$this, 'enqueue_bruteprotect_admin' ) );
 
 			add_action( 'admin_menu', array( &$this, 'clef_init') , 0 );
+			
+			add_action('admin_init', array( &$this, 'activation_redirection' ) );
 		}
 		
 		function clef_init() {
 			include 'admin/clef/clef_installer.php';
-			$this->clef = new BP_Clef;
+			$this->clef = new BruteProtect_Clef;
+		}
+
+		function activation_redirection() {
+		    if (get_option('bruteprotect_do_activation_redirect', false)) {
+		        delete_option('bruteprotect_do_activation_redirect');
+		        wp_redirect( admin_url( 'admin.php?page=bruteprotect-api' ) );
+		    }
 		}
 		
 		function set_custom_font_icon() {
@@ -60,6 +69,9 @@ if( !class_exists( 'BruteProtect_Admin' ) ) {
 		}
 		
 		function bruteprotect_localhost_warning() {
+			global $bruteprotect_showing_warning;
+			$bruteprotect_showing_warning = true;
+			
 			echo "
 			<div id='bruteprotect-warning' class='updated fade'><p><strong>" . __( 'BruteProtect not enabled.' ) . "</strong> You have installed BruteProtect, but we have detected that you are running it on a local installation.   You can leave BruteProtect turned on, we will prompt you to generate a key when you migrate to a live server.</p></div>";
 		}
@@ -192,6 +204,9 @@ if( !class_exists( 'BruteProtect_Admin' ) ) {
 		}
 
 		function bruteprotect_warning() {
+			global $bruteprotect_showing_warning;
+			$bruteprotect_showing_warning = true;
+			
 			//Don't trigger the warning on the config page
 			if ( isset( $_GET['page'] ) && 'bruteprotect-api' == $_GET['page'] )
 				return;
@@ -211,6 +226,8 @@ if( !class_exists( 'BruteProtect_Admin' ) ) {
 		}
 		
 		function bruteprotect_invalid_key_warning() {
+			global $bruteprotect_showing_warning;
+			$bruteprotect_showing_warning = true;
 			echo "
 			<div id='bruteprotect-warning' class='error fade'><p><strong>" . __( 'There is a problem with your BruteProtect API key' ) . "</strong> " . sprintf( __( ' <a href="%1$s">Please correct the error</a>, your site will not be protected until you do.' ), esc_url( admin_url( 'admin.php?page=bruteprotect-api' ) ) )."</p></div>
 			";

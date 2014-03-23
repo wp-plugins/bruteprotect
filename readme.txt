@@ -1,6 +1,6 @@
 === BruteProtect ===
 Contributors: samhotchkiss, roccotripaldi, sdquirk, professor44, magicbean
-Tags: security, brute force, brute force attack, harden wp, login lockdown, multisite, botnet, wordfence, best security
+Tags: security, bruteforce, brute force, brute force attack, harden wp, login lockdown, multisite, botnet, wordfence, best security
 Requires at least: 3.0
 Tested up to: 3.8.1
 Stable tag: trunk
@@ -83,6 +83,12 @@ Yes, you may add IP addresses under the “whitelist” setting of BruteProtect.
 
 
 == Changelog ==
+
+= 1.1.5 = 
+* Fix offline blocked attempt counter
+* Add one-click-clef back in
+* Add information about Pro
+* Add information about our security auditing
 
 = 1.1.4.1 = 
 * Allow for graceful fallback if filter_var isn't available

@@ -6,7 +6,7 @@
 Plugin Name: BruteProtect
 Plugin URI: http://bruteprotect.com/
 Description: BruteProtect allows the millions of WordPress bloggers to work together to defeat Brute Force attacks. It keeps your site protected from brute force security attacks even while you sleep. To get started: 1) Click the "Activate" link to the left of this description, 2) Sign up for a BruteProtect API key, and 3) Go to your BruteProtect configuration page, and save your API key.
-Version: 1.1.4.1
+Version: 1.1.5
 Author: Parka, LLC
 Author URI: http://getparka.com/
 License: GPLv2 or later
@@ -28,12 +28,14 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-define('BRUTEPROTECT_VERSION', '1.1.4.1');
+define('BRUTEPROTECT_VERSION', '1.1.5');
 define('BRUTEPROTECT_PLUGIN_URL', plugin_dir_url( __FILE__ ));
 
 if ( is_admin() ) :
 	require_once dirname( __FILE__ ) . '/admin.php';
+	require_once dirname( __FILE__ ) . '/admin/inc/shoutouts.php';
 	new BruteProtect_Admin;
+	new BruteProtect_Shoutouts;
 endif;
 
 require_once dirname( __FILE__ ) . '/clear_transients.php';
@@ -89,6 +91,9 @@ class BruteProtect
 		        if (array_key_exists($key, $_SERVER) === true) :
 		            foreach (explode(',', $_SERVER[$key]) as $ip) :
 		                $ip = trim($ip); // just to be safe
+						
+						if( $ip == '127.0.0.1' || $ip == '::1' )
+							return $ip;
 
 		                if (filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE) !== false) :
 		                    $this->user_ip = $ip;
@@ -313,10 +318,15 @@ class BruteProtect
 	
 	function brute_log_blocked_attempt( $api_count = 0 ) {
 		$attempt_count = $this->brute_get_blocked_attempts();
+		
+		if( !$attempt_count )
+			$attempt_count = 0;
+		
 		if( $attempt_count < $api_count ) {
 			$attempt_count = $api_count;
 		}
 		$attempt_count++;
+
 		update_site_option( 'bruteprotect_blocked_attempt_count', $attempt_count );
 		return $attempt_count;
 	}
@@ -390,3 +400,7 @@ if (isset($pagenow) && $pagenow == 'wp-login.php') {
 	//	This is in case the wp-login.php pagenow variable fails
 	add_action( 'login_head', array( &$bruteProtect, 'brute_check_loginability' ) );
 }
+
+register_activation_hook(__FILE__, 'bruteprotect_activate');
+
+function bruteprotect_activate() { add_option('bruteprotect_do_activation_redirect', true); }

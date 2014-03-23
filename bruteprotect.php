@@ -174,6 +174,7 @@ class BruteProtect
 	// cached as transients in the wp_options table
 	/////////////////////////////////////////////////////////////////////
 	function brute_check_loginability( $preauth = false ) {
+		
 		$ip = $this->brute_get_ip();
 
 		//Never block login from localhost
@@ -313,7 +314,10 @@ class BruteProtect
 	}
 	
 	function brute_get_blocked_attempts() {
-		return get_site_option( 'bruteprotect_blocked_attempt_count' );
+		$blocked_count = get_site_option( 'bruteprotect_blocked_attempt_count' );
+		if( !$blocked_count )
+			$blocked_count = 0;
+		return $blocked_count;
 	}
 	
 	function brute_log_blocked_attempt( $api_count = 0 ) {

@@ -5,7 +5,7 @@ Requires at least: 3.0
 Tested up to: 3.8.1
 Stable tag: trunk
 
-BruteProtect is a cloud-powered Brute Force attack prevention plugin and the ONLY SECURITY PLUGIN able to guard against botnet attacks.
+BruteProtect is a cloud-powered Brute Force attack prevention plugin and the best protection against botnet attacks.
 
 == Description ==
 

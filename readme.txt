@@ -2,7 +2,7 @@
 Contributors: samhotchkiss, roccotripaldi, sdquirk, professor44, magicbean
 Tags: security, bruteforce, brute force, brute force attack, harden wp, login lockdown, multisite, botnet, wordfence, best security
 Requires at least: 3.0
-Tested up to: 3.8.1
+Tested up to: 3.9
 Stable tag: trunk
 
 BruteProtect is a cloud-powered Brute Force attack prevention plugin and the best protection against botnet attacks.
@@ -83,6 +83,10 @@ Yes, you may add IP addresses under the “whitelist” setting of BruteProtect.
 
 
 == Changelog ==
+
+= 1.1.5 = 
+* Make the security auditing messaging less offensive
+* Add in better text around the text requiring users to get a unique API key for each site
 
 = 1.1.5 = 
 * Fix offline blocked attempt counter

@@ -44,8 +44,9 @@ if ( isset( $_POST['brute_action'] ) && $_POST['brute_action'] == 'get_api_key' 
 	exit;
 }
 
-if ( isset( $_POST['brute_action'] ) && $_POST['brute_action'] == 'update_key' )
+if ( isset( $_POST['brute_action'] ) && $_POST['brute_action'] == 'update_key' ) :
 	update_site_option( 'bruteprotect_api_key', $_POST['brute_api_key'] );
+endif;
 
 if ( isset( $_POST['brute_action'] ) && $_POST['brute_action'] == 'update_brute_dashboard_widget_settings' )
 	update_site_option( 'brute_dashboard_widget_hide', $_POST['brute_dashboard_widget_hide'] );
@@ -129,7 +130,7 @@ endif;
 <?php endif ?>
 
 <?php if ( false != $key && $invalid_key == 'host' ) : ?>
-	<div class="error below-h2" id="message"><p><?php _e( '<strong>Invalid API Key!</strong> You have entered an API key which is not valid for this server.  Every site must have its own API key.' ); ?></p></div>
+	<div class="error below-h2" id="message"><p><?php _e( '<strong>Invalid API Key!</strong> You have entered an API key which is not valid for this server.  Every site must have its own API key.  Just click the "Get an API key" button below to get a fresh new key for free' ); ?></p></div>
 <?php endif ?>
 
 <?php if ( $invalid_key == 'server_access' ) : 

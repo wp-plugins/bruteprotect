@@ -4,11 +4,15 @@ if( !class_exists( 'BruteProtect_Shoutouts' ) ) {
 	{
 		
 		function __construct()
-		{	
-			add_action('admin_notices', array( &$this, 'generate_notice' ), 90 );
-			
+		{				
 			if( isset( $_GET[ 'dismiss_bruteprotect_shoutout' ] ) )
 				$this->process_dismissed_shoutout( $_GET[ 'dismiss_bruteprotect_shoutout' ] );
+			
+			//only show our shoutouts on the BP pages
+			if( !isset( $_GET[ 'page' ] ) || !strpos( $_GET[ 'page' ], 'bruteprotect' ) )
+				return;
+			
+			add_action('admin_notices', array( &$this, 'generate_notice' ), 90 );
 		}
 		
 		function get_shoutouts() {

@@ -84,7 +84,7 @@ Yes, you may add IP addresses under the “whitelist” setting of BruteProtect.
 
 == Changelog ==
 
-= 1.1.5 = 
+= 1.1.6 = 
 * Make the security auditing messaging less offensive
 * Add in better text around the text requiring users to get a unique API key for each site
 

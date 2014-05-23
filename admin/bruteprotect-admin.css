@@ -1,16 +1,423 @@
 @font-face {
-  font-family: "bruteprotect";
-  src:url("fonts/bruteprotect.eot");
-  src:url("fonts/bruteprotect.eot?#iefix") format("embedded-opentype"),
+    font-family: "bruteprotect";
+    src: url("fonts/bruteprotect.eot");
+    src: url("fonts/bruteprotect.eot?#iefix") format("embedded-opentype"),
     url("fonts/bruteprotect.woff") format("woff"),
     url("fonts/bruteprotect.ttf") format("truetype"),
     url("fonts/bruteprotect.svg#bruteprotect") format("svg");
-  font-weight: normal;
-  font-style: normal;
+    font-weight: normal;
+    font-style: normal;
 
 }
 
 .current#toplevel_page_bruteprotect-config .wp-menu-image img {
-	opacity: 1!important;
-	filter: alpha(opacity=100)!important;
+    opacity: 1 !important;
+    filter: alpha(opacity=100) !important;
 }
+
+/*
+ $primary-color: #f26722;  // BruteProtect Orange
+ $secondary-color: #4096ee;  // CTA Blue
+ $alert-color: #d80000;  // red
+ $success-color: #15b100; // green
+ $warning-color: #ff9c00;  // yellow-ish orange
+ $neutral-color: #959595; // gray
+ */
+
+@import url(http://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic);
+
+
+
+#bruteapi * {
+    -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box;
+}
+
+.gotapikey, .getnewkey {
+    display: none;
+}
+
+#bruteapi .brutecontainer {
+    font-family: "lato", arial, sans-serif;
+    background: #fff;
+    padding: 20px;
+    border: 1px #ddd solid;
+    -webkit-box-shadow: 2px 2px 2px 0px rgba(50, 50, 50, 0.1);
+    -moz-box-shadow: 2px 2px 2px 0px rgba(50, 50, 50, 0.1);
+    box-shadow: 2px 2px 2px 0px rgba(50, 50, 50, 0.1);
+}
+
+#bruteapi .brutecontainer label {
+    display: block;
+}
+
+#bruteapi label.setting {
+    margin-bottom: 12px;
+    line-height: 120%;
+}
+
+#bruteapi label.setting input {
+    margin-right: 10px;
+}
+
+#bruteapi input {
+    outline: none;
+    border: none;
+    box-shadow: none;
+}
+
+.whitelist textarea {
+    width: 90% l;
+}
+
+#bruteapi h2#header {
+    margin: 0;
+    padding: 20px;
+    color: #bbb;
+    font-style: italic;
+    background-color: #272727;
+
+}
+
+#bruteapi h2#header a {
+    font-style: normal;
+}
+
+#bruteapi .halfbox {
+    width: 49%;
+    padding: 0 10px 10px 10px;
+    border: 1px #e2e2e2 solid;
+    background: #f8f8f8;
+
+}
+
+#bruteprotect_permissions_description {
+    background: #15b100; /* Old browsers */
+    background: -moz-linear-gradient(top, #15b100 0%, #218e00 100%); /* FF3.6+ */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #15b100), color-stop(100%, #218e00)); /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(top, #15b100 0%, #218e00 100%); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(top, #15b100 0%, #218e00 100%); /* Opera 11.10+ */
+    background: -ms-linear-gradient(top, #15b100 0%, #218e00 100%); /* IE10+ */
+    background: linear-gradient(to bottom, #15b100 0%, #218e00 100%); /* W3C */
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#15b100', endColorstr='#218e00', GradientType=0); /* IE6-9 */
+    padding: 20px;
+    border: 2px solid #fff;
+    color: #084700;
+    width: auto;
+    font-size: 16px;
+    line-height: 125%;
+}
+
+#bruteprotect_permissions_description ul {
+    margin-top: 0;
+    list-style: disc;
+}
+
+#bruteprotect_permissions_description h3, #bruteprotect_permissions_description h3 a {
+    color: #fff;
+    border: none !important;
+    margin-bottom: 0 !important;
+    font-size: 18px;
+
+}
+
+#bruteprotect_permissions_description h3 a {
+    text-decoration: underline;
+    font-weight: bold;
+}
+
+.cleflogo {
+    background-color: #0D9DDB;
+    text-align: center;
+    padding: 15px;
+    margin-bottom: 10px;
+}
+
+.cleflogo img {
+    margin: 0 auto;
+    max-width: 75%;
+}
+
+#bruteapi .box {
+    padding: 0 10px 10px 10px;
+    border: 1px #e2e2e2 solid;
+    margin-bottom: 0;
+    background: #f8f8f8;
+}
+
+#bruteapi .box.framed {
+    background: #fff;
+}
+
+#bruteapi .box .loginbox {
+    padding: 10px;
+    width: 57%;
+    float: left;
+    border: 1px #e2e2e2 solid;
+    background: #fefefe url(../images/linked.png) 50% 50% no-repeat;
+    margin-right: 20px;
+
+}
+
+
+
+#bruteapi label {
+    margin-bottom: 0.46875rem;
+
+}
+
+#bruteapi .loginbox label input,
+#bruteapi .getapikey label input {
+        opacity: .75;
+        width: 100%;
+        padding: 10px;
+        border: 1px #d5d5d5 solid;
+}
+
+
+#bruteapi.adspace .box {
+    max-width: 750px;
+    margin-bottom: 15px;
+}
+
+.bordernone {
+    border: none !important;
+}
+
+#bruteapi .halfbox.left {
+    /*margin-right: 2%;*/
+}
+
+#bruteapi h3 {
+    color: #fff;
+    padding: 15px;
+    border-bottom: 1px #fff solid;
+}
+
+#bruteapi .completed {
+    width: 45%;
+
+}
+
+#bruteapi p.complete {
+    font-size: 16px;
+    color: #f26722;
+    margin-bottom: 0;
+}
+
+#bruteapi .left h3 {
+    margin: 0 -10px 10px -10px;
+}
+
+#bruteapi .halfbox.right {
+    display: block;
+    padding: 10px;
+    /*background-color: #f8f8f8;*/
+}
+
+#bruteapi h3 {
+    font-weight: normal;
+
+}
+
+#bruteapi .right h3 {
+    margin: -10px -10px 1em -10px;
+}
+
+#bruteapi h3.orange {
+    background: #f26722 url(../images/attn.png) 100% -5px no-repeat;
+
+}
+
+#bruteapi h3.blue {
+    background: #4096ee url(../images/info.png) 100% -5px no-repeat;
+
+}
+
+#bruteapi h3.green {
+    background: #15b100 url(../images/check.png) 100% -5px no-repeat;
+}
+
+#bruteapi h3.red {
+    background: #d80000 url(../images/warning.png) 100% -5px no-repeat;
+}
+
+#bruteapi iframe, #bruteapi .framed {
+	border: none;
+}
+
+#brute_api_key {
+    font-size: 16px;
+    border: 1px solid #ccc;
+    padding: 4px;
+    width: 98%;
+}
+
+#bruteapi .link input.username,
+#bruteapi .link input.password {
+    width: 98%;
+}
+
+#bruteapi .button {
+    font-weight: bold;
+    text-transform: uppercase;
+    padding: 10px;
+    height: auto;
+    border: none;
+    box-shadow: none;
+    border-radius: 0;
+
+}
+
+#bruteapi .welcomescreen {
+    float: right;
+    max-width: 40%;
+    margin: 0;
+    text-align: center;
+    color: #f26722;
+    display: block;
+}
+
+#bruteapi .welcomescreen img {
+    width: 100%;
+        border: 2px #fff solid;
+
+}
+
+#bruteapi .button.reg {
+    margin-right: 5px;
+}
+
+#bruteapi form .button {
+    margin: 10px 0;
+}
+
+#bruteapi form.regform .button {
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+
+/* colored btns */
+
+#bruteapi .green,
+#bruteapi .orange,
+#bruteapi .red,
+#bruteapi .blue {
+        color: #fff;
+        text-shadow: none;
+
+}
+
+#bruteapi .green {
+    background: #15b100;
+}
+
+#bruteapi .orange {
+    background: #f26722;
+}
+
+#bruteapi .red {
+    background: #d80000;
+}
+
+#bruteapi .blue {
+    background: #4096ee;
+}
+
+#bruteapi .success {
+    font-style: italic;
+    padding: 10px;
+}
+
+#bruteapi .right {
+    float: right;
+}
+
+#bruteapi .clr {
+    clear: both;
+    height: 1px;
+    font-size: 0;
+}
+
+
+@media only screen and (min-width: 1050px) {
+
+#bruteapi .halfbox.stepuno, #bruteapi .halfbox.stepdos {
+    height: 280px;
+}
+
+ }
+ /* end min 1000px  */
+
+
+ @media only screen and (max-width: 1049px) {
+
+#bruteapi .halfbox.stepuno, #bruteapi .halfbox.stepdos {
+    height: 300px;
+}
+
+ }
+ /* end max 1049px  */
+
+
+@media only screen and (max-width: 1000px) {
+
+    #bruteapi .halfbox.left, #bruteapi .halfbox.right {
+        width: 100%;
+        margin-right: 0;
+        margin-bottom: 15px;
+    }
+
+#bruteapi .halfbox.stepuno, #bruteapi .halfbox.stepdos {
+    height: auto;
+}
+
+    #bruteapi h2#header {
+        text-align: center;
+    }
+
+    #bruteapi h2#header .button {
+        float: none;
+        width: 100%;
+        margin-bottom: 15px;
+        text-align: center;
+    }
+
+#bruteapi .box .loginbox {
+    width: 100%;
+}
+
+
+#bruteapi .welcomescreen {
+    display: none;
+}
+
+
+}
+/* end max 1000px  */
+
+
+@media only screen and (max-width: 900px) {
+
+
+
+/* end max 900px  */
+
+@media only screen and (max-width: 800px) {
+
+
+
+}
+/* end max 800px  */
+
+@media only screen and (max-width: 600px) {
+
+#bruteapi .brutecontainer {
+    padding: 2px;
+}
+
+}
+
+/* end max 600px  */
+
+

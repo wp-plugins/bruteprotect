@@ -84,6 +84,14 @@ Yes, you may add IP addresses under the “whitelist” setting of BruteProtect.
 
 == Changelog ==
 
+= 2.0 =
+* Redesign everything
+* Add My BruteProtect
+* Add remote secure login
+* Add remote monitoring
+* Add remote plugin monitoring and updating
+* This update includes over 2,000 man hours of programming and design work, and countless sleepless nights.  Thank you to Rocco, Jesse, Stephen, Jeff, Derek and Ryan, and to our incredibly patient significant others.  We really hope that everyone loves what we've done.
+
 = 1.1.6 = 
 * Make the security auditing messaging less offensive
 * Add in better text around the text requiring users to get a unique API key for each site

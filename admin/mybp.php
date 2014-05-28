@@ -66,7 +66,7 @@ endif;
 $is_subdomain_install = false;
 $wp_site_url = get_site_url();
 $wp_site_url_parts = parse_url( $wp_site_url );
-if( $wp_site_url_parts[ 'path' ] && $wp_site_url_parts[ 'path' ] != '/' ) {
+if( isset( $wp_site_url_parts ) && is_array( $wp_site_url_parts ) && $wp_site_url_parts[ 'path' ] && $wp_site_url_parts[ 'path' ] != '/' ) {
 	$is_subdomain_install = true;
 }
 
@@ -106,6 +106,7 @@ include 'mybp-sections/privacy_update.php';
 <div id="bruteapi">
 
 <h2 id="header">
+
 	<?php if ( ! is_multisite() && ! $is_subdomain_install ) : ?><a href="http://support.bruteprotect.com/" target="_blank" class="right orange button">Get Support</a><a href="https://my.bruteprotect.com" target="_blank" class="right blue button">Go to My BruteProtect</a><?php endif; ?>
 	<img src="<?php echo BRUTEPROTECT_PLUGIN_URL ?>images/BruteProtect-Logo-Text-Only-40.png" alt="BruteProtect"
 	     width="250"> &nbsp;

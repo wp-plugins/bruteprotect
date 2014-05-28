@@ -7,7 +7,7 @@
 Plugin Name: BruteProtect
 Plugin URI: http://bruteprotect.com/
 Description: BruteProtect allows the millions of WordPress bloggers to work together to defeat Brute Force attacks. It keeps your site protected from brute force security attacks even while you sleep. To get started: 1) Click the "Activate" link to the left of this description, 2) Sign up for a BruteProtect API key, and 3) Go to your BruteProtect configuration page, and save your API key.
-Version: 2.0
+Version: 2.0.1
 Author: Parka, LLC
 Author URI: http://getparka.com/
 License: GPLv2 or later
@@ -29,7 +29,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-define( 'BRUTEPROTECT_VERSION', '2.0' );
+define( 'BRUTEPROTECT_VERSION', '2.0.1' );
 define( 'BRUTEPROTECT_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 
 $use_https = get_site_transient( 'bruteprotect_use_https' );
@@ -468,6 +468,18 @@ class BruteProtect {
 		return $attempt_count;
 	}
 
+	function is_subdirectory() {
+		$is_subdomain_install = false;
+		$wp_site_url = get_site_url();
+		$wp_site_url_parts = parse_url( $wp_site_url );
+		if( isset( $wp_site_url_parts ) && is_array( $wp_site_url_parts ) && $wp_site_url_parts[ 'path' ] && $wp_site_url_parts[ 'path' ] != '/' ) {
+			$is_subdomain_install = true;
+		} else {
+			return false;
+		}
+		return $wp_site_url;
+	}
+
 	/**
 	 * Calls over to the api using wp_remote_post
 	 *
@@ -493,6 +505,7 @@ class BruteProtect {
 		$request['bruteprotect_version'] = constant( 'BRUTEPROTECT_VERSION' );
 		$request['wordpress_version']    = $wp_version;
 		$request['api_key']              = $api_key;
+		$request['subdirectory']         = $this->is_subdirectory();
 		$request['multisite']            = "0";
 
 		if ( is_multisite() ) {

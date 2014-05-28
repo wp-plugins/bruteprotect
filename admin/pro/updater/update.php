@@ -36,6 +36,15 @@ if ( $_POST['user_id'] != 'auto' ) {
 	}
 }
 
+/**
+ * Updates the given list of plugins.
+ * 
+ * Accepts an array of plugin paths such as 'bruteprotect/bruteprotect.php'
+ * Returns a detailed array showing the status of each plugin and a log of messages output during the process
+ *
+ * @param array $plugins
+ * @return array
+ */
 function bruteprotect_bulk_update_plugins( $plugins ) {
 	$skin          = new Automatic_Upgrader_Skin();
 	$upgrader      = new Plugin_Upgrader( $skin );
@@ -47,6 +56,15 @@ function bruteprotect_bulk_update_plugins( $plugins ) {
 	return $o;
 }
 
+/**
+ * Updates the given list of themes.
+ * 
+ * Accepts an array of theme slugs such as 'twentyfourteen'
+ * Returns a detailed array showing the status of each theme and a log of messages output during the process
+ *
+ * @param array $themes
+ * @return array
+ */
 function bruteprotect_bulk_update_themes( $themes ) {
 	$skin          = new Automatic_Upgrader_Skin();
 	$upgrader      = new Theme_Upgrader( $skin );
@@ -58,16 +76,53 @@ function bruteprotect_bulk_update_themes( $themes ) {
 	return $o;
 }
 
+/**
+ * Updates wordpress core to the given version.
+ *
+ * Returns the new version on success, and a Wp_error object on failure
+ * 
+ * @param string $version
+ * @return string|object
+ */
+function bruteprotect_update_core($version) {
+	$locale = get_locale();
+	$update = find_core_update( $version, $locale );
+	$skin = new Automatic_Upgrader_Skin();
+	$upgrader = new Core_Upgrader( $skin );
+	$results = $upgrader->upgrade( $update );
+	return $results;
+}
+
 include_once ABSPATH . 'wp-admin/includes/class-wp-upgrader.php';
 include_once ABSPATH . 'wp-admin/includes/file.php';
 include_once ABSPATH . 'wp-admin/includes/misc.php';
 include_once ABSPATH . 'wp-admin/includes/plugin.php';
 include_once ABSPATH . 'wp-admin/includes/theme.php';
+include_once ABSPATH . 'wp-admin/includes/update.php';
 $update_error = false;
 $overview     = '';
 $response     = array(
 	'message' => array()
 );
+
+if( !empty( $_POST['core']) ) {
+	$core = bruteprotect_update_core( $_POST['core'] );
+	if( is_wp_error($core) ) {
+		$update_error = true;
+		$error_message = $core->get_error_message();
+		$response['message']['core'] = array(
+			'error'=>true,
+			'message'=> $error_message,
+		);
+		$overview .= 'WordPress core update failed. ';
+	} else {
+		$response['message']['core'] = array(
+			'error'=>false,
+			'message'=> 'WordPress was updated to version ' . $core . '.',
+		);
+		$overview .= 'WordPress core update complete. ';
+	}
+}
 
 if ( ! empty( $_POST['plugins'] ) ) {
 	$plugins     = unserialize( stripslashes( $_POST['plugins'] ) );

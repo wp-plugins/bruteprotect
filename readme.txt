@@ -84,6 +84,11 @@ Yes, you may add IP addresses under the “whitelist” setting of BruteProtect.
 
 == Changelog ==
 
+= 2.0.1 =
+* Add in core update
+* Minor bug fixes
+* Track subdirectory urls
+
 = 2.0 =
 * Redesign everything
 * Add My BruteProtect

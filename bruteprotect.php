@@ -7,7 +7,7 @@
 Plugin Name: BruteProtect
 Plugin URI: http://bruteprotect.com/
 Description: BruteProtect allows the millions of WordPress bloggers to work together to defeat Brute Force attacks. It keeps your site protected from brute force security attacks even while you sleep. To get started: 1) Click the "Activate" link to the left of this description, 2) Sign up for a BruteProtect API key, and 3) Go to your BruteProtect configuration page, and save your API key.
-Version: 2.0.2
+Version: 2.0.3
 Author: Parka, LLC
 Author URI: http://getparka.com/
 License: GPLv2 or later
@@ -499,13 +499,13 @@ class BruteProtect {
 
 		$request['action']               = $action;
 		$request['ip']                   = $this->brute_get_ip();
-		$request['host']                 = strval( $this->brute_get_local_host() );
+		$request['host']                 = $this->brute_get_local_host();
 		$request['blocked_attempts']     = strval( $this->brute_get_blocked_attempts() );
 		$request['privacy_settings']     = serialize( get_site_option( 'brute_privacy_opt_in' ) );
 		$request['bruteprotect_version'] = constant( 'BRUTEPROTECT_VERSION' );
 		$request['wordpress_version']    = $wp_version;
 		$request['api_key']              = $api_key;
-		$request['subdirectory']         = $this->is_subdirectory();
+		$request['subdirectory']         =  strval( $this->is_subdirectory() );
 		$request['multisite']            = "0";
 
 		if ( is_multisite() ) {

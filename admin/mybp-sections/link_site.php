@@ -1,10 +1,36 @@
 <?php
 // provide a pro-linking form if the api key is not invalid
-if ( false == $invalid_key ) : ?>
+if ( false == $invalid_key ) : 
+	$privacy_opt_in = get_site_option( 'brute_privacy_opt_in' );
+	if( is_array($privacy_opt_in) && isset( $privacy_opt_in['remote_monitoring'] )) {
+		$iframe_height = '780px';
+		$iframe_url = MYBP_URL . 'wp/dash/' . get_site_option( 'bruteprotect_site_id' ) . '/' . get_user_meta( $current_user->ID, 'bruteprotect_user_linked', true );
+	} else {
+		$iframe_height = '200px';
+		$iframe_url =  MYBP_URL . 'wp/no_permissions/';
+	}
+	
+?>
 <?php if ( bruteprotect_is_pro() && get_user_meta( $current_user->ID, 'bruteprotect_user_linked', true ) ) : ?>
-	<iframe src="<?php echo MYBP_URL . 'wp/dash/' . get_site_option( 'bruteprotect_site_id' ) . '/' . get_user_meta( $current_user->ID, 'bruteprotect_user_linked', true ); ?>" width="100%" height="780px" ></iframe>
-
+	
+	<iframe src="<?php echo $iframe_url; ?>" width="100%" height="<?php echo $iframe_height; ?>" ></iframe>
+	<form action="" method="post" class="regform" id="disconnect_bp">
+		<input type="hidden" name="brute_action" value="unlink_owner_from_site"/>
+		<input type="submit" value="Disconnect Site" class="button orange" id="disconnect_bp_button" />
+	</form>
+	<script>
+	jQuery( document ). ready( function() {
+		jQuery( "#disconnect_bp_button" ).click( function(e) {
+			e.preventDefault();
+			var d = confirm( "Are you sure you want to disconnect this site from your my.bruteprotect.com account? BruteProtect Shield will still be active.");
+			if( d ) {
+				jQuery( "#disconnect_bp" ).submit();
+			}
+		});
+	});
+	</script>
 <?php else: ?>
+	
 	<h3 class="orange">Step 3: Sign-in / Register with My BruteProtect</h3>
 
 				<a href="<?php echo BRUTEPROTECT_PLUGIN_URL ?>/images/screen-welcome.jpg" target="_blank" class="welcomescreen">

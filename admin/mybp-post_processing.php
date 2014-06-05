@@ -1,4 +1,23 @@
 <?php
+
+if ( isset( $_POST['brute_action'] ) && $_POST['brute_action'] == 'unlink_owner_from_site' ) {
+	global $current_user;
+	delete_user_meta($current_user->ID, 'bruteprotect_user_linked');
+	$bp_users = get_bruteprotect_users();
+	if( empty( $bp_users ) ) {
+		delete_site_option('bruteprotect_user_linked');
+	}
+	
+	$action = 'unlink_owner_from_site';
+	$additional_data = array(
+		'wp_user_id' => strval(count( $current_user->ID )),
+	);
+	$sign = true;
+
+	$response = $this->brute_call( $action, $additional_data, $sign );
+	add_action( 'admin_notices', 'brute_site_unlinked_notice' );
+}
+
 if ( isset( $_POST['brute_action'] ) && $_POST['brute_action'] == 'get_api_key' && is_email( $_POST['email_address'] ) ) {
 	global $wp_version;
 

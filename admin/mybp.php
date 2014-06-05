@@ -79,7 +79,7 @@ $bruteprotect_1_and_2 = false;
 if ( false == $invalid_key ) {
 	$bruteprotect_step1 = true;
 }
-if ( $privacy_opt_in && in_array( true, $privacy_opt_in ) ) {
+if( is_array($privacy_opt_in) && isset( $privacy_opt_in['remote_monitoring'] )) {
 	$bruteprotect_step2 = true;
 }
 if ( $bruteprotect_step1 && $bruteprotect_step2 ) {

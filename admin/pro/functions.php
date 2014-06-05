@@ -404,3 +404,27 @@ function brute_protect_get_core_update() {
 
 	return '1';
 }
+
+function brute_site_unlinked_notice() {
+    ?>
+       <div class="updated">
+           <p>This site was unlinked from your my.bruteprotect.com account.</p>
+       </div>
+       <?php
+}
+
+/**
+ * Gets users on this site who have linked to an account on my.bruteprotect
+ */
+function get_bruteprotect_users() {
+	$args = array(
+		'meta_query' => array(
+			array(
+				'key' => 'bruteprotect_user_linked',
+				'compare'=>'EXISTS',
+			),
+		),
+	);
+	$bp_users = get_users( $args );
+	return $bp_users;
+}

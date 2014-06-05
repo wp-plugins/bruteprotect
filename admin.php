@@ -84,7 +84,7 @@ if ( ! class_exists( 'BruteProtect_Admin' ) ) {
 		function check_bruteprotect_access() {
 
 			$can_access_host = get_site_transient( 'bruteprotect_can_access_host' );
-			if ( $can_access_host && ( ! isset( $_GET['page'] ) || $_GET['page'] != 'bruteprotect-api' ) && ! isset( $_GET['bpc'] ) ) {
+			if ( $can_access_host && ( ! isset( $_GET['page'] ) || $_GET['page'] != 'bruteprotect-config' ) && ! isset( $_GET['bpc'] ) ) {
 				return true;
 			}
 
@@ -194,16 +194,6 @@ if ( ! class_exists( 'BruteProtect_Admin' ) ) {
 					'bruteprotect_dashboard'
 				), $this->menu_icon );
 
-			/*add_submenu_page( 'bruteprotect-config', __( 'General Settings' ), __( 'General Settings' ), 'manage_options', 'bruteprotect-settings', array( &$this, 'bruteprotect_general_settings' ) );
-				
-			add_submenu_page( 'bruteprotect-config', __( 'API Key' ), __( 'API Key' ), 'manage_options', 'bruteprotect-api', array( &$this, 'bruteprotect_api_key_settings' ) );			
-			
-			add_submenu_page( 'bruteprotect-config', __( 'IP White List' ), __( 'IP White List' ), 'manage_options', 'bruteprotect-whitelist', array( &$this, 'bruteprotect_whitelist_settings' ) );
-		
-			if ( is_object( $this->clef ) && !$this->clef->clef_active() ) {
-				add_submenu_page( 'bruteprotect-config', __( 'Clef' ), __( 'Clef' ), 'manage_options', 'bruteprotect-clef', array( &$this->clef, 'display_settings' ) );
-			}*/
-
 
 			$key   = get_site_option( 'bruteprotect_api_key' );
 			$error = get_site_option( 'bruteprotect_error' );
@@ -212,7 +202,7 @@ if ( ! class_exists( 'BruteProtect_Admin' ) ) {
 				add_action( 'admin_notices', array( &$this, 'bruteprotect_warning' ) );
 
 				return;
-			} elseif ( $error && isset( $_GET['page'] ) && $_GET['page'] != 'bruteprotect-api' ) {
+			} elseif ( $error && isset( $_GET['page'] ) && $_GET['page'] != 'bruteprotect-config' ) {
 				add_action( 'admin_notices', array( &$this, 'bruteprotect_invalid_key_warning' ) );
 
 				return;
@@ -224,7 +214,7 @@ if ( ! class_exists( 'BruteProtect_Admin' ) ) {
 			$bruteprotect_showing_warning = true;
 
 			//Don't trigger the warning on the config page
-			if ( isset( $_GET['page'] ) && 'bruteprotect-api' == $_GET['page'] )
+			if ( isset( $_GET['page'] ) && 'bruteprotect-config' == $_GET['page'] )
 				return;
 
 			$ip = $this->brute_get_ip();
@@ -237,7 +227,7 @@ if ( ! class_exists( 'BruteProtect_Admin' ) ) {
 				return;
 
 
-			echo "<div id='bruteprotect-warning' class='error fade'><p><strong>" . __( 'BruteProtect is almost ready.' ) . "</strong> " . sprintf( __( 'You must <a href="%1$s">enter your BruteProtect API key</a> for it to work.  <a href="%1$s">Obtain a key for free</a>.' ), esc_url( admin_url( 'admin.php?page=bruteprotect-api' ) ) ) . "</p></div>
+			echo "<div id='bruteprotect-warning' class='error fade'><p><strong>" . __( 'BruteProtect is almost ready.' ) . "</strong> " . sprintf( __( 'You must <a href="%1$s">enter your BruteProtect API key</a> for it to work.  <a href="%1$s">Obtain a key for free</a>.' ), esc_url( admin_url( 'admin.php?page=bruteprotect-config' ) ) ) . "</p></div>
 			";
 		}
 
@@ -246,7 +236,7 @@ if ( ! class_exists( 'BruteProtect_Admin' ) ) {
 			global $bruteprotect_showing_warning;
 			$bruteprotect_showing_warning = true;
 			echo "
-			<div id='bruteprotect-warning' class='error fade'><p><strong>" . __( 'There is a problem with your BruteProtect API key' ) . "</strong> " . sprintf( __( ' <a href="%1$s">Please correct the error</a>, your site will not be protected until you do.' ), esc_url( admin_url( 'admin.php?page=bruteprotect-api' ) ) ) . "</p></div>
+			<div id='bruteprotect-warning' class='error fade'><p><strong>" . __( 'There is a problem with your BruteProtect API key' ) . "</strong> " . sprintf( __( ' <a href="%1$s">Please correct the error</a>, your site will not be protected until you do.' ), esc_url( admin_url( 'admin.php?page=bruteprotect-config' ) ) ) . "</p></div>
 			";
 		}
 

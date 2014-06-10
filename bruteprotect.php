@@ -7,7 +7,7 @@
 Plugin Name: BruteProtect
 Plugin URI: http://bruteprotect.com/
 Description: BruteProtect allows the millions of WordPress bloggers to work together to defeat Brute Force attacks. It keeps your site protected from brute force security attacks even while you sleep. To get started: 1) Click the "Activate" link to the left of this description, 2) Sign up for a BruteProtect API key, and 3) Go to your BruteProtect configuration page, and save your API key.
-Version: 2.0.4
+Version: 2.0.5
 Author: Parka, LLC
 Author URI: http://getparka.com/
 License: GPLv2 or later
@@ -29,7 +29,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-define( 'BRUTEPROTECT_VERSION', '2.0.4' );
+define( 'BRUTEPROTECT_VERSION', '2.0.5' );
 define( 'BRUTEPROTECT_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 
 $use_https = get_site_transient( 'bruteprotect_use_https' );
@@ -149,12 +149,30 @@ class BruteProtect {
 	 * @return VOID
 	 */
 	function brute_maybe_use_secure_login() {
+		
+		global $error;
+
+		if ( empty($wp_error) )
+			$wp_error = new WP_Error();
+		
+		// In case a plugin uses $error rather than the $wp_errors object
+		if ( !empty( $error ) ) {
+			$wp_error->add('error', $error);
+			unset($error);
+		}
+		
+		// turn off secure login if we're already on ssl or the user has opted for standard login or they had a failed login
+		if( isset( $_GET['bp_sl_off'] ) || is_ssl() || $wp_error->get_error_code() ) {
+			return;
+		}
+		
 		$response = $this->brute_call( 'check_key' );
 
 		if ( ! isset( $response['privacy_settings'] ) ) {
 			// there is no response from the api, don't show secure login
 			return;
 		}
+		
 		// gets the user's most up-to-date account info
 		bruteprotect_save_pro_info( $response );
 
@@ -219,7 +237,6 @@ class BruteProtect {
 				endif;
 			endforeach;
 		endif;
-
 	}
 
 	function get_privacy_key() {
@@ -677,15 +694,19 @@ class bp_Widget extends WP_Widget {
 			       value="<?php echo esc_attr( $title ); ?>">
 		</p>
 
-		<!--Show site stats-->
+		<!--Show site stats
 		<p>
 			<input id="<?php echo $this->get_field_id( 'showsitestats' ); ?>"
 			       name="<?php echo $this->get_field_name( 'showsitestats' ); ?>" type="checkbox"
 			       value="1" <?php checked( '1', $showsitestats ); ?> />
 			<label
 				for="<?php echo $this->get_field_id( 'showsitestats' ); ?>"><?php _e( 'Show your stats?' ); ?></label>
-			<br/>(Currently <?php echo get_site_option( 'bruteprotect_blocked_attempt_count' ); ?> attacks blocked)
-		</p>
+				<?php
+				$attacks_blocked = get_site_option( 'bruteprotect_blocked_attempt_count', '0' );
+				$plural = ($attacks_blocked > 1 || $attacks_blocked === '0') ? 's' : '';
+				?>
+			<br/>(Currently <?php echo $attacks_blocked; ?> attack<?php echo $plural; ?> blocked)
+		</p>-->
 		
 		<!--Choose Logo Color-->
 		<p>
@@ -709,7 +730,7 @@ class bp_Widget extends WP_Widget {
 	public function update( $new_instance, $old_instance ) {
 		$instance                  = array();
 		$instance['title']         = ( ! empty( $new_instance['title'] ) ) ? strip_tags( $new_instance['title'] ) : '';
-		$instance['showsitestats'] = strip_tags( $new_instance['showsitestats'] );
+		//$instance['showsitestats'] = strip_tags( $new_instance['showsitestats'] );
 		$instance['choose_logo_color'] = strip_tags( $new_instance['choose_logo_color'] );
 
 		return $instance;
@@ -756,12 +777,14 @@ class bp_Widget extends WP_Widget {
 			echo $args['before_title'] . $title . $args['after_title'];
 		echo '<div id="brutewidget">' . '<center>' . $widgetlogo . '</center>';
 
-		/*show site stats*/
+		/*show site stats
 		if ( $instance['showsitestats'] AND $instance['showsitestats'] == '1' && get_site_option( 'bruteprotect_blocked_attempt_count' ) > 0 ) {
 			echo '<center>' . 'Protected from ' . get_site_option( 'bruteprotect_blocked_attempt_count' ) . ' attacks!' . '</center>' . '</div>';
+		} elseif( $instance['showsitestats'] AND $instance['showsitestats'] == '1' && get_site_option( 'bruteprotect_blocked_attempt_count' ) == '1' ) {
+			echo '<center>' . 'Protected from ' . get_site_option( 'bruteprotect_blocked_attempt_count' ) . ' attack!' . '</center>' . '</div>';
 		} else {
 			echo '</div>';
-		}
+		}*/
 
 		echo $args['after_widget'];
 	}

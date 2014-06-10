@@ -17,9 +17,27 @@ $redirect = '';
 if(isset($_GET['redirect_to'])) {
 	$redirect = $_GET['redirect_to'];
 }
+
+$wp_login_url = home_url() . '/wp-login.php?bp_sl_off=true';
+if( !empty( $_GET['redirect_to'])) {
+	$wp_login_url .= '&redirect_to=' . $_GET['redirect_to'];
+}
+if( !empty( $_GET['reauth'])) {
+	$wp_login_url .= '&reauth=' . $_GET['reauth'];
+}
+
 ?>
 <div id="newbutton">
-<a class="btn bfm bfme icon-arrow-right" href="/" onclick="PopupCenter('https://api.bruteprotect.com/ui/login/to/<?php echo urlencode( $login_url ); ?>/<?php echo $api_key; ?>/<?php echo base64_encode($redirect); ?>', 'Secure Login', 400, 300); return false;"><span class="btext">Log In Securely with BruteProtect</span></a>
+<a class="btn bfm bfme icon-arrow-right" href="/" onclick="PopupCenter('https://api.bruteprotect.com/ui/login/to/<?php echo urlencode( $login_url ); ?>/<?php echo $api_key; ?>/<?php echo base64_encode($redirect); ?>', 'Secure Login', 400, 300); return false;">
+	<span class="btext">
+		<?php echo apply_filters( 'brute_secure_login_button', 'Log In Securely with BruteProtect' ); ?>
+	</span>
+</a>
+<a class="btn bwp" href="<?php echo $wp_login_url; ?>">
+	<span class="btext">
+		<?php echo apply_filters( 'brute_default_button', 'Log in with WordPress' ); ?>
+	</span>
+</a>
 </div>
 <style type="text/css">
 
@@ -29,17 +47,27 @@ if(isset($_GET['redirect_to'])) {
 	-moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box;
 }
 
+
+.login form {
+	padding: 20px;
+}
+
 #login .btext {
 	padding: 17px 10px 15px 50px;
 	display: inline-block;
 	line-height: 100%;
 }
 
+#login .bwp .btext {
+	padding: 17px 10px 15px 10px;
+	text-align: center;
+}
+
 #login  .blogo {
 	padding: 7px 5px 5px 5px;
 	border-right: 1px #d65210 solid;
 	display: inline-block;
-	background-color: #15b100; 
+	background-color: #f29e0d; 
 }
 
 
@@ -74,13 +102,25 @@ if(isset($_GET['redirect_to'])) {
 	content: "";
 }
 
-.bfm {
-	background: #15b100;
+.bwp {
+	background: #1e8cbe;
+	color: #fff;
+	text-align: center;
+}
+
+.bwp:hover {
+	background: #117eaf;
 	color: #fff;
 }
 
-.bfm:hover {
+.bfm {
 	background: #f29e0d;
+	color: #fff;
+	margin: 0 0 10px 0;
+}
+
+.bfm:hover {
+	background: #15b100;
 	color: #fff;
 }
 
@@ -116,7 +156,7 @@ if(isset($_GET['redirect_to'])) {
 .bfme:after {
 	width: 15%;
 	height: 100%;
-	background: #15b100 url('../wp-content/plugins/bruteprotect/images/single-lock.png') 50% 50% no-repeat;
+	background: #f29e0d url('../wp-content/plugins/bruteprotect/images/single-lock.png') 50% 50% no-repeat;
 	z-index: 1;
 	left: 0;
 	top: 0;
@@ -126,6 +166,19 @@ if(isset($_GET['redirect_to'])) {
 .bfme:hover:after {
 	width: 100%;
 	background: #129900 url('../wp-content/plugins/bruteprotect/images/single-lock.png') 50% 50% no-repeat;
+}
+
+
+/* clef ovverides */
+
+#loginform h2 {  /* overrides clef h2 styling */
+	margin-top: 20px !important;
+	font-style: italic;
+	color: #aaa !important;
+}
+
+.clef-login-form .clef-button-container {
+	margin-bottom: 0;
 }
 
 

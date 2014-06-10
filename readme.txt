@@ -1,5 +1,5 @@
 === BruteProtect ===
-Contributors: samhotchkiss, roccotripaldi, sdquirk, professor44, magicbean
+Contributors: samhotchkiss, roccotripaldi, sdquirk, professor44, magicbean, dsmartdesign
 Tags: security, bruteforce, brute force, brute force attack, harden wp, login lockdown, multisite, botnet, wordfence, best security
 Requires at least: 3.0
 Tested up to: 3.9
@@ -83,6 +83,10 @@ Yes, you may add IP addresses under the “whitelist” setting of BruteProtect.
 
 
 == Changelog ==
+
+= 2.0.5 =
+* Now you can opt out of the Secure Login feature from the login page
+* Secure Login is automatically disabled if you are connecting to your site via SSL already
 
 = 2.0.4 =
 * Add color options for the front end widget

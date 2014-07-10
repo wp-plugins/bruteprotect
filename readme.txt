@@ -84,6 +84,11 @@ Yes, you may add IP addresses under the “whitelist” setting of BruteProtect.
 
 == Changelog ==
 
+= 2.0.6 =
+* Support for sites where WordPress is installed in a sub folder
+* More readable UI
+* Fixed bugs that where causing PHP errors
+
 = 2.0.5 =
 * Now you can opt out of the Secure Login feature from the login page
 * Secure Login is automatically disabled if you are connecting to your site via SSL already

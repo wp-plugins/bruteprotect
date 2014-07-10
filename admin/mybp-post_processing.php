@@ -27,6 +27,8 @@ if ( isset( $_POST['brute_action'] ) && $_POST['brute_action'] == 'get_api_key' 
 
 	$request['email'] = $_POST['email_address'];
 	$request['site']  = $host;
+	$request['directory_url'] = $this->is_subdirectory();
+	$request['url_protocol'] = $this->brute_get_protocol();
 
 	$args = array(
 		'body'        => $request,
@@ -36,8 +38,21 @@ if ( isset( $_POST['brute_action'] ) && $_POST['brute_action'] == 'get_api_key' 
 	);
 
 	$response_json = wp_remote_post( $post_host, $args );
+	
+	if( is_wp_error( $response_json )) {
+		// connection error 
+		?>
+		<script type="text/javascript">
+			<!--
+			window.location = "admin.php?page=bruteprotect-config&get_key=fail";
+			//-->
+		</script>
+		<?php
+		exit;
+	}
+	
 
-	if ( $response_json['response']['code'] == 200 ) {
+	if ( isset($response_json['response']['code']) && $response_json['response']['code'] == 200 ) {
 		$key = $response_json['body'];
 		update_site_option( 'bruteprotect_api_key', $key );
 		?>

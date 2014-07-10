@@ -1,5 +1,5 @@
 === BruteProtect ===
-Contributors: samhotchkiss, roccotripaldi, sdquirk, professor44, magicbean, dsmartdesign
+Contributors: samhotchkiss, professor44, roccotripaldi, sdquirk, maverick3x6, dsmartdesign, magicbean
 Tags: security, bruteforce, brute force, brute force attack, harden wp, login lockdown, multisite, botnet, wordfence, best security
 Requires at least: 3.0
 Tested up to: 3.9

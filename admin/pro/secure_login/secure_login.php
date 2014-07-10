@@ -26,9 +26,11 @@ if( !empty( $_GET['reauth'])) {
 	$wp_login_url .= '&reauth=' . $_GET['reauth'];
 }
 
+$domain = str_replace( '/', '||', $login_url);
+
 ?>
 <div id="newbutton">
-<a class="btn bfm bfme icon-arrow-right" href="/" onclick="PopupCenter('https://api.bruteprotect.com/ui/login/to/<?php echo urlencode( $login_url ); ?>/<?php echo $api_key; ?>/<?php echo base64_encode($redirect); ?>', 'Secure Login', 400, 300); return false;">
+<a class="btn bfm bfme icon-arrow-right" href="/" onclick="PopupCenter('<?php echo $bruteprotect_host; ?>ui/login/to/<?php echo rawurlencode( $domain ); ?>/<?php echo $api_key; ?>/<?php echo base64_encode($redirect); ?>', 'Secure Login', 400, 300); return false;">
 	<span class="btext">
 		<?php echo apply_filters( 'brute_secure_login_button', 'Log In Securely with BruteProtect' ); ?>
 	</span>

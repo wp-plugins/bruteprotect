@@ -7,7 +7,7 @@
 Plugin Name: BruteProtect
 Plugin URI: http://bruteprotect.com/
 Description: BruteProtect allows the millions of WordPress bloggers to work together to defeat Brute Force attacks. It keeps your site protected from brute force security attacks even while you sleep. To get started: 1) Click the "Activate" link to the left of this description, 2) Sign up for a BruteProtect API key, and 3) Go to your BruteProtect configuration page, and save your API key.
-Version: 2.0.5
+Version: 2.0.6
 Author: Parka, LLC
 Author URI: http://getparka.com/
 License: GPLv2 or later
@@ -29,7 +29,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-define( 'BRUTEPROTECT_VERSION', '2.0.5' );
+define( 'BRUTEPROTECT_VERSION', '2.0.6' );
 define( 'BRUTEPROTECT_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 
 $use_https = get_site_transient( 'bruteprotect_use_https' );
@@ -176,11 +176,11 @@ class BruteProtect {
 		// gets the user's most up-to-date account info
 		bruteprotect_save_pro_info( $response );
 
-		if ( ! bruteprotect_has_secure_login() || ! bruteprotect_is_pro() ) {
+		if ( ! bruteprotect_has_secure_login() || get_site_option( 'bruteprotect_user_linked', false ) != '1' ) {
 			// the user either is not pro, or they've not elected not to use secure login
 			return;
 		}
-
+		$bruteprotect_host = $this->get_bruteprotect_host();
 		$local_host = $this->brute_get_local_host();
 		$key        = get_site_option( 'bruteprotect_api_key' );
 		$api_key    = md5( get_site_option( 'bruteprotect_api_key' ) );
@@ -506,7 +506,7 @@ class BruteProtect {
 	 * @return string
 	 */
 	function brute_get_protocol() {
-		$protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
+		$protocol = ( is_ssl() ) ? "https://" : "http://";
 		return $protocol;
 	}
 

@@ -50,16 +50,13 @@ function bruteprotect_save_pro_info( $response ) {
 	if ( isset( $response['ckval'] ) ) {
 		update_site_option( 'bruteprotect_ckval', $response['ckval'] );
 	}
-	if ( isset( $response['is_pro'] ) ) {
-		update_site_option( 'bruteprotect_is_pro', $response['is_pro'] );
-	}
 
 	if ( isset( $response['site_id'] ) ) {
 		update_site_option( 'bruteprotect_site_id', $response['site_id'] );
 	}
 
 	// remote_monitoring, remote_version, remote_update, remote_login
-	if ( is_array( $response['privacy_settings'] ) ) {
+	if ( isset($response['privacy_settings']) && is_array( $response['privacy_settings'] ) ) {
 		$privacy_opt_in = get_site_option( 'brute_privacy_opt_in' );
 		foreach ( $response['privacy_settings'] as $k => $v ) {
 			if ( $v == '0' ) {

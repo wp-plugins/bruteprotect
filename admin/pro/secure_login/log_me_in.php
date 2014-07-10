@@ -23,7 +23,7 @@ delete_site_transient( 'brute_login_' . $uid );
 wp_set_auth_cookie( $uid );
 $redirect = urldecode( $_GET['redirect'] );
 if ( empty( $redirect ) ) {
-	$redirect = '/wp-admin';
+	$redirect = home_url() . '/wp-admin';
 }
 wp_redirect( $redirect );
 exit;

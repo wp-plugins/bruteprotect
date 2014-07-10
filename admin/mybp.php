@@ -19,24 +19,6 @@ if ( $_SERVER['REQUEST_METHOD'] == 'POST' ) {
 	require 'mybp-post_processing.php';
 }
 
-$key         = get_site_option( 'bruteprotect_api_key' );
-$invalid_key = false;
-delete_site_option( 'bruteprotect_error' );
-$response = $this->brute_call( 'check_key' );
-if ( isset( $response['error'] ) ) :
-	if ( $response['error'] == 'Invalid API Key' || $response['error'] == 'API Key Required' ) :
-		$invalid_key = 'invalid';
-	endif;
-	if ( $response['error'] == 'Host match error' ) :
-		$invalid_key = 'host';
-	endif;
-endif;
-
-if ( ! $this->check_bruteprotect_access() ) : //server cannot access API
-	$invalid_key = 'server_access';
-endif;
-bruteprotect_save_pro_info( $response );
-
 $brute_dashboard_widget_hide       = get_site_option( 'brute_dashboard_widget_hide' );
 $brute_dashboard_widget_admin_only = get_site_option( 'brute_dashboard_widget_admin_only' );
 $privacy_opt_in                    = get_site_option( 'brute_privacy_opt_in' );
@@ -62,13 +44,6 @@ endif;
 if ( ! $this->check_bruteprotect_access() ) : //server cannot access API
 	$invalid_key = 'server_access';
 endif;
-
-$is_subdomain_install = false;
-$wp_site_url = get_site_url();
-$wp_site_url_parts = parse_url( $wp_site_url );
-if( isset( $wp_site_url_parts ) && is_array( $wp_site_url_parts ) && $wp_site_url_parts[ 'path' ] && $wp_site_url_parts[ 'path' ] != '/' ) {
-	$is_subdomain_install = true;
-}
 
 bruteprotect_save_pro_info( $response );
 
@@ -107,7 +82,7 @@ include 'mybp-sections/privacy_update.php';
 
 <h2 id="header">
 
-	<?php if ( ! is_multisite() && ! $is_subdomain_install ) : ?><a href="http://support.bruteprotect.com/" target="_blank" class="right orange button">Get Support</a><a href="https://my.bruteprotect.com" target="_blank" class="right blue button">Go to My BruteProtect</a><?php endif; ?>
+	<?php if ( ! is_multisite() ) : ?><a href="http://support.bruteprotect.com/" target="_blank" class="right orange button">Get Support</a><a href="https://my.bruteprotect.com" target="_blank" class="right blue button">Go to My BruteProtect</a><?php endif; ?>
 	<img src="<?php echo BRUTEPROTECT_PLUGIN_URL ?>images/BruteProtect-Logo-Text-Only-40.png" alt="BruteProtect"
 	     width="250"> &nbsp;
 	Setup
@@ -129,7 +104,7 @@ echo '<div class="clear">&nbsp;</div>';
 endif //end sections 1&2 ?>
 
 	
-<?php if ( ! is_multisite() && ! $is_subdomain_install ) : ?>
+<?php if ( ! is_multisite() ) : ?>
 	<div class="box left clear framed">
 
 		<?php include 'mybp-sections/link_site.php'; ?>

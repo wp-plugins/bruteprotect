@@ -7,7 +7,7 @@
 Plugin Name: BruteProtect
 Plugin URI: http://bruteprotect.com/
 Description: BruteProtect allows the millions of WordPress bloggers to work together to defeat Brute Force attacks. It keeps your site protected from brute force security attacks even while you sleep. To get started: 1) Click the "Activate" link to the left of this description, 2) Sign up for a BruteProtect API key, and 3) Go to your BruteProtect configuration page, and save your API key.
-Version: 2.0.6
+Version: 2.0.7
 Author: Parka, LLC
 Author URI: http://getparka.com/
 License: GPLv2 or later
@@ -29,7 +29,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-define( 'BRUTEPROTECT_VERSION', '2.0.6' );
+define( 'BRUTEPROTECT_VERSION', '2.0.7' );
 define( 'BRUTEPROTECT_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 
 $use_https = get_site_transient( 'bruteprotect_use_https' );
@@ -490,10 +490,13 @@ class BruteProtect {
 	 * @return bool|string  Returns false if not a subdirectory. Returns the site url including subdirectory otherwise.
 	 */
 	function is_subdirectory() {
+		if( is_multisite() )
+			return false;
+		
 		$is_subdomain_install = false;
 		$wp_site_url = get_site_url();
 		$wp_site_url_parts = parse_url( $wp_site_url );
-		if( isset( $wp_site_url_parts ) && is_array( $wp_site_url_parts ) && $wp_site_url_parts[ 'path' ] && $wp_site_url_parts[ 'path' ] != '/' ) {
+		if( isset( $wp_site_url_parts ) && is_array( $wp_site_url_parts ) && isset( $wp_site_url_parts[ 'path' ] ) && $wp_site_url_parts[ 'path' ] && $wp_site_url_parts[ 'path' ] != '/' ) {
 			$is_subdomain_install = true;
 		} else {
 			return false;

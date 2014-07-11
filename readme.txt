@@ -84,6 +84,9 @@ Yes, you may add IP addresses under the “whitelist” setting of BruteProtect.
 
 == Changelog ==
 
+= 2.0.7 =
+* Fix minor bug in multisite admin
+
 = 2.0.6 =
 * Support for sites where WordPress is installed in a sub folder
 * More readable UI

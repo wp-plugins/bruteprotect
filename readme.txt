@@ -84,6 +84,10 @@ Yes, you may add IP addresses under the “whitelist” setting of BruteProtect.
 
 == Changelog ==
 
+= 2.0.8 =
+* Improve the way site urls are saved
+* Improve how we determine if a site is linked to my.bruteprotect.com
+
 = 2.0.7 =
 * Fix minor bug in multisite admin
 

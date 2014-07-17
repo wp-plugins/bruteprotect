@@ -12,13 +12,16 @@
  *
  * @return bool
  */
-function bruteprotect_is_pro() {
-	$is_pro = get_site_option( 'bruteprotect_user_linked', false );
-	if ( $is_pro == '1' ) {
-		return true;
-	} else {
-		return false;
-	}
+function bruteprotect_is_linked() {
+    global $current_user;
+    $bruteprotect_user_linked = get_user_meta( $current_user->ID, 'bruteprotect_user_linked', false );
+    if( $bruteprotect_user_linked == false )
+        return false;
+    $site_linked = get_site_option( 'bruteprotect_user_linked', false );
+    if( $site_linked == false )
+        return false;
+
+    return true;
 }
 
 /**

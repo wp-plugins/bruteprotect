@@ -11,7 +11,7 @@ if ( false == $invalid_key ) :
 	}
 	
 ?>
-<?php if ( get_site_option( 'bruteprotect_user_linked', false ) == '1' ) : ?>
+<?php if ( bruteprotect_is_linked() ) : ?>
 	
 	<iframe src="<?php echo $iframe_url; ?>" width="100%" height="<?php echo $iframe_height; ?>" ></iframe>
 	<form action="" method="post" class="regform" id="disconnect_bp">

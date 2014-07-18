@@ -32,7 +32,7 @@ if ( verify_bp_nonce( $bruteprotect_host, $_POST ) ) {
 	}
 
 	//$login_destination = plugins_url( 'log_me_in.php' , __FILE__ ) . '?user='.$user->ID;
-	$login_destination = home_url() . '/?bruteprotect_pro=true&bpp_action=bp_secure_login&user=' . $user->ID . '&redirect=' . $redirect;
+	$login_destination = home_url() . '/?bruteprotect_pro=true&bpp_action=bp_secure_login&user=' . $user->ID . '&redirect=' . urlencode($redirect);
 
 	$tname = 'brute_login_' . $user->ID;
 	$tval  = substr( md5( rand( 0, 1000000000000 ) ), 3, 20 );

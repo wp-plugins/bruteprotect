@@ -18,7 +18,7 @@ if(isset($_GET['redirect_to'])) {
 	$redirect = $_GET['redirect_to'];
 }
 
-$wp_login_url = home_url() . '/wp-login.php?bp_sl_off=true';
+$wp_login_url = wp_login_url() . '?bp_sl_off=true';
 if( !empty( $_GET['redirect_to'])) {
 	$wp_login_url .= '&redirect_to=' . urlencode($_GET['redirect_to']);
 }

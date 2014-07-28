@@ -84,6 +84,10 @@ Yes, you may add IP addresses under the “whitelist” setting of BruteProtect.
 
 == Changelog ==
 
+= 2.0.9 =
+* Change the hook used for our backstop check to ensure complete effectiveness
+* Improve secure login redirect
+
 = 2.0.8.1 =
 * Fixing a glitch that deactivated the Secure Login feature
 * Improving the urls in the Secure Login feature
@@ -269,3 +273,8 @@ Yes, you may add IP addresses under the “whitelist” setting of BruteProtect.
 * Improve admin styling (thanks Michael Cain!)
 * Added statistics to your dashboard
 * If the API server goes down, we fall back to a math-based human verification
+
+== Upgrade Notice ==
+
+= 2.0.9 =
+This upgrade ensures complete protection against XML-RPC based attacks.  Please upgrade immediately.

@@ -7,7 +7,7 @@
 Plugin Name: BruteProtect
 Plugin URI: http://bruteprotect.com/
 Description: BruteProtect allows the millions of WordPress bloggers to work together to defeat Brute Force attacks. It keeps your site protected from brute force security attacks even while you sleep. To get started: 1) Click the "Activate" link to the left of this description, 2) Sign up for a BruteProtect API key, and 3) Go to your BruteProtect configuration page, and save your API key.
-Version: 2.0.8.1
+Version: 2.0.9
 Author: Parka, LLC
 Author URI: http://getparka.com/
 License: GPLv2 or later
@@ -29,7 +29,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-define( 'BRUTEPROTECT_VERSION', '2.0.8.1' );
+define( 'BRUTEPROTECT_VERSION', '2.0.9' );
 define( 'BRUTEPROTECT_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 
 $use_https = get_site_transient( 'bruteprotect_use_https' );
@@ -68,7 +68,7 @@ class BruteProtect {
 		add_action( 'login_head', array( &$this, 'brute_check_use_math' ) );
 		add_action( 'login_form', array( &$this, 'brute_maybe_use_secure_login' ) );
 		add_action( 'init', array( &$this, 'brute_access_check_generator' ) );
-		add_action( 'wp_authenticate', array( &$this, 'brute_check_preauth' ), 1 );
+		add_filter( 'authenticate', array( &$this, 'brute_check_preauth' ), 10, 3 );
 		add_action( 'wp_login_failed', array( &$this, 'brute_log_failed_attempt' ) );
 		if ( isset( $_GET['bruteprotect_pro'] ) ) {
 			add_action( 'init', array( &$this, 'load_bruteprotect_pro' ) );
@@ -132,7 +132,7 @@ class BruteProtect {
 	 *
 	 * @return VOID
 	 */
-	function brute_check_preauth( $username = 'Not Used By BruteProtect' ) {
+	function brute_check_preauth( $user = 'Not Used By BruteProtect', $username = 'Not Used By BruteProtect', $password = 'Not Used By BruteProtect' ) {
 		$this->brute_check_loginability( true );
 		$bum = get_site_transient( 'brute_use_math' );
 

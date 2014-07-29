@@ -20,7 +20,7 @@ if(isset($_GET['redirect_to'])) {
 
 $wp_login_url = wp_login_url() . '?bp_sl_off=true';
 if( !empty( $_GET['redirect_to'])) {
-	$wp_login_url .= '&redirect_to=' . $_GET['redirect_to'];
+	$wp_login_url .= '&redirect_to=' . urlencode($_GET['redirect_to']);
 }
 if( !empty( $_GET['reauth'])) {
 	$wp_login_url .= '&reauth=' . $_GET['reauth'];

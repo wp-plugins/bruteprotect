@@ -84,6 +84,9 @@ Yes, you may add IP addresses under the “whitelist” setting of BruteProtect.
 
 == Changelog ==
 
+= 2.0.9.1 =
+* Fix minor issue with secure login
+
 = 2.0.9 =
 * Change the hook used for our backstop check to ensure complete effectiveness
 * Improve secure login redirect

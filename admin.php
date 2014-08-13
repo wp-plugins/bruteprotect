@@ -63,7 +63,27 @@ if ( ! class_exists( 'BruteProtect_Admin' ) ) {
 		}
 
 		function enqueue_bruteprotect_admin() {
-			wp_enqueue_style( 'bruteprotect-css', plugins_url( '/admin/bruteprotect-admin.css', __FILE__ ), array(), BRUTEPROTECT_VERSION );
+            wp_enqueue_style( 'bruteprotect-css', plugins_url( '/admin/bruteprotect-admin.css', __FILE__ ), array(), BRUTEPROTECT_VERSION );
+            if( isset($_GET['page']) && $_GET['page'] == 'bruteprotect-config') {
+                wp_enqueue_style('bpdash-css', MYBP_URL . 'assets/stylesheets/app.css', array(), BRUTEPROTECT_VERSION );
+                wp_enqueue_style('fontawesome',  plugins_url('/bruteprotect/admin/fonts/font-awesome/css/font-awesome.min.css'), array(), BRUTEPROTECT_VERSION );
+                wp_enqueue_style('jquery_ui_smoothness', '//ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/themes/smoothness/jquery-ui.css', array(), BRUTEPROTECT_VERSION );
+                wp_register_script( 'modrnizer', plugins_url('/bruteprotect/admin/js/modrnizer.js'));
+                wp_register_script( 'foundation', plugins_url('/bruteprotect/admin/js/foundation.min.js'), array('jquery','modrnizer'), BRUTEPROTECT_VERSION);
+                wp_register_script( 'equalizer', plugins_url('/bruteprotect/admin/js/foundation.equalizer.js'), array('foundation'), BRUTEPROTECT_VERSION);
+                wp_register_script( 'zxcvbn', plugins_url('/bruteprotect/admin/js/zxcvbn.js'), array('jquery'), BRUTEPROTECT_VERSION);
+                wp_register_script( 'zxcvbn_analysis', plugins_url('/bruteprotect/admin/js/zxcvbn_analysis.js'), array('zxcvbn'), BRUTEPROTECT_VERSION);
+                wp_register_script( 'jquery_ui', '//ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min.js', array('jquery'), BRUTEPROTECT_VERSION);
+                wp_register_script( 'bp_pricing_slider', plugins_url('/bruteprotect/admin/js/pricing_slider.js'), array('jquery_ui'), BRUTEPROTECT_VERSION);
+
+
+                wp_enqueue_script('modrnizer');
+                wp_enqueue_script('foundation');
+                wp_enqueue_script('equalizer');
+                wp_enqueue_script('bp_pricing_slider');
+                wp_enqueue_script('zxcvbn_analysis');
+            }
+
 		}
 
 		function bruteprotect_localhost_warning() {
@@ -89,7 +109,7 @@ if ( ! class_exists( 'BruteProtect_Admin' ) ) {
 			}
 
 
-			$test = wp_remote_get( 'http://api.bruteprotect.com/api_check.php' );
+			$test = wp_remote_get( 'http://api.bpdv.co/api_check.php' );
 			if ( ! is_wp_error( $test ) && $test['body'] == 'ok' ) :
 				set_site_transient( 'bruteprotect_can_access_host', 1, 604800 );
 
@@ -136,24 +156,27 @@ if ( ! class_exists( 'BruteProtect_Admin' ) ) {
 		}
 
 		function bruteprotect_dashboard_widget() {
+
+            $response = $this->brute_call( 'check_key' );
+
+            if( !isset($response['status']) ) {
+                // we cannot connect to the api, lets not show the stats
+                echo '<div style="text-align: center;"><strong>Statistics are currently unavailable.</strong></div>';
+                return;
+            }
+
+            bruteprotect_save_pro_info( $response );
 			$key   = get_site_option( 'bruteprotect_api_key' );
 			$ckval = get_site_option( 'bruteprotect_ckval' );
 
-			if ( $key && ! $ckval ) {
-				$response = $this->brute_call( 'check_key' );
-
-				bruteprotect_save_pro_info( $response );
-			}
-
 			$stats = wp_remote_get( $this->get_bruteprotect_host() . "index.php/ui/dashboard/index/" . $key );
 
-			if ( ! is_wp_error( $stats ) ) {
-				print_r( $stats['body'] );
+            if( is_wp_error( $stats ) ) {
+                echo '<div style="text-align: center;"><strong>Statistics are currently unavailable.</strong></div>';
+                return;
+            }
 
-				return;
-			}
-
-			echo '<center><strong>Statistics are currently unavailable.</strong></center>';
+            print_r( $stats['body'] );
 		}
 
 		function bruteprotect_plugin_action_links( $links, $file ) {
@@ -243,18 +266,48 @@ if ( ! class_exists( 'BruteProtect_Admin' ) ) {
 		function bruteprotect_dashboard() {
 			include 'admin/mybp.php';
 		}
+        /**
+         * Unlinks the current user from my.bruteprotect.com
+         *
+         * if there is a flag to delete_all, all other linked users will also be disconnected, and the api key removed
+         *
+         * @param bool $delete_all
+         */
+        function unlink_site( $delete_all = false ) {
+            global $current_user;
+            $user_linked = get_user_meta( $current_user->ID, 'bruteprotect_user_linked', true );
+            if( !empty($user_linked) ) {
+                delete_user_meta($current_user->ID, 'bruteprotect_user_linked');
+                $action = 'unlink_owner_from_site';
+                $additional_data = array(
+                    'wp_user_id' => strval( $current_user->ID ),
+                );
+                $sign = true;
 
-		function bruteprotect_general_settings() {
-			include 'admin/settings.php';
-		}
+                $response = $this->brute_call( $action, $additional_data, $sign );
+            }
 
-		function bruteprotect_api_key_settings() {
-			include 'admin/api_key_settings.php';
-		}
+            $bp_users = get_bruteprotect_users();
+            if( empty( $bp_users ) ) {
+                delete_site_option('bruteprotect_user_linked');
+            } else if( $delete_all == true ) {
+                foreach( $bp_users as $u ) {
+                    delete_user_meta($u->ID, 'bruteprotect_user_linked');
+                    $action = 'unlink_owner_from_site';
+                    $additional_data = array(
+                        'wp_user_id' => strval( $u->ID ),
+                    );
+                    $sign = true;
 
-		function bruteprotect_whitelist_settings() {
-			include 'admin/whitelist.php';
-		}
+                    $response = $this->brute_call( $action, $additional_data, $sign );
+                }
+                delete_site_option('bruteprotect_user_linked');
+            }
+
+            if($delete_all === true)
+                delete_site_option('bruteprotect_api_key');
+
+        }
 
 		function bruteprotect_conf_ms_notice() {
 			?>

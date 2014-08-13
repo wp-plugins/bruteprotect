@@ -9,7 +9,7 @@
 
 		<h3 class="subheader">Recommended by BruteProtect, <a
 				href="https://support.cloudflare.com/hc/en-us/articles/200908270-Can-CloudFlare-protect-me-against-WordPress-brute-force-attacks-">CloudFlare</a>,
-			the <a href="bits.blogs.nytimes.com/2013/12/18/new-clef-plug-in-lets-you-forget-about-your-password/">New
+			the <a href="http://bits.blogs.nytimes.com/2013/12/18/new-clef-plug-in-lets-you-forget-about-your-password/">New
 				York Times</a>, and others.</h3>
 
 		<a href="<?php echo $install_url ?>" class="button button-primary button-hero">Install and set up Clef in 30

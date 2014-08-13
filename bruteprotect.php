@@ -7,7 +7,8 @@
 Plugin Name: BruteProtect
 Plugin URI: http://bruteprotect.com/
 Description: BruteProtect allows the millions of WordPress bloggers to work together to defeat Brute Force attacks. It keeps your site protected from brute force security attacks even while you sleep. To get started: 1) Click the "Activate" link to the left of this description, 2) Sign up for a BruteProtect API key, and 3) Go to your BruteProtect configuration page, and save your API key.
-Version: 2.0.9.2
+
+Version: 2.1
 Author: Parka, LLC
 Author URI: http://getparka.com/
 License: GPLv2 or later
@@ -29,7 +30,10 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-define( 'BRUTEPROTECT_VERSION', '2.0.9.2' );
+
+
+define( 'BRUTEPROTECT_VERSION', '2.1' );
+
 define( 'BRUTEPROTECT_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 
 $use_https = get_site_transient( 'bruteprotect_use_https' );
@@ -117,9 +121,12 @@ class BruteProtect {
 	 */
 	function brute_pro_ping_checkval() {
 		$privacy_opt_in = get_site_option( 'brute_privacy_opt_in' );
-		if ( ! $privacy_opt_in['remote_monitoring'] ) {
+		if ( ! isset($privacy_opt_in['remote_monitoring']) )
 			return;
-		}
+
+        if(empty( $privacy_opt_in['remote_monitoring'] ))
+            return;
+
 		echo '<!-- 7ads6x98y -->';
 	}
 
@@ -442,7 +449,7 @@ class BruteProtect {
 		$use_https = get_site_transient( 'bruteprotect_use_https' );
 
 		if ( $use_https == 'yes' ) {
-			$this->api_endpoint = 'https://api.bruteprotect.com/';
+			$this->api_endpoint = 'http://api.bruteprotect.com/';
 		} else {
 			$this->api_endpoint = 'http://api.bruteprotect.com/';
 		}
@@ -565,7 +572,7 @@ class BruteProtect {
 
 		$response_json   = wp_remote_post( $this->get_bruteprotect_host(), $args );
 		$log['response'] = $response_json;
-		//error_log( print_r($log,true),1, 'rocco@roccotripaldi.com');
+		//error_log( print_r($log,true),1, 'rocco@hotchkissconsulting.net');
 		$ip             = $_SERVER['REMOTE_ADDR'];
 		$transient_name = 'brute_loginable_' . str_replace( '.', '_', $ip );
 		delete_site_transient( $transient_name );

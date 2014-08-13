@@ -49,6 +49,7 @@ function bruteprotect_has_secure_login() {
  *
  * @return void
  */
+
 function bruteprotect_save_pro_info( $response ) {
 	if ( isset( $response['ckval'] ) ) {
 		update_site_option( 'bruteprotect_ckval', $response['ckval'] );
@@ -427,4 +428,25 @@ function get_bruteprotect_users() {
 	);
 	$bp_users = get_users( $args );
 	return $bp_users;
+}
+
+/**
+ * @param $privacy_options
+ * @return string | bool
+ */
+function get_mybp_iframe_url( $privacy_options ) {
+    global $current_user;
+    $user_linked = get_user_meta( $current_user->ID, 'bruteprotect_user_linked', true );
+
+    // if the user has not linked yet, return false
+    if( empty( $user_linked ))
+        return false;
+
+    // if the user chose not to allow BP to monitor their site, we tell that MyBruteProtect is not available
+    if( !is_array($privacy_options) || !isset($privacy_options['remote_monitoring']))
+        return MYBP_URL . 'wp/no_permissions/';
+    $site_id = get_site_option( 'bruteprotect_site_id' );
+
+    return MYBP_URL . 'wp/dash/' . $site_id . '/' . $user_linked;
+
 }

@@ -13,15 +13,17 @@
  * @return bool
  */
 function bruteprotect_is_linked() {
-    global $current_user;
-    $bruteprotect_user_linked = get_user_meta( $current_user->ID, 'bruteprotect_user_linked', false );
-    if( $bruteprotect_user_linked == false )
-        return false;
-    $site_linked = get_site_option( 'bruteprotect_user_linked', false );
-    if( $site_linked == false )
-        return false;
+	global $current_user;
+	$bruteprotect_user_linked = get_user_meta( $current_user->ID, 'bruteprotect_user_linked', false );
+	if ( $bruteprotect_user_linked == false ) {
+		return false;
+	}
+	$site_linked = get_site_option( 'bruteprotect_user_linked', false );
+	if ( $site_linked == false ) {
+		return false;
+	}
 
-    return true;
+	return true;
 }
 
 /**
@@ -60,7 +62,7 @@ function bruteprotect_save_pro_info( $response ) {
 	}
 
 	// remote_monitoring, remote_version, remote_update, remote_login
-	if ( isset($response['privacy_settings']) && is_array( $response['privacy_settings'] ) ) {
+	if ( isset( $response['privacy_settings'] ) && is_array( $response['privacy_settings'] ) ) {
 		$privacy_opt_in = get_site_option( 'brute_privacy_opt_in' );
 		foreach ( $response['privacy_settings'] as $k => $v ) {
 			if ( $v == '0' ) {
@@ -407,46 +409,50 @@ function brute_protect_get_core_update() {
 }
 
 function brute_site_unlinked_notice() {
-    ?>
-       <div class="updated">
-           <p>This site was unlinked from your my.bruteprotect.com account.</p>
-       </div>
-       <?php
+	?>
+	<div class="updated">
+		<p>This site was unlinked from your my.bruteprotect.com account.</p>
+	</div>
+<?php
 }
 
 /**
  * Gets users on this site who have linked to an account on my.bruteprotect
  */
 function get_bruteprotect_users() {
-	$args = array(
+	$args     = array(
 		'meta_query' => array(
 			array(
-				'key' => 'bruteprotect_user_linked',
-				'compare'=>'EXISTS',
+				'key'     => 'bruteprotect_user_linked',
+				'compare' => 'EXISTS',
 			),
 		),
 	);
 	$bp_users = get_users( $args );
+
 	return $bp_users;
 }
 
 /**
  * @param $privacy_options
+ *
  * @return string | bool
  */
 function get_mybp_iframe_url( $privacy_options ) {
-    global $current_user;
-    $user_linked = get_user_meta( $current_user->ID, 'bruteprotect_user_linked', true );
+	global $current_user;
+	$user_linked = get_user_meta( $current_user->ID, 'bruteprotect_user_linked', true );
 
-    // if the user has not linked yet, return false
-    if( empty( $user_linked ))
-        return false;
+	// if the user has not linked yet, return false
+	if ( empty( $user_linked ) ) {
+		return false;
+	}
 
-    // if the user chose not to allow BP to monitor their site, we tell that MyBruteProtect is not available
-    if( !is_array($privacy_options) || !isset($privacy_options['remote_monitoring']))
-        return MYBP_URL . 'wp/no_permissions/';
-    $site_id = get_site_option( 'bruteprotect_site_id' );
+	// if the user chose not to allow BP to monitor their site, we tell that MyBruteProtect is not available
+	if ( ! is_array( $privacy_options ) || ! isset( $privacy_options['remote_monitoring'] ) ) {
+		return MYBP_URL . 'wp/no_permissions/';
+	}
+	$site_id = get_site_option( 'bruteprotect_site_id' );
 
-    return MYBP_URL . 'wp/dash/' . $site_id . '/' . $user_linked;
+	return MYBP_URL . 'wp/dash/' . $site_id . '/' . $user_linked;
 
 }

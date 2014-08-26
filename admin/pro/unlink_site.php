@@ -15,23 +15,23 @@ if ( ! verify_bp_nonce( $bruteprotect_host, $_POST ) ) {
 	exit;
 }
 
-if( isset( $_POST['wp_user_id'])) {
+if ( isset( $_POST['wp_user_id'] ) ) {
 	// remove the user meta
 	$user_id = $_POST['wp_user_id'];
-	delete_user_meta( $user_id, 'bruteprotect_user_linked');
+	delete_user_meta( $user_id, 'bruteprotect_user_linked' );
 }
 
-if( isset( $_POST['remaining_users'])) {
+if ( isset( $_POST['remaining_users'] ) ) {
 	// if their are no remaining users for this site on my.bruteprotect, delete the site option as well
 	$remaing_users = $_POST['remaining_users'];
-	if( $remaing_users == '0' ) {
+	if ( $remaing_users == '0' ) {
 		delete_site_option( 'bruteprotect_user_linked' );
 	}
 }
 
 $response = array(
-	'error'         => false,
-	'message'		=> 'User unlinked.',
+	'error'   => false,
+	'message' => 'User unlinked.',
 );
 echo json_encode( $response );
 exit;

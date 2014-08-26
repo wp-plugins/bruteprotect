@@ -46,13 +46,15 @@ if ( ! class_exists( 'BruteProtect_Shoutouts' ) ) {
 			$week_ago            = time() - WEEK_IN_SECONDS;
 			if ( is_array( $dismissed_shoutouts ) ) :  foreach ( $dismissed_shoutouts as $shoutout_shortname => $dismissed_time ) :
 				unset( $shoutouts[ $shoutout_shortname ] );
-				if ( $dismissed_time > $week_ago )
+				if ( $dismissed_time > $week_ago ) {
 					return;
+				}
 			endforeach; endif;
 
 			// Check to see if we have any shoutouts which haven't been dismissed yet...
-			if ( ! $shoutouts )
+			if ( ! $shoutouts ) {
 				return;
+			}
 
 			if ( is_array( $shoutouts ) ) :  foreach ( $shoutouts as $slug => $so ) :
 				?>

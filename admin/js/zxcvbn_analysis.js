@@ -1,62 +1,62 @@
-jQuery(document).ready(function(){
+jQuery(document).ready(function () {
     jQuery('.phone').hide();
     var pass_obj = jQuery('#password');
     var strengthbar_obj = jQuery('#strengthbar');
-    jQuery(pass_obj).keyup(function() {
+    jQuery(pass_obj).keyup(function () {
         var analysis = zxcvbn(pass_obj.val());
         var entropy = analysis.entropy;
         jQuery('#cracktime span').html(analysis.crack_time_display);
-        pass_obj.removeClass().addClass("strength"+analysis.score);
+        pass_obj.removeClass().addClass("strength" + analysis.score);
     });
 
-    jQuery('#hidepass').click(function(){
+    jQuery('#hidepass').click(function () {
 
-        if( pass_obj.attr('type') == 'text' ){
+        if (pass_obj.attr('type') == 'text') {
             pass_obj.removeAttr('type').prop('type', 'password');
             jQuery(this).html('show password');
-        }else {
+        } else {
             pass_obj.removeAttr('type').prop('type', 'text');
             jQuery(this).html('hide password');
         }
         return false;
     });
 
-    jQuery( "#submitpro" ).click(function() {
+    jQuery("#submitpro").click(function () {
         jQuery("#going_pro").val("true");
     });
-    jQuery( "#submitfree" ).click(function() {
+    jQuery("#submitfree").click(function () {
         jQuery("#going_pro").val("false");
     });
 
 });
 
 
-function validate_reg_form(){
+function validate_reg_form() {
 //alert('validating');
 
-    var form_objs = new Array( jQuery('#first_name'), jQuery('#last_name'), jQuery('#email'), jQuery('#password') );
+    var form_objs = new Array(jQuery('#first_name'), jQuery('#last_name'), jQuery('#email'), jQuery('#password'));
     var errorcount = 0;
 
-    jQuery.each( form_objs, function( key, value ) {
-        if(value.val() == "" || value.val() == "required" ){
+    jQuery.each(form_objs, function (key, value) {
+        if (value.val() == "" || value.val() == "required") {
             value.val("required");
             value.addClass("error");
             errorcount++;
         }
-        if(key == 2 && value.val() != "required"){
-            if(isValidEmailAddress(value.val()) == false){
+        if (key == 2 && value.val() != "required") {
+            if (isValidEmailAddress(value.val()) == false) {
                 errorcount++
                 value.val("sorry, your email address wasn't written correctly");
             }
         }
-        if(key == 3){
-            if(value.val().length < 6 || value.val() == "password must be at least 6 characters long"){
+        if (key == 3) {
+            if (value.val().length < 6 || value.val() == "password must be at least 6 characters long") {
                 value.val('password must be at least 6 characters long');
                 errorcount++;
             }
         }
     });
-    if(errorcount > 0)return false;
+    if (errorcount > 0)return false;
     else return true;
 
 };

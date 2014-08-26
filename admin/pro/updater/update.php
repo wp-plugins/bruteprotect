@@ -38,11 +38,12 @@ if ( $_POST['user_id'] != 'auto' ) {
 
 /**
  * Updates the given list of plugins.
- * 
+ *
  * Accepts an array of plugin paths such as 'bruteprotect/bruteprotect.php'
  * Returns a detailed array showing the status of each plugin and a log of messages output during the process
  *
  * @param array $plugins
+ *
  * @return array
  */
 function bruteprotect_bulk_update_plugins( $plugins ) {
@@ -58,11 +59,12 @@ function bruteprotect_bulk_update_plugins( $plugins ) {
 
 /**
  * Updates the given list of themes.
- * 
+ *
  * Accepts an array of theme slugs such as 'twentyfourteen'
  * Returns a detailed array showing the status of each theme and a log of messages output during the process
  *
  * @param array $themes
+ *
  * @return array
  */
 function bruteprotect_bulk_update_themes( $themes ) {
@@ -80,16 +82,18 @@ function bruteprotect_bulk_update_themes( $themes ) {
  * Updates wordpress core to the given version.
  *
  * Returns the new version on success, and a Wp_error object on failure
- * 
+ *
  * @param string $version
+ *
  * @return string|object
  */
-function bruteprotect_update_core($version) {
-	$locale = get_locale();
-	$update = find_core_update( $version, $locale );
-	$skin = new Automatic_Upgrader_Skin();
+function bruteprotect_update_core( $version ) {
+	$locale   = get_locale();
+	$update   = find_core_update( $version, $locale );
+	$skin     = new Automatic_Upgrader_Skin();
 	$upgrader = new Core_Upgrader( $skin );
-	$results = $upgrader->upgrade( $update );
+	$results  = $upgrader->upgrade( $update );
+
 	return $results;
 }
 
@@ -105,20 +109,20 @@ $response     = array(
 	'message' => array()
 );
 
-if( !empty( $_POST['core']) ) {
+if ( ! empty( $_POST['core'] ) ) {
 	$core = bruteprotect_update_core( $_POST['core'] );
-	if( is_wp_error($core) ) {
-		$update_error = true;
-		$error_message = $core->get_error_message();
+	if ( is_wp_error( $core ) ) {
+		$update_error                = true;
+		$error_message               = $core->get_error_message();
 		$response['message']['core'] = array(
-			'error'=>true,
-			'message'=> $error_message,
+			'error'   => true,
+			'message' => $error_message,
 		);
 		$overview .= 'WordPress core update failed. ';
 	} else {
 		$response['message']['core'] = array(
-			'error'=>false,
-			'message'=> 'WordPress was updated to version ' . $core . '.',
+			'error'   => false,
+			'message' => 'WordPress was updated to version ' . $core . '.',
 		);
 		$overview .= 'WordPress core update complete. ';
 	}
@@ -167,7 +171,7 @@ if ( ! empty( $_POST['plugins'] ) ) {
 if ( ! empty( $_POST['themes'] ) ) {
 	$themes     = unserialize( stripslashes( $_POST['themes'] ) );
 	$num_themes = count( $themes );
-	
+
 	if ( $num_themes > 0 ) {
 		$success_count_themes = 0;
 		$fail_count_themes    = 0;

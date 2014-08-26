@@ -11,7 +11,9 @@
 // if we aren't cleared to track versions, bail
 $privacy_opt_in = get_site_option( 'brute_privacy_opt_in' );
 if ( ! isset( $privacy_opt_in['remote_monitoring'] ) ) {
-	$response = array( 'error' => true, 'message' => 'This site is not authorized for version tracking. Settings: '.serialize($privacy_opt_in) );
+	$response = array( 'error'   => true,
+	                   'message' => 'This site is not authorized for version tracking. Settings: ' . serialize( $privacy_opt_in )
+	);
 	echo json_encode( $response );
 	exit;
 }

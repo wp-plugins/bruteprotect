@@ -8,7 +8,7 @@ Plugin Name: BruteProtect
 Plugin URI: http://bruteprotect.com/
 Description: BruteProtect allows the millions of WordPress bloggers to work together to defeat Brute Force attacks. It keeps your site protected from brute force security attacks even while you sleep. To get started: 1) Click the "Activate" link to the left of this description, 2) Sign up for a BruteProtect API key, and 3) Go to your BruteProtect configuration page, and save your API key.
 
-Version: 2.1
+Version: 2.2
 Author: Parka, LLC
 Author URI: http://getparka.com/
 License: GPLv2 or later
@@ -30,9 +30,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-
-
-define( 'BRUTEPROTECT_VERSION', '2.1' );
+define( 'BRUTEPROTECT_VERSION', '2.2' );
 
 define( 'BRUTEPROTECT_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 
@@ -70,7 +68,6 @@ class BruteProtect {
 	 */
 	function __construct() {
 		add_action( 'login_head', array( &$this, 'brute_check_use_math' ) );
-		add_action( 'login_form', array( &$this, 'brute_maybe_use_secure_login' ) );
 		add_action( 'init', array( &$this, 'brute_access_check_generator' ) );
 		add_filter( 'authenticate', array( &$this, 'brute_check_preauth' ), 10, 3 );
 		add_action( 'wp_login_failed', array( &$this, 'brute_log_failed_attempt' ) );
@@ -121,11 +118,13 @@ class BruteProtect {
 	 */
 	function brute_pro_ping_checkval() {
 		$privacy_opt_in = get_site_option( 'brute_privacy_opt_in' );
-		if ( ! isset($privacy_opt_in['remote_monitoring']) )
+		if ( ! isset( $privacy_opt_in['remote_monitoring'] ) ) {
 			return;
+		}
 
-        if(empty( $privacy_opt_in['remote_monitoring'] ))
-            return;
+		if ( empty( $privacy_opt_in['remote_monitoring'] ) ) {
+			return;
+		}
 
 		echo '<!-- 7ads6x98y -->';
 	}
@@ -156,45 +155,48 @@ class BruteProtect {
 	 * @return VOID
 	 */
 	function brute_maybe_use_secure_login() {
-		
+
 		global $error;
 
-		if ( empty($wp_error) )
+		if ( empty( $wp_error ) ) {
 			$wp_error = new WP_Error();
-		
-		// In case a plugin uses $error rather than the $wp_errors object
-		if ( !empty( $error ) ) {
-			$wp_error->add('error', $error);
-			unset($error);
 		}
-		
+
+		// In case a plugin uses $error rather than the $wp_errors object
+		if ( ! empty( $error ) ) {
+			$wp_error->add( 'error', $error );
+			unset( $error );
+		}
+
 		// turn off secure login if we're already on ssl or the user has opted for standard login or they had a failed login
-		if( isset( $_GET['bp_sl_off'] ) || is_ssl() || $wp_error->get_error_code() ) {
+		if ( isset( $_GET['bp_sl_off'] ) || is_ssl() || $wp_error->get_error_code() ) {
 			return;
 		}
-		
+
 		$response = $this->brute_call( 'check_key' );
 
 		if ( ! isset( $response['privacy_settings'] ) ) {
 			// there is no response from the api, don't show secure login
 			return;
 		}
-		
+
 		// gets the user's most up-to-date account info
 		bruteprotect_save_pro_info( $response );
 
-		if ( ! bruteprotect_has_secure_login() )
+		if ( ! bruteprotect_has_secure_login() ) {
 			return;
+		}
 
-        $site_linked = get_site_option( 'bruteprotect_user_linked', false );
+		$site_linked = get_site_option( 'bruteprotect_user_linked', false );
 
-        if( empty( $site_linked ))
-            return;
+		if ( empty( $site_linked ) ) {
+			return;
+		}
 
 		$bruteprotect_host = $this->get_bruteprotect_host();
-		$local_host = $this->brute_get_local_host();
-		$key        = get_site_option( 'bruteprotect_api_key' );
-		$api_key    = md5( get_site_option( 'bruteprotect_api_key' ) );
+		$local_host        = $this->brute_get_local_host();
+		$key               = get_site_option( 'bruteprotect_api_key' );
+		$api_key           = md5( get_site_option( 'bruteprotect_api_key' ) );
 		include 'admin/pro/secure_login/secure_login.php';
 	}
 
@@ -225,8 +227,9 @@ class BruteProtect {
 					foreach ( explode( ',', $_SERVER[ $key ] ) as $ip ) :
 						$ip = trim( $ip ); // just to be safe
 
-						if ( $ip == '127.0.0.1' || $ip == '::1' )
+						if ( $ip == '127.0.0.1' || $ip == '::1' ) {
 							return $ip;
+						}
 
 						if ( filter_var( $ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE ) !== false ) :
 							$this->user_ip = $ip;
@@ -237,6 +240,7 @@ class BruteProtect {
 				endif;
 			endforeach;
 		else : // PHP filter extension isn't available
+		{
 			foreach ( $server_headers as $key ) :
 				if ( array_key_exists( $key, $_SERVER ) === true ) :
 					foreach ( explode( ',', $_SERVER[ $key ] ) as $ip ) :
@@ -247,6 +251,7 @@ class BruteProtect {
 					endforeach;
 				endif;
 			endforeach;
+		}
 		endif;
 	}
 
@@ -255,11 +260,13 @@ class BruteProtect {
 	}
 
 	function brute_access_check_generator() {
-		if ( ! isset( $_GET['bpc'] ) )
+		if ( ! isset( $_GET['bpc'] ) ) {
 			return;
+		}
 
-		if ( $_GET['bpc'] != $this->get_privacy_key() )
+		if ( $_GET['bpc'] != $this->get_privacy_key() ) {
 			return;
+		}
 
 		require_once dirname( __FILE__ ) . '/admin.php';
 
@@ -332,16 +339,22 @@ class BruteProtect {
 			$item = trim( $item );
 
 			if ( $ip == $item ) //exact match
+			{
 				return true;
+			}
 
 			if ( strpos( $item, '*' ) === false ) //no match, no wildcard
+			{
 				continue;
+			}
 
 			$ip_low  = ip2long( str_replace( '*', '0', $item ) );
 			$ip_high = ip2long( str_replace( '*', '255', $item ) );
 
 			if ( $iplong >= $ip_low && $iplong <= $ip_high ) //IP is within wildcard range
+			{
 				return true;
+			}
 
 		endforeach; endif;
 
@@ -411,8 +424,9 @@ class BruteProtect {
 	}
 
 	function brute_get_local_host() {
-		if ( isset( $this->local_host ) )
+		if ( isset( $this->local_host ) ) {
 			return $this->local_host;
+		}
 
 		$uri = 'http://' . strtolower( $_SERVER['HTTP_HOST'] );
 
@@ -442,8 +456,9 @@ class BruteProtect {
 	 * @return string URL of api with either http or https protocol
 	 */
 	function get_bruteprotect_host() {
-		if ( isset( $this->api_endpoint ) )
+		if ( isset( $this->api_endpoint ) ) {
 			return $this->api_endpoint;
+		}
 
 		//Some servers can't access https-- we'll check once a day to see if we can.
 		$use_https = get_site_transient( 'bruteprotect_use_https' );
@@ -468,8 +483,9 @@ class BruteProtect {
 
 	function brute_get_blocked_attempts() {
 		$blocked_count = get_site_option( 'bruteprotect_blocked_attempt_count' );
-		if ( ! $blocked_count )
+		if ( ! $blocked_count ) {
 			$blocked_count = 0;
+		}
 
 		return $blocked_count;
 	}
@@ -477,8 +493,9 @@ class BruteProtect {
 	function brute_log_blocked_attempt( $api_count = 0 ) {
 		$attempt_count = $this->brute_get_blocked_attempts();
 
-		if ( ! $attempt_count )
+		if ( ! $attempt_count ) {
 			$attempt_count = 0;
+		}
 
 		if ( $attempt_count < $api_count ) {
 			$attempt_count = $api_count;
@@ -496,19 +513,22 @@ class BruteProtect {
 	 * @return bool|string  Returns false if not a subdirectory. Returns the site url including subdirectory otherwise.
 	 */
 	function is_subdirectory() {
-		if( is_multisite() )
+		if ( is_multisite() ) {
 			return false;
-		
+		}
+
 		$is_subdomain_install = false;
-		$wp_site_url = get_site_url();
-		$wp_site_url_parts = parse_url( $wp_site_url );
-		if( isset( $wp_site_url_parts ) && is_array( $wp_site_url_parts ) && isset( $wp_site_url_parts[ 'path' ] ) && $wp_site_url_parts[ 'path' ] && $wp_site_url_parts[ 'path' ] != '/' ) {
+		$wp_site_url          = get_site_url();
+		$wp_site_url_parts    = parse_url( $wp_site_url );
+		if ( isset( $wp_site_url_parts ) && is_array( $wp_site_url_parts ) && isset( $wp_site_url_parts['path'] ) && $wp_site_url_parts['path'] && $wp_site_url_parts['path'] != '/' ) {
 			$is_subdomain_install = true;
 		} else {
 			return false;
 		}
+
 		return $wp_site_url;
 	}
+
 	/**
 	 * Finds out if this site is using http or https
 	 *
@@ -516,6 +536,7 @@ class BruteProtect {
 	 */
 	function brute_get_protocol() {
 		$protocol = ( is_ssl() ) ? "https://" : "http://";
+
 		return $protocol;
 	}
 
@@ -539,15 +560,15 @@ class BruteProtect {
 		$request['action']               = $action;
 		$request['ip']                   = $this->brute_get_ip();
 		$request['host']                 = $this->brute_get_local_host();
-		$request['protocol']			 = $this->brute_get_protocol();
+		$request['protocol']             = $this->brute_get_protocol();
 		$request['blocked_attempts']     = strval( $this->brute_get_blocked_attempts() );
 		$request['privacy_settings']     = serialize( get_site_option( 'brute_privacy_opt_in' ) );
 		$request['bruteprotect_version'] = constant( 'BRUTEPROTECT_VERSION' );
 		$request['wordpress_version']    = $wp_version;
 		$request['api_key']              = $api_key;
-		$request['subdirectory']         =  strval( $this->is_subdirectory() );
+		$request['subdirectory']         = strval( $this->is_subdirectory() );
 		$request['multisite']            = "0";
-		$request['wp_user_id']			 = strval( $current_user->ID );
+		$request['wp_user_id']           = strval( $current_user->ID );
 
 		if ( is_multisite() ) {
 			$request['multisite'] = get_blog_count();
@@ -557,9 +578,9 @@ class BruteProtect {
 		}
 
 		if ( $sign === true ) {
-			$chkval               = get_site_option( 'bruteprotect_ckval' );
-			$serialized           = serialize( $request );
-			$request['signature'] = sha1( $serialized . $chkval );
+			$chkval                   = get_site_option( 'bruteprotect_ckval' );
+			$serialized               = serialize( $request );
+			$request['signature']     = sha1( $serialized . $chkval );
 			$request['wp_serialized'] = $serialized;
 		}
 		$log['request'] = $request;
@@ -577,19 +598,20 @@ class BruteProtect {
 		$transient_name = 'brute_loginable_' . str_replace( '.', '_', $ip );
 		delete_site_transient( $transient_name );
 
-		if ( is_array( $response_json ) )
+		if ( is_array( $response_json ) ) {
 			$response = json_decode( $response_json['body'], true );
+		}
 
 		if ( isset( $response['status'] ) && ! isset( $response['error'] ) ) :
 			$response['expire'] = time() + $response['seconds_remaining'];
 			set_site_transient( $transient_name, $response, $response['seconds_remaining'] );
 			delete_site_transient( 'brute_use_math' );
-		else :
-
-			//no response from the API host?  Let's use math!
+		else : //no response from the API host?  Let's use math!
+		{
 			set_site_transient( 'brute_use_math', 1, 600 );
 			$response['status'] = 'ok';
 			$response['math']   = true;
+		}
 		endif;
 
 		if ( isset( $response['error'] ) ) :
@@ -625,11 +647,11 @@ function bruteprotect_deactivate() {
 	global $bruteProtect;
 	$settings = get_site_option( 'brute_privacy_opt_in' );
 	update_site_option( 'bruteprotect_saved_settings', $settings );
-	update_site_option( 'bruteprotect_deactivated', '1');
+	update_site_option( 'bruteprotect_deactivated', '1' );
 	// call the api
-	$action = 'deactivate_site';
+	$action          = 'deactivate_site';
 	$additional_data = array();
-	$sign = true;
+	$sign            = true;
 	$bruteProtect->brute_call( $action, $additional_data, $sign );
 }
 
@@ -641,21 +663,21 @@ function bruteprotect_deactivate() {
  */
 function bruteprotect_activate() {
 	update_site_option( 'bruteprotect_version', BRUTEPROTECT_VERSION );
-	
-	$deactivated = get_site_option('bruteprotect_deactivated');
-	
-	if( !empty($deactivated) ) {
-		$saved_settings = get_site_option( 'bruteprotect_saved_settings', array() );
-		$bruteProtect = new BruteProtect;
+
+	$deactivated = get_site_option( 'bruteprotect_deactivated' );
+
+	if ( ! empty( $deactivated ) ) {
+		$saved_settings  = get_site_option( 'bruteprotect_saved_settings', array() );
+		$bruteProtect    = new BruteProtect;
 		$action          = 'reactive_site';
-		$additional_data = array('saved_settings'=>serialize($saved_settings));
+		$additional_data = array( 'saved_settings' => serialize( $saved_settings ) );
 		$sign            = true;
-		delete_site_option('bruteprotect_saved_settings');
-		delete_site_option('bruteprotect_deactivated');
+		delete_site_option( 'bruteprotect_saved_settings' );
+		delete_site_option( 'bruteprotect_deactivated' );
 		$bruteProtect->brute_call( $action, $additional_data, $sign );
 	}
-	
-	
+
+
 	add_site_option( 'bruteprotect_do_activation_redirect', true );
 }
 
@@ -684,7 +706,7 @@ class bp_Widget extends WP_Widget {
 	 * Back-end widget options
 	 */
 	public function form( $instance ) {
-		$showsitestats = esc_attr( $instance['showsitestats'] );
+		$showsitestats     = esc_attr( $instance['showsitestats'] );
 		$choose_logo_color = esc_attr( $instance['choose_logo_color'] );
 
 		if ( isset( $instance['title'] ) ) {
@@ -711,25 +733,38 @@ class bp_Widget extends WP_Widget {
 			<label
 				for="<?php echo $this->get_field_id( 'showsitestats' ); ?>"><?php _e( 'Show your stats?' ); ?></label>
 				<?php
-				$attacks_blocked = get_site_option( 'bruteprotect_blocked_attempt_count', '0' );
-				$plural = ($attacks_blocked > 1 || $attacks_blocked === '0') ? 's' : '';
-				?>
+		$attacks_blocked = get_site_option( 'bruteprotect_blocked_attempt_count', '0' );
+		$plural          = ( $attacks_blocked > 1 || $attacks_blocked === '0' ) ? 's' : '';
+		?>
 			<br/>(Currently <?php echo $attacks_blocked; ?> attack<?php echo $plural; ?> blocked)
 		</p>-->
-		
+
 		<!--Choose Logo Color-->
 		<p>
-			<label for="<?php echo $this->get_field_id('choose_logo_color'); ?>"><?php _e('Choose Logo Color: '); ?></label>
-			<select name="<?php echo $this->get_field_name('choose_logo_color'); ?>" id="<?php echo $this->get_field_id('choose_logo_color'); ?>" class="widefat">
-			<?php
-			$options = array( 'White - Default', 'White', 'White with orange lock', 'Black - Default', 'Black', 'Black with orange lock', 'Grey - Default', 'Grey', 'Grey with orange lock', 'Orange' );
-			foreach ( $options as $option ) {
-			echo '<option value="' . $option . '" id="' . $option . '"', $choose_logo_color == $option ? ' selected="selected"' : '', '>', $option, '</option>';
-			}
-			?>
+			<label
+				for="<?php echo $this->get_field_id( 'choose_logo_color' ); ?>"><?php _e( 'Choose Logo Color: ' ); ?></label>
+			<select name="<?php echo $this->get_field_name( 'choose_logo_color' ); ?>"
+			        id="<?php echo $this->get_field_id( 'choose_logo_color' ); ?>" class="widefat">
+				<?php
+				$options = array(
+					'White - Default',
+					'White',
+					'White with orange lock',
+					'Black - Default',
+					'Black',
+					'Black with orange lock',
+					'Grey - Default',
+					'Grey',
+					'Grey with orange lock',
+					'Orange'
+				);
+				foreach ( $options as $option ) {
+					echo '<option value="' . $option . '" id="' . $option . '"', $choose_logo_color == $option ? ' selected="selected"' : '', '>', $option, '</option>';
+				}
+				?>
 			</select>
 		</p>
-		
+
 	<?php
 	}
 
@@ -737,8 +772,8 @@ class bp_Widget extends WP_Widget {
 	 * Save widget form values
 	 */
 	public function update( $new_instance, $old_instance ) {
-		$instance                  = array();
-		$instance['title']         = ( ! empty( $new_instance['title'] ) ) ? strip_tags( $new_instance['title'] ) : '';
+		$instance          = array();
+		$instance['title'] = ( ! empty( $new_instance['title'] ) ) ? strip_tags( $new_instance['title'] ) : '';
 		//$instance['showsitestats'] = strip_tags( $new_instance['showsitestats'] );
 		$instance['choose_logo_color'] = strip_tags( $new_instance['choose_logo_color'] );
 
@@ -750,40 +785,40 @@ class bp_Widget extends WP_Widget {
 	 */
 	public function widget( $args, $instance ) {
 		extract( $args );
-		$title      	   = apply_filters( 'widget_title', $instance['title'] );
+		$title             = apply_filters( 'widget_title', $instance['title'] );
 		$choose_logo_color = apply_filters( 'choose_logo_color', $instance['choose_logo_color'] );
-		
+
 		/*Widget Logo Colors*/
 		if ( $choose_logo_color == 'White - Default' ) {
-				$widgetlogo = '<a href="http://bruteprotect.com" target="_blank"><img src="' . BRUTEPROTECT_PLUGIN_URL . 'images/bp-white-default.png" width="80%"></a>';
-				} else if ( $choose_logo_color == 'Black - Default' ) {
-				$widgetlogo = '<a href="http://bruteprotect.com" target="_blank"><img src="' . BRUTEPROTECT_PLUGIN_URL . 'images/bp-black-default.png" width="80%"></a>';
-				} else if ( $choose_logo_color == 'Grey - Default' ) {
-				$widgetlogo = '<a href="http://bruteprotect.com" target="_blank"><img src="' . BRUTEPROTECT_PLUGIN_URL . 'images/bp-grey-default.png" width="80%"></a>';
-				} else if ( $choose_logo_color == 'White with orange lock' ) {
-				$widgetlogo = '<a href="http://bruteprotect.com" target="_blank"><img src="' . BRUTEPROTECT_PLUGIN_URL . 'images/bp-white-orangelock.png" width="80%"></a>';
-				} else if ( $choose_logo_color == 'White' ) {
-				$widgetlogo = '<a href="http://bruteprotect.com" target="_blank"><img src="' . BRUTEPROTECT_PLUGIN_URL . 'images/bp-white.png" width="80%"></a>';
-				} else if ( $choose_logo_color == 'Black' ) {
-				$widgetlogo = '<a href="http://bruteprotect.com" target="_blank"><img src="' . BRUTEPROTECT_PLUGIN_URL . 'images/bp-black.png" width="80%"></a>';
-				} else if ( $choose_logo_color == 'Black with orange lock' ) {
-				$widgetlogo = '<a href="http://bruteprotect.com" target="_blank"><img src="' . BRUTEPROTECT_PLUGIN_URL . 'images/bp-black-orangelock.png" width="80%"></a>';
-				} else if ( $choose_logo_color == 'Grey' ) {
-				$widgetlogo = '<a href="http://bruteprotect.com" target="_blank"><img src="' . BRUTEPROTECT_PLUGIN_URL . 'images/bp-grey.png" width="80%"></a>';
-				} else if ( $choose_logo_color == 'Grey with orange lock' ) {
-				$widgetlogo = '<a href="http://bruteprotect.com" target="_blank"><img src="' . BRUTEPROTECT_PLUGIN_URL . 'images/bp-grey-orangelock.png" width="80%"></a>';
-				} else if ( $choose_logo_color == 'Orange' ) {
-				$widgetlogo = '<a href="http://bruteprotect.com" target="_blank"><img src="' . BRUTEPROTECT_PLUGIN_URL . 'images/bp-orange.png" width="80%"></a>';
-				} else {
-				$widgetlogo = '<a href="http://bruteprotect.com" target="_blank"><img src="' . BRUTEPROTECT_PLUGIN_URL . 'images/bp-white-default.png" width="80%"></a>';
-			}
-			
+			$widgetlogo = '<a href="http://bruteprotect.com" target="_blank"><img src="' . BRUTEPROTECT_PLUGIN_URL . 'images/bp-white-default.png" width="80%"></a>';
+		} else if ( $choose_logo_color == 'Black - Default' ) {
+			$widgetlogo = '<a href="http://bruteprotect.com" target="_blank"><img src="' . BRUTEPROTECT_PLUGIN_URL . 'images/bp-black-default.png" width="80%"></a>';
+		} else if ( $choose_logo_color == 'Grey - Default' ) {
+			$widgetlogo = '<a href="http://bruteprotect.com" target="_blank"><img src="' . BRUTEPROTECT_PLUGIN_URL . 'images/bp-grey-default.png" width="80%"></a>';
+		} else if ( $choose_logo_color == 'White with orange lock' ) {
+			$widgetlogo = '<a href="http://bruteprotect.com" target="_blank"><img src="' . BRUTEPROTECT_PLUGIN_URL . 'images/bp-white-orangelock.png" width="80%"></a>';
+		} else if ( $choose_logo_color == 'White' ) {
+			$widgetlogo = '<a href="http://bruteprotect.com" target="_blank"><img src="' . BRUTEPROTECT_PLUGIN_URL . 'images/bp-white.png" width="80%"></a>';
+		} else if ( $choose_logo_color == 'Black' ) {
+			$widgetlogo = '<a href="http://bruteprotect.com" target="_blank"><img src="' . BRUTEPROTECT_PLUGIN_URL . 'images/bp-black.png" width="80%"></a>';
+		} else if ( $choose_logo_color == 'Black with orange lock' ) {
+			$widgetlogo = '<a href="http://bruteprotect.com" target="_blank"><img src="' . BRUTEPROTECT_PLUGIN_URL . 'images/bp-black-orangelock.png" width="80%"></a>';
+		} else if ( $choose_logo_color == 'Grey' ) {
+			$widgetlogo = '<a href="http://bruteprotect.com" target="_blank"><img src="' . BRUTEPROTECT_PLUGIN_URL . 'images/bp-grey.png" width="80%"></a>';
+		} else if ( $choose_logo_color == 'Grey with orange lock' ) {
+			$widgetlogo = '<a href="http://bruteprotect.com" target="_blank"><img src="' . BRUTEPROTECT_PLUGIN_URL . 'images/bp-grey-orangelock.png" width="80%"></a>';
+		} else if ( $choose_logo_color == 'Orange' ) {
+			$widgetlogo = '<a href="http://bruteprotect.com" target="_blank"><img src="' . BRUTEPROTECT_PLUGIN_URL . 'images/bp-orange.png" width="80%"></a>';
+		} else {
+			$widgetlogo = '<a href="http://bruteprotect.com" target="_blank"><img src="' . BRUTEPROTECT_PLUGIN_URL . 'images/bp-white-default.png" width="80%"></a>';
+		}
+
 		// $widgetlogo = '<a href="http://bruteprotect.com" target="_blank"><img src="../wp-content/plugins/bruteprotect/images/BruteProtect-Logo-Text-Only-40.png" width="60%"></a>';
 
 		echo $args['before_widget'];
-		if ( ! empty( $title ) )
-			/*set title*/
+		if ( ! empty( $title ) ) /*set title*/ {
 			echo $args['before_title'] . $title . $args['after_title'];
+		}
 		echo '<div id="brutewidget">' . '<center>' . $widgetlogo . '</center>';
 
 		/*show site stats

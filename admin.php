@@ -29,14 +29,7 @@ if ( ! class_exists( 'BruteProtect_Admin' ) ) {
 
 			add_action( 'admin_enqueue_scripts', array( &$this, 'enqueue_bruteprotect_admin' ) );
 
-			add_action( 'admin_menu', array( &$this, 'clef_init' ), 0 );
-
 			add_action( 'admin_init', array( &$this, 'activation_redirection' ) );
-		}
-
-		function clef_init() {
-			include 'admin/clef/clef_installer.php';
-			$this->clef = new BruteProtect_Clef;
 		}
 
 		function activation_redirection() {
@@ -63,26 +56,29 @@ if ( ! class_exists( 'BruteProtect_Admin' ) ) {
 		}
 
 		function enqueue_bruteprotect_admin() {
-            wp_enqueue_style( 'bruteprotect-css', plugins_url( '/admin/bruteprotect-admin.css', __FILE__ ), array(), BRUTEPROTECT_VERSION );
-            if( isset($_GET['page']) && $_GET['page'] == 'bruteprotect-config') {
-                wp_enqueue_style('bpdash-css', MYBP_URL . 'assets/stylesheets/app.css', array(), BRUTEPROTECT_VERSION );
-                wp_enqueue_style('fontawesome',  plugins_url('/bruteprotect/admin/fonts/font-awesome/css/font-awesome.min.css'), array(), BRUTEPROTECT_VERSION );
-                wp_enqueue_style('jquery_ui_smoothness', '//ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/themes/smoothness/jquery-ui.css', array(), BRUTEPROTECT_VERSION );
-                wp_register_script( 'modrnizer', plugins_url('/bruteprotect/admin/js/modrnizer.js'));
-                wp_register_script( 'foundation', plugins_url('/bruteprotect/admin/js/foundation.min.js'), array('jquery','modrnizer'), BRUTEPROTECT_VERSION);
-                wp_register_script( 'equalizer', plugins_url('/bruteprotect/admin/js/foundation.equalizer.js'), array('foundation'), BRUTEPROTECT_VERSION);
-                wp_register_script( 'zxcvbn', plugins_url('/bruteprotect/admin/js/zxcvbn.js'), array('jquery'), BRUTEPROTECT_VERSION);
-                wp_register_script( 'zxcvbn_analysis', plugins_url('/bruteprotect/admin/js/zxcvbn_analysis.js'), array('zxcvbn'), BRUTEPROTECT_VERSION);
-                wp_register_script( 'jquery_ui', '//ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min.js', array('jquery'), BRUTEPROTECT_VERSION);
-                wp_register_script( 'bp_pricing_slider', plugins_url('/bruteprotect/admin/js/pricing_slider.js'), array('jquery_ui'), BRUTEPROTECT_VERSION);
+			wp_enqueue_style( 'bruteprotect-css', plugins_url( '/admin/bruteprotect-admin.css', __FILE__ ), array(), BRUTEPROTECT_VERSION );
+			if ( isset( $_GET['page'] ) && $_GET['page'] == 'bruteprotect-config' ) {
+				wp_enqueue_style( 'bpdash-css', MYBP_URL . 'assets/stylesheets/app.css', array(), BRUTEPROTECT_VERSION );
+				wp_enqueue_style( 'fontawesome', plugins_url( '/bruteprotect/admin/fonts/font-awesome/css/font-awesome.min.css' ), array(), BRUTEPROTECT_VERSION );
+				wp_enqueue_style( 'jquery_ui_smoothness', '//ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/themes/smoothness/jquery-ui.css', array(), BRUTEPROTECT_VERSION );
+				wp_register_script( 'modrnizer', plugins_url( '/bruteprotect/admin/js/modrnizer.js' ) );
+				wp_register_script( 'foundation', plugins_url( '/bruteprotect/admin/js/foundation.min.js' ), array(
+						'jquery',
+						'modrnizer'
+					), BRUTEPROTECT_VERSION );
+				wp_register_script( 'equalizer', plugins_url( '/bruteprotect/admin/js/foundation.equalizer.js' ), array( 'foundation' ), BRUTEPROTECT_VERSION );
+				wp_register_script( 'zxcvbn', plugins_url( '/bruteprotect/admin/js/zxcvbn.js' ), array( 'jquery' ), BRUTEPROTECT_VERSION );
+				wp_register_script( 'zxcvbn_analysis', plugins_url( '/bruteprotect/admin/js/zxcvbn_analysis.js' ), array( 'zxcvbn' ), BRUTEPROTECT_VERSION );
+				wp_register_script( 'jquery_ui', '//ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min.js', array( 'jquery' ), BRUTEPROTECT_VERSION );
+				wp_register_script( 'bp_pricing_slider', plugins_url( '/bruteprotect/admin/js/pricing_slider.js' ), array( 'jquery_ui' ), BRUTEPROTECT_VERSION );
 
 
-                wp_enqueue_script('modrnizer');
-                wp_enqueue_script('foundation');
-                wp_enqueue_script('equalizer');
-                wp_enqueue_script('bp_pricing_slider');
-                wp_enqueue_script('zxcvbn_analysis');
-            }
+				wp_enqueue_script( 'modrnizer' );
+				wp_enqueue_script( 'foundation' );
+				wp_enqueue_script( 'equalizer' );
+				wp_enqueue_script( 'bp_pricing_slider' );
+				wp_enqueue_script( 'zxcvbn_analysis' );
+			}
 
 		}
 
@@ -109,7 +105,7 @@ if ( ! class_exists( 'BruteProtect_Admin' ) ) {
 			}
 
 
-			$test = wp_remote_get( 'http://api.bpdv.co/api_check.php' );
+			$test = wp_remote_get( 'http://api.bruteprotect.com/api_check.php' );
 			if ( ! is_wp_error( $test ) && $test['body'] == 'ok' ) :
 				set_site_transient( 'bruteprotect_can_access_host', 1, 604800 );
 
@@ -150,38 +146,41 @@ if ( ! class_exists( 'BruteProtect_Admin' ) ) {
 
 			global $wp_meta_boxes;
 			wp_add_dashboard_widget( 'bruteprotect_dashboard_widget', 'BruteProtect Stats', array(
-					&$this,
-					'bruteprotect_dashboard_widget'
-				) );
+				&$this,
+				'bruteprotect_dashboard_widget'
+			) );
 		}
 
 		function bruteprotect_dashboard_widget() {
 
-            $response = $this->brute_call( 'check_key' );
+			$response = $this->brute_call( 'check_key' );
 
-            if( !isset($response['status']) ) {
-                // we cannot connect to the api, lets not show the stats
-                echo '<div style="text-align: center;"><strong>Statistics are currently unavailable.</strong></div>';
-                return;
-            }
+			if ( ! isset( $response['status'] ) ) {
+				// we cannot connect to the api, lets not show the stats
+				echo '<div style="text-align: center;"><strong>Statistics are currently unavailable.</strong></div>';
 
-            bruteprotect_save_pro_info( $response );
+				return;
+			}
+
+			bruteprotect_save_pro_info( $response );
 			$key   = get_site_option( 'bruteprotect_api_key' );
 			$ckval = get_site_option( 'bruteprotect_ckval' );
 
 			$stats = wp_remote_get( $this->get_bruteprotect_host() . "index.php/ui/dashboard/index/" . $key );
 
-            if( is_wp_error( $stats ) ) {
-                echo '<div style="text-align: center;"><strong>Statistics are currently unavailable.</strong></div>';
-                return;
-            }
+			if ( is_wp_error( $stats ) ) {
+				echo '<div style="text-align: center;"><strong>Statistics are currently unavailable.</strong></div>';
 
-            print_r( $stats['body'] );
+				return;
+			}
+
+			print_r( $stats['body'] );
 		}
 
 		function bruteprotect_plugin_action_links( $links, $file ) {
-			if ( $file == plugin_basename( dirname( __FILE__ ) . '/bruteprotect.php' ) )
+			if ( $file == plugin_basename( dirname( __FILE__ ) . '/bruteprotect.php' ) ) {
 				$links[] = '<a href="' . esc_url( admin_url( 'admin.php?page=bruteprotect-config' ) ) . '">' . __( 'Settings' ) . '</a>';
+			}
 
 			return $links;
 		}
@@ -196,9 +195,9 @@ if ( ! class_exists( 'BruteProtect_Admin' ) ) {
 			}
 			if ( is_multisite() ) {
 				add_menu_page( __( 'BruteProtect' ), __( 'BruteProtect' ), 'manage_options', 'bruteprotect-config', array(
-						&$this,
-						'bruteprotect_conf_ms_notice'
-					), $this->menu_icon );
+					&$this,
+					'bruteprotect_conf_ms_notice'
+				), $this->menu_icon );
 
 				return;
 			}
@@ -213,9 +212,9 @@ if ( ! class_exists( 'BruteProtect_Admin' ) ) {
 				$this->menu_icon = plugins_url( '/images/menu_icon.png', __FILE__ );
 			}
 			add_menu_page( __( 'BruteProtect' ), __( 'BruteProtect' ), 'manage_options', 'bruteprotect-config', array(
-					&$this,
-					'bruteprotect_dashboard'
-				), $this->menu_icon );
+				&$this,
+				'bruteprotect_dashboard'
+			), $this->menu_icon );
 
 
 			$key   = get_site_option( 'bruteprotect_api_key' );
@@ -237,17 +236,20 @@ if ( ! class_exists( 'BruteProtect_Admin' ) ) {
 			$bruteprotect_showing_warning = true;
 
 			//Don't trigger the warning on the config page
-			if ( isset( $_GET['page'] ) && 'bruteprotect-config' == $_GET['page'] )
+			if ( isset( $_GET['page'] ) && 'bruteprotect-config' == $_GET['page'] ) {
 				return;
+			}
 
 			$ip = $this->brute_get_ip();
 			//Don't trigger the warning on localhost, since we're not going to let them set up the API yet anyway...
-			if ( $ip == '127.0.0.1' || $ip == '::1' )
+			if ( $ip == '127.0.0.1' || $ip == '::1' ) {
 				return;
+			}
 
 			$selfinstalling = get_option( 'bp_selfinstall_attempt' );
-			if ( $selfinstalling )
+			if ( $selfinstalling ) {
 				return;
+			}
 
 
 			echo "<div id='bruteprotect-warning' class='error fade'><p><strong>" . __( 'BruteProtect is almost ready.' ) . "</strong> " . sprintf( __( 'You must <a href="%1$s">enter your BruteProtect API key</a> for it to work.  <a href="%1$s">Obtain a key for free</a>.' ), esc_url( admin_url( 'admin.php?page=bruteprotect-config' ) ) ) . "</p></div>
@@ -255,7 +257,9 @@ if ( ! class_exists( 'BruteProtect_Admin' ) ) {
 		}
 
 		function bruteprotect_invalid_key_warning() {
-			if( isset( $_GET[ 'get_key' ] ) && $_GET[ 'get_key' ] == 'success' ) { return true; }
+			if ( isset( $_GET['get_key'] ) && $_GET['get_key'] == 'success' ) {
+				return true;
+			}
 			global $bruteprotect_showing_warning;
 			$bruteprotect_showing_warning = true;
 			echo "
@@ -266,48 +270,50 @@ if ( ! class_exists( 'BruteProtect_Admin' ) ) {
 		function bruteprotect_dashboard() {
 			include 'admin/mybp.php';
 		}
-        /**
-         * Unlinks the current user from my.bruteprotect.com
-         *
-         * if there is a flag to delete_all, all other linked users will also be disconnected, and the api key removed
-         *
-         * @param bool $delete_all
-         */
-        function unlink_site( $delete_all = false ) {
-            global $current_user;
-            $user_linked = get_user_meta( $current_user->ID, 'bruteprotect_user_linked', true );
-            if( !empty($user_linked) ) {
-                delete_user_meta($current_user->ID, 'bruteprotect_user_linked');
-                $action = 'unlink_owner_from_site';
-                $additional_data = array(
-                    'wp_user_id' => strval( $current_user->ID ),
-                );
-                $sign = true;
 
-                $response = $this->brute_call( $action, $additional_data, $sign );
-            }
+		/**
+		 * Unlinks the current user from my.bruteprotect.com
+		 *
+		 * if there is a flag to delete_all, all other linked users will also be disconnected, and the api key removed
+		 *
+		 * @param bool $delete_all
+		 */
+		function unlink_site( $delete_all = false ) {
+			global $current_user;
+			$user_linked = get_user_meta( $current_user->ID, 'bruteprotect_user_linked', true );
+			if ( ! empty( $user_linked ) ) {
+				delete_user_meta( $current_user->ID, 'bruteprotect_user_linked' );
+				$action          = 'unlink_owner_from_site';
+				$additional_data = array(
+					'wp_user_id' => strval( $current_user->ID ),
+				);
+				$sign            = true;
 
-            $bp_users = get_bruteprotect_users();
-            if( empty( $bp_users ) ) {
-                delete_site_option('bruteprotect_user_linked');
-            } else if( $delete_all == true ) {
-                foreach( $bp_users as $u ) {
-                    delete_user_meta($u->ID, 'bruteprotect_user_linked');
-                    $action = 'unlink_owner_from_site';
-                    $additional_data = array(
-                        'wp_user_id' => strval( $u->ID ),
-                    );
-                    $sign = true;
+				$response = $this->brute_call( $action, $additional_data, $sign );
+			}
 
-                    $response = $this->brute_call( $action, $additional_data, $sign );
-                }
-                delete_site_option('bruteprotect_user_linked');
-            }
+			$bp_users = get_bruteprotect_users();
+			if ( empty( $bp_users ) ) {
+				delete_site_option( 'bruteprotect_user_linked' );
+			} else if ( $delete_all == true ) {
+				foreach ( $bp_users as $u ) {
+					delete_user_meta( $u->ID, 'bruteprotect_user_linked' );
+					$action          = 'unlink_owner_from_site';
+					$additional_data = array(
+						'wp_user_id' => strval( $u->ID ),
+					);
+					$sign            = true;
 
-            if($delete_all === true)
-                delete_site_option('bruteprotect_api_key');
+					$response = $this->brute_call( $action, $additional_data, $sign );
+				}
+				delete_site_option( 'bruteprotect_user_linked' );
+			}
 
-        }
+			if ( $delete_all === true ) {
+				delete_site_option( 'bruteprotect_api_key' );
+			}
+
+		}
 
 		function bruteprotect_conf_ms_notice() {
 			?>

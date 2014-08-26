@@ -84,6 +84,12 @@ Yes, you may add IP addresses under the “whitelist” setting of BruteProtect.
 
 == Changelog ==
 
+= 2.2 =
+* Reformatted all plugin code to meet WP style standards
+* Added icons for WP 4.0 Plugin Browser
+* Removed secure login option
+* Changed link to my. mechanism from username/pass to key
+
 = 2.1 =
 * BruteProtect dashboard gets a makeover
 * Fixed some broken links

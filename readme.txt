@@ -83,6 +83,8 @@ Yes, you may add IP addresses under the “whitelist” setting of BruteProtect.
 
 
 == Changelog ==
+= 2.2.1 =
+* Replaced placeholder with dynamic data
 
 = 2.2 =
 * Reformatted all plugin code to meet WP style standards

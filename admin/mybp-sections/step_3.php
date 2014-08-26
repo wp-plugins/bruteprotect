@@ -1,5 +1,5 @@
 <?php
-global $privacy_opt_in, $remote_security_options, $local_host;
+global $privacy_opt_in, $remote_security_options, $local_host, $bruteprotect_api_key;
 global $register_error, $linking_error, $linking_success;
 global $privacy_success;
 global $wordpress_success;
@@ -108,7 +108,7 @@ include( 'header.php' );
 
 
 		<form action="" method="post" class="apiholder clearfix" id="remove_api_key_form">
-			<input type="text" name="brute_api_key" value="8616cbccf08024357ce95c942fd5433514d6de78" id="brute_api_key"
+			<input type="text" name="brute_api_key" value="<?php echo $bruteprotect_api_key; ?>" id="brute_api_key"
 			       disabled="disabled"/>
 			<input type="hidden" name="brute_action" value="remove_key"/>
 			<input type="submit" value="Remove API Key" class="button green alignright" id="remove_api_key_button"/>

@@ -7,7 +7,7 @@
  * @since 1.0
  */
 
-global $brute_success, $brute_error, $privacy_opt_in, $remote_security_options, $local_host;
+global $brute_success, $brute_error, $privacy_opt_in, $remote_security_options, $local_host, $bruteprotect_api_key;
 
 $local_host = str_replace( 'http://', '', home_url() );
 $local_host = str_replace( 'https://', '', $local_host );
@@ -18,7 +18,7 @@ if ( $_SERVER['REQUEST_METHOD'] == 'POST' ) {
 }
 
 // grab default variables
-$key                     = get_site_option( 'bruteprotect_api_key' );
+$bruteprotect_api_key    = get_site_option( 'bruteprotect_api_key' );
 $invalid_key             = false;
 $remote_security_options = array(
 	'remote_monitoring' => __( 'Remotely monitor your site uptime and scan for malware; Remotely track the versions of WordPress, plugins, & themes you have installed; Remotely update your site' ),

@@ -83,6 +83,10 @@ Yes, you may add IP addresses under the “whitelist” setting of BruteProtect.
 
 
 == Changelog ==
+
+= 2.2.2 =
+* The future is bright
+
 = 2.2.1 =
 * Replaced placeholder with dynamic data
 

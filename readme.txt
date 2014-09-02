@@ -84,6 +84,9 @@ Yes, you may add IP addresses under the “whitelist” setting of BruteProtect.
 
 == Changelog ==
 
+= 2.2.3 =
+* Add in filters for private IPs
+
 = 2.2.2 =
 * The future is bright
 

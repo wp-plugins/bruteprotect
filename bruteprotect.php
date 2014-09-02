@@ -8,7 +8,7 @@ Plugin Name: BruteProtect
 Plugin URI: http://bruteprotect.com/
 Description: BruteProtect allows the millions of WordPress bloggers to work together to defeat Brute Force attacks. It keeps your site protected from brute force security attacks even while you sleep. To get started: 1) Click the "Activate" link to the left of this description, 2) Sign up for a BruteProtect API key, and 3) Go to your BruteProtect configuration page, and save your API key.
 
-Version: 2.2.2
+Version: 2.2.3
 Author: Parka, LLC
 Author URI: http://getparka.com/
 License: GPLv2 or later
@@ -30,7 +30,8 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-define( 'BRUTEPROTECT_VERSION', '2.2.2' );
+
+define( 'BRUTEPROTECT_VERSION', '2.2.3' );
 
 define( 'BRUTEPROTECT_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 
@@ -226,14 +227,15 @@ class BruteProtect {
 				if ( array_key_exists( $key, $_SERVER ) === true ) :
 					foreach ( explode( ',', $_SERVER[ $key ] ) as $ip ) :
 						$ip = trim( $ip ); // just to be safe
-
-						if ( $ip == '127.0.0.1' || $ip == '::1' ) {
-							return $ip;
+						
+						//if the IP is private, return REMOTE_ADDR to help prevent spoofing
+						if ( $ip == '127.0.0.1' || $ip == '::1' || $this->ip_is_private( $ip ) ) {
+							$this->user_ip = $_SERVER[ 'REMOTE_ADDR' ];
+							return $_SERVER[ 'REMOTE_ADDR' ];
 						}
 
 						if ( filter_var( $ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE ) !== false ) :
 							$this->user_ip = $ip;
-
 							return $this->user_ip;
 						endif;
 					endforeach;
@@ -245,14 +247,50 @@ class BruteProtect {
 				if ( array_key_exists( $key, $_SERVER ) === true ) :
 					foreach ( explode( ',', $_SERVER[ $key ] ) as $ip ) :
 						$ip            = trim( $ip ); // just to be safe
+						
+						//if the IP is private, return REMOTE_ADDR to help prevent spoofing
+						if ( $ip == '127.0.0.1' || $ip == '::1' || $this->ip_is_private( $ip ) ) {
+							$this->user_ip = $_SERVER[ 'REMOTE_ADDR' ];
+							return $_SERVER[ 'REMOTE_ADDR' ];
+						}
+						
 						$this->user_ip = $ip;
-
 						return $this->user_ip;
 					endforeach;
 				endif;
 			endforeach;
 		}
 		endif;
+	}
+	
+	/**
+	 * Checks an IP to see if it is within a private range
+	 *
+	 * @return bool
+	 */
+	function ip_is_private ($ip) {
+	    $pri_addrs = array(
+	                      '10.0.0.0|10.255.255.255', // single class A network
+	                      '172.16.0.0|172.31.255.255', // 16 contiguous class B network
+	                      '192.168.0.0|192.168.255.255', // 256 contiguous class C network
+	                      '169.254.0.0|169.254.255.255', // Link-local address also refered to as Automatic Private IP Addressing
+	                      '127.0.0.0|127.255.255.255' // localhost
+	                     );
+
+	    $long_ip = ip2long ($ip);
+	    if ($long_ip != -1) {
+
+	        foreach ($pri_addrs AS $pri_addr) {
+	            list ($start, $end) = explode('|', $pri_addr);
+
+	             // IF IS PRIVATE
+	             if ($long_ip >= ip2long ($start) && $long_ip <= ip2long ($end)) {
+	                 return true;
+	             }
+	        }
+	    }
+
+	    return false;
 	}
 
 	function get_privacy_key() {
@@ -593,7 +631,7 @@ class BruteProtect {
 
 		$response_json   = wp_remote_post( $this->get_bruteprotect_host(), $args );
 		$log['response'] = $response_json;
-		//error_log( print_r($log,true),1, 'rocco@hotchkissconsulting.net');
+
 		$ip             = $_SERVER['REMOTE_ADDR'];
 		$transient_name = 'brute_loginable_' . str_replace( '.', '_', $ip );
 		delete_site_transient( $transient_name );

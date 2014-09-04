@@ -2,7 +2,7 @@
 Contributors: samhotchkiss, professor44, roccotripaldi, sdquirk, maverick3x6, dsmartdesign, magicbean
 Tags: security, bruteforce, brute force, brute force attack, harden wp, login lockdown, multisite, botnet, wordfence, best security
 Requires at least: 3.0
-Tested up to: 3.9
+Tested up to: 4.0
 Stable tag: trunk
 
 BruteProtect is a cloud-powered Brute Force attack prevention plugin and the best protection against botnet attacks.

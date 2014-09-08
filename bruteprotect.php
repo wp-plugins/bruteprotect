@@ -8,7 +8,7 @@ Plugin Name: BruteProtect
 Plugin URI: http://bruteprotect.com/
 Description: BruteProtect allows the millions of WordPress bloggers to work together to defeat Brute Force attacks. It keeps your site protected from brute force security attacks even while you sleep. To get started: 1) Click the "Activate" link to the left of this description, 2) Sign up for a BruteProtect API key, and 3) Go to your BruteProtect configuration page, and save your API key.
 
-Version: 2.2.5
+Version: 2.2.6
 Author: Parka, LLC
 Author URI: http://getparka.com/
 License: GPLv2 or later
@@ -31,7 +31,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
 
-define( 'BRUTEPROTECT_VERSION', '2.2.5' );
+define( 'BRUTEPROTECT_VERSION', '2.2.6' );
 
 define( 'BRUTEPROTECT_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 
@@ -90,12 +90,6 @@ class BruteProtect {
 	function load_bruteprotect_pro() {
 		$bruteprotect_host = $this->get_bruteprotect_host();
 		switch ( $_GET['bpp_action'] ) {
-			case 'bp_verify_secure_login':
-				include 'admin/pro/secure_login/bp_secure_login_process.php';
-				break;
-			case 'bp_secure_login':
-				include 'admin/pro/secure_login/log_me_in.php';
-				break;
 			case 'bp_scan':
 				include 'admin/pro/updater/scan.php';
 				break;
@@ -150,56 +144,6 @@ class BruteProtect {
 		endif;
 	}
 
-	/**
-	 * Loads in the secure login form, and shows it for pro users
-	 *
-	 * @return VOID
-	 */
-	function brute_maybe_use_secure_login() {
-
-		global $error;
-
-		if ( empty( $wp_error ) ) {
-			$wp_error = new WP_Error();
-		}
-
-		// In case a plugin uses $error rather than the $wp_errors object
-		if ( ! empty( $error ) ) {
-			$wp_error->add( 'error', $error );
-			unset( $error );
-		}
-
-		// turn off secure login if we're already on ssl or the user has opted for standard login or they had a failed login
-		if ( isset( $_GET['bp_sl_off'] ) || is_ssl() || $wp_error->get_error_code() ) {
-			return;
-		}
-
-		$response = $this->brute_call( 'check_key' );
-
-		if ( ! isset( $response['privacy_settings'] ) ) {
-			// there is no response from the api, don't show secure login
-			return;
-		}
-
-		// gets the user's most up-to-date account info
-		bruteprotect_save_pro_info( $response );
-
-		if ( ! bruteprotect_has_secure_login() ) {
-			return;
-		}
-
-		$site_linked = get_site_option( 'bruteprotect_user_linked', false );
-
-		if ( empty( $site_linked ) ) {
-			return;
-		}
-
-		$bruteprotect_host = $this->get_bruteprotect_host();
-		$local_host        = $this->brute_get_local_host();
-		$key               = get_site_option( 'bruteprotect_api_key' );
-		$api_key           = md5( get_site_option( 'bruteprotect_api_key' ) );
-		include 'admin/pro/secure_login/secure_login.php';
-	}
 
 	/**
 	 * Retrives and sets the ip address the person logging in

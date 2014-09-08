@@ -456,9 +456,13 @@ $privacy_opt_in = get_site_option( 'brute_privacy_opt_in' );
 <?php
 
 if ( isset( $_GET['force_mybp_step'] ) ) {
-	include 'mybp-sections/' . $_GET['force_mybp_step'] . '.php';
-
-	return;
+    $acceptable_steps = array( 'register', 'step_1', 'step_2', 'step_3' );
+    $step = $_GET['force_mybp_step'];
+    if( !in_array( $step, $acceptable_steps ) ) {
+        $step = 'step_3';
+    }
+    include 'mybp-sections/' . $step . '.php';
+    return;
 }
 
 // determine where we are in the BruteProtect process

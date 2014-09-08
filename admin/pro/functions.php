@@ -34,12 +34,7 @@ function bruteprotect_is_linked() {
  * @return bool
  */
 function bruteprotect_has_secure_login() {
-	$privacy_opt_in = get_site_option( 'brute_privacy_opt_in' );
-	if ( isset( $privacy_opt_in['remote_login'] ) ) {
-		return true;
-	} else {
 		return false;
-	}
 }
 
 /**

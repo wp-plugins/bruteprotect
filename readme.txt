@@ -84,6 +84,9 @@ Yes, you may add IP addresses under the “whitelist” setting of BruteProtect.
 
 == Changelog ==
 
+= 2.2.6.1 =
+* Improve uptime monitoring for CloudFlare-protected sites
+
 = 2.2.6 =
 * Minor updates admin config, removed secure login
 

@@ -1,11 +1,12 @@
 === BruteProtect ===
-Contributors: samhotchkiss, professor44, roccotripaldi, sdquirk, maverick3x6, dsmartdesign, magicbean
+Contributors: automattic, samhotchkiss, roccotripaldi, professor44, sdquirk, maverick3x6, magicbean, dsmartdesign
 Tags: security, bruteforce, brute force, brute force attack, harden wp, login lockdown, multisite, botnet, wordfence, best security
 Requires at least: 3.0
 Tested up to: 4.0
 Stable tag: trunk
 
 BruteProtect is a cloud-powered Brute Force attack prevention plugin and the best protection against botnet attacks.
+
 
 == Description ==
 
@@ -84,8 +85,10 @@ Yes, you may add IP addresses under the “whitelist” setting of BruteProtect.
 
 == Changelog ==
 
-= 2.2.6.1 =
-* Improve uptime monitoring for CloudFlare-protected sites
+= 2.3 =
+* Add ability for users to turn off monitoring
+* Improve IP detection
+* Added noncing on admin pages
 
 = 2.2.6 =
 * Minor updates admin config, removed secure login

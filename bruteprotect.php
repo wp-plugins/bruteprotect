@@ -8,7 +8,7 @@ Plugin Name: BruteProtect
 Plugin URI: http://bruteprotect.com/
 Description: BruteProtect allows the millions of WordPress bloggers to work together to defeat Brute Force attacks. It keeps your site protected from brute force security attacks even while you sleep. To get started: 1) Click the "Activate" link to the left of this description, 2) Sign up for a BruteProtect API key, and 3) Go to your BruteProtect configuration page, and save your API key.
 
-Version: 2.3
+Version: 2.3.2
 Author: Automattic
 Author URI: http://automattic.com/
 License: GPLv2 or later
@@ -30,7 +30,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-define( 'BRUTEPROTECT_VERSION', '2.3' );
+define( 'BRUTEPROTECT_VERSION', '2.3.2' );
 
 define( 'BRUTEPROTECT_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 
@@ -41,9 +41,7 @@ define( 'MYBP_URL', 'https://' . $my_url );
 
 if ( is_admin() ) :
     require_once dirname( __FILE__ ) . '/admin.php';
-    require_once dirname( __FILE__ ) . '/admin/inc/shoutouts.php';
     new BruteProtect_Admin;
-    new BruteProtect_Shoutouts;
 endif;
 
 require_once dirname( __FILE__ ) . '/clear_transients.php';
@@ -125,17 +123,8 @@ class BruteProtect
      */
     function brute_pro_ping_checkval()
     {
-        $privacy_opt_in = get_site_option( 'brute_privacy_opt_in' );
-        if ( !isset( $privacy_opt_in[ 'uptime_monitor' ] ) ) {
-            return;
-        }
-
-        if ( empty( $privacy_opt_in[ 'uptime_monitor' ] ) ) {
-            return;
-        }
-
         //add span to make things work with cloudflare
-        echo '<span style="display:none;">7ads6x98y</span>';
+        echo '<span id="bruteprotect_uptime_check_string" style="display:none;">7ads6x98y</span>';
     }
 
     /**

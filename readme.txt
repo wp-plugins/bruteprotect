@@ -85,6 +85,12 @@ Yes, you may add IP addresses under the “whitelist” setting of BruteProtect.
 
 == Changelog ==
 
+= 2.3.2 =
+* Remove shoutouts
+
+= 2.3.1 =
+* Fix false downtime notifications
+
 = 2.3 =
 * Add ability for users to turn off monitoring
 * Improve IP detection

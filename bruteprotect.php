@@ -142,10 +142,10 @@ class BruteProtect
         $bum = get_site_transient( 'brute_use_math' );
 
         if ( $bum == 1 && isset( $_POST[ 'log' ] ) ) :
-
             BruteProtect_Math_Authenticate::brute_math_authenticate();
-
         endif;
+		
+		return $user;
     }
 
 

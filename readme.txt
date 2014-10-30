@@ -85,6 +85,9 @@ Yes, you may add IP addresses under the “whitelist” setting of BruteProtect.
 
 == Changelog ==
 
+= 2.3.3 =
+* Patch brute_check_preauth so that Google Apps login will work (props jay-s)
+
 = 2.3.2 =
 * Remove shoutouts
 

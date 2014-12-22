@@ -8,7 +8,7 @@ Plugin Name: BruteProtect
 Plugin URI: http://bruteprotect.com/
 Description: BruteProtect allows the millions of WordPress bloggers to work together to defeat Brute Force attacks. It keeps your site protected from brute force security attacks even while you sleep. To get started: 1) Click the "Activate" link to the left of this description, 2) Sign up for a BruteProtect API key, and 3) Go to your BruteProtect configuration page, and save your API key.
 
-Version: 2.3.3
+Version: 2.4
 Author: Automattic
 Author URI: http://automattic.com/
 License: GPLv2 or later
@@ -30,7 +30,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-define( 'BRUTEPROTECT_VERSION', '2.3.3' );
+define( 'BRUTEPROTECT_VERSION', '2.4' );
 
 define( 'BRUTEPROTECT_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 
@@ -177,6 +177,12 @@ class BruteProtect
                 if ( array_key_exists( $key, $_SERVER ) === true ) :
                     foreach ( explode( ',', $_SERVER[ $key ] ) as $ip ) :
                         $ip = trim( $ip ); // just to be safe
+						
+						//Check for IPv4 IP cast as IPv6
+						if ( preg_match('/^::ffff:(\d+\.\d+\.\d+\.\d+)$/', $ip, $matches ) )
+						{
+							$ip = $matches[1];
+						}
 
                         //if the IP is private, return REMOTE_ADDR to help prevent spoofing
                         if ( $ip == '127.0.0.1' || $ip == '::1' || $this->ip_is_private( $ip ) ) {
@@ -199,6 +205,12 @@ class BruteProtect
                 if ( array_key_exists( $key, $_SERVER ) === true ) :
                     foreach ( explode( ',', $_SERVER[ $key ] ) as $ip ) :
                         $ip = trim( $ip ); // just to be safe
+						
+						//Check for IPv4 IP cast as IPv6
+						if ( preg_match('/^::ffff:(\d+\.\d+\.\d+\.\d+)$/', $ip, $matches ) )
+						{
+							$ip = $matches[1];
+						}
 
                         //if the IP is private, return REMOTE_ADDR to help prevent spoofing
                         if ( $ip == '127.0.0.1' || $ip == '::1' || $this->ip_is_private( $ip ) ) {
@@ -391,7 +403,11 @@ class BruteProtect
     function brute_kill_login()
     {
         do_action( 'brute_kill_login', $this->brute_get_ip() );
-        wp_die( 'Your IP (' . $this->brute_get_ip() . ') has been flagged for potential security violations.  Please try again in a little while...' );
+        wp_die(
+	        'Your IP (' . $this->brute_get_ip() . ') has been flagged for potential security violations.  Please try again in a little while...',
+	        'Login Blocked by BruteProtect',
+	        array( 'response' => 403 )
+        );
     }
 
     /**
@@ -574,7 +590,7 @@ class BruteProtect
         $request[ 'headers' ] = json_encode( $this->brute_get_headers() );
         $request[ 'privacy_settings' ] = serialize( get_site_option( 'brute_privacy_opt_in' ) );
         $request[ 'bruteprotect_version' ] = constant( 'BRUTEPROTECT_VERSION' );
-        $request[ 'wordpress_version' ] = $wp_version;
+        $request[ 'wordpress_version' ] = strval( $wp_version );
         $request[ 'api_key' ] = $api_key;
         $request[ 'subdirectory' ] = strval( $this->is_subdirectory() );
         $request[ 'multisite' ] = "0";

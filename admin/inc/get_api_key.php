@@ -37,8 +37,6 @@ include( 'header.php' );
                 <div class="generate_api_key" data-equalizer-watch>
                     <div class="frontinner" data-equalizer-watch>
 
-                        <h2 class="steptitle">STEP 1</h2>
-
                         <h3 class="attn">In order to protect <?php echo $local_host; ?>, you must first obtain a free
                             API
                             key.</h3>
@@ -69,7 +67,7 @@ include( 'header.php' );
                         <div class="stepholder columns large-12">
                             <div class="steps">
 
-                                <em>Step 1 of 3</em>
+                               <!-- This Div is just a space filler since we've removed the 'step 1 of 3' text -->
 
                             </div>
                             <!-- // steps -->
@@ -137,13 +135,6 @@ include( 'header.php' );
 
 
             </script>
-
-
-            <!-- UNUSED - REPLACED BY HEADER
-
-            <div class="stepbg">
-            Step 1
-            </div> // step bg -->
 
         </div>
         <!-- // brute container -->

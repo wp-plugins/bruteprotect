@@ -30,8 +30,20 @@ if ( !class_exists( 'BruteProtect_Admin' ) ) {
             add_action( 'admin_enqueue_scripts', array( &$this, 'enqueue_bruteprotect_admin' ) );
 
             add_action( 'admin_init', array( &$this, 'activation_redirection' ) );
+	        add_action( 'admin_init', array( &$this, 'dismiss_notice' ) );
 
         }
+
+	    function dismiss_notice() {
+		    if ( isset( $_GET['brute_dismiss_notice'] ) ) {
+			    $dismiss = $_GET['brute_dismiss_notice'];
+			    $expected = array( '1', '0' );
+			    if ( in_array( $dismiss, $expected ) ) {
+				    global $current_user;
+				    update_user_meta( $current_user->ID, 'brute_dismiss_jetpack_notice', $dismiss );
+			    }
+		    }
+	    }
 
         function activation_redirection()
         {
@@ -340,7 +352,7 @@ if ( !class_exists( 'BruteProtect_Admin' ) ) {
 
         function bruteprotect_dashboard()
         {
-            include 'admin/mybp.php';
+            include 'admin/main.php';
         }
 
         /**

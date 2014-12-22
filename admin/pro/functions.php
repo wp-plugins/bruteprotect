@@ -464,3 +464,37 @@ function get_mybp_iframe_url( $privacy_options )
     return MYBP_URL . 'wp/dash/' . $site_id . '/' . $user_linked;
 
 }
+
+function brute_show_jetpack_notice() {
+	global $current_user;
+	$dismissed = get_user_meta( $current_user->ID, 'brute_dismiss_jetpack_notice', true );
+	if ( '1' === $dismissed) {
+		return false;
+	}
+	return true;
+}
+
+function brute_needs_jetpack_install() {
+	$plugins = get_plugins();
+	if ( isset( $plugins['jetpack/jetpack.php'] ) ) {
+		return false;
+	}
+	return true;
+}
+
+function brute_needs_jetpack_update() {
+	$plugins = get_plugins();
+	if ( ! isset( $plugins['jetpack/jetpack.php'] ) ) {
+		return false;
+	}
+	if ( ! isset( $plugins['jetpack/jetpack.php']['Version'] ) ) {
+		return false;
+	}
+	$jetpack_version = $plugins['jetpack/jetpack.php']['Version'];
+	$version_needed = '3.3';
+	$compare = version_compare( $jetpack_version, $version_needed );
+	if ( $compare > -1 ) {
+		return false;
+	}
+	return true;
+}

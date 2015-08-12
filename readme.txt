@@ -1,5 +1,5 @@
 === BruteProtect ===
-Contributors: automattic, samhotchkiss, roccotripaldi, professor44, sdquirk, maverick3x6, dsmartdesign
+Contributors: automattic, samhotchkiss, roccotripaldi, professor44, sdquirk, maverick3x6, dsmart
 Tags: security, bruteforce, brute force, brute force attack, harden wp, login lockdown, multisite, botnet, wordfence, best security
 Requires at least: 3.0
 Tested up to: 4.1
@@ -23,6 +23,9 @@ So good.  You won't regret it.
 
 
 == Changelog ==
+
+= 2.4.2 =
+* Fix error in 2.4.1, fix transients in multisite to not autoload
 
 = 2.4.1 =
 * Fix potential circumvention method (Props Ruben van Vreeland - bitsaver.nl)

@@ -8,7 +8,7 @@ Plugin Name: BruteProtect
 Plugin URI: http://bruteprotect.com/
 Description: BruteProtect allows the millions of WordPress bloggers to work together to defeat Brute Force attacks. It keeps your site protected from brute force security attacks even while you sleep. To get started: 1) Click the "Activate" link to the left of this description, 2) Sign up for a BruteProtect API key, and 3) Go to your BruteProtect configuration page, and save your API key.
 
-Version: 2.4.1
+Version: 2.4.2
 Author: Automattic
 Author URI: http://automattic.com/
 License: GPLv2 or later
@@ -30,11 +30,11 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-define( 'BRUTEPROTECT_VERSION', '2.4.1' );
+define( 'BRUTEPROTECT_VERSION', '2.4.2' );
 
 define( 'BRUTEPROTECT_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 
-$use_https = get_site_transient( 'bruteprotect_use_https' );
+$use_https =  true;
 $my_url = get_site_option( 'brute_my_url', 'my.bruteprotect.com/' );
 define( 'MYBP_URL', 'https://' . $my_url );
 
@@ -141,7 +141,7 @@ class BruteProtect
     function brute_check_preauth( $user = 'Not Used By BruteProtect', $username = 'Not Used By BruteProtect', $password = 'Not Used By BruteProtect' )
     {
         $this->brute_check_loginability( true );
-        $bum = get_site_transient( 'brute_use_math' );
+        $bum =  $this->get_transient( 'brute_use_math' );
 
         if ( $bum == 1 && isset( $_POST[ 'log' ] ) ) :
             BruteProtect_Math_Authenticate::brute_math_authenticate();
@@ -344,7 +344,7 @@ class BruteProtect
 		$header_hash = md5( json_encode( $headers ) );
 
         $transient_name = 'brute_loginable_' . $header_hash;
-        $transient_value = get_site_transient( $transient_name );
+        $transient_value =  $this->get_transient( $transient_name );
 
         //Never block login from whitelisted IPs
         $whitelist = get_site_option( 'brute_ip_whitelist' );
@@ -408,13 +408,91 @@ class BruteProtect
      */
     function brute_check_use_math()
     {
-        $bp_use_math = get_site_transient( 'brute_use_math' );
+        $bp_use_math =  $this->get_transient( 'brute_use_math' );
 
         if ( $bp_use_math ) {
             include_once 'math-fallback.php';
             new BruteProtect_Math_Authenticate;
         }
     }
+	
+
+
+	/**
+	 * Wrapper for WordPress set_transient function, our version sets
+	 * the transient on the main site in the network if this is a multisite network
+	 *
+	 * We do it this way (instead of $this->set_transient) because of an issue where
+	 * sitewide transients are always autoloaded
+	 * https://core.trac.wordpress.org/ticket/22846
+	 *
+	 * @param string $transient  Transient name. Expected to not be SQL-escaped. Must be
+	 *                           45 characters or fewer in length.
+	 * @param mixed  $value      Transient value. Must be serializable if non-scalar.
+	 *                           Expected to not be SQL-escaped.
+	 * @param int    $expiration Optional. Time until expiration in seconds. Default 0.
+	 *
+  	 * @return bool False if value was not set and true if value was set.
+	 */
+	function set_transient( $transient, $value, $expiration ) {
+		if ( is_multisite() && ! is_main_site() ) {
+			switch_to_blog( $this->get_main_blog_id() );
+			$return = set_transient( $transient, $value, $expiration );
+			restore_current_blog();
+			return $return;
+		}
+		return set_transient( $transient, $value, $expiration );
+	}
+
+	/**
+	 * Wrapper for WordPress delete_transient function, our version deletes
+	 * the transient on the main site in the network if this is a multisite network
+	 *
+ 	 * @param string $transient Transient name. Expected to not be SQL-escaped.
+  	 * @return bool true if successful, false otherwise
+	 */
+	function delete_transient( $transient ) {
+		if ( is_multisite() && ! is_main_site() ) {
+			switch_to_blog( $this->get_main_blog_id() );
+			$return = delete_transient( $transient );
+			restore_current_blog();
+			return $return;
+		}
+		return delete_transient( $transient );
+	}
+
+	/**
+	 * Wrapper for WordPress get_transient function, our version gets
+	 * the transient on the main site in the network if this is a multisite network
+	 *
+	 * @param string $transient Transient name. Expected to not be SQL-escaped.
+ 	 * @return mixed Value of transient.
+	 */
+	function get_transient( $transient ) {
+		if ( is_multisite() && ! is_main_site() ) {
+			switch_to_blog( $this->get_main_blog_id() );
+			$return = get_transient( $transient );
+			restore_current_blog();
+			return $return;
+		}
+		return get_transient( $transient );
+	}
+
+	/**
+	 * If we're in a multisite network, return the blog ID of the primary blog
+	 *
+	 * @return int
+	 */
+	public function get_main_blog_id() {
+		if( ! is_multisite() ) {
+			return false;
+		}
+
+		global $current_site;
+		$primary_blog_id = $current_site->blog_id;
+
+		return $primary_blog_id;
+	}
 
     function brute_kill_login()
     {
@@ -479,7 +557,7 @@ class BruteProtect
         }
 
         //Some servers can't access https-- we'll check once a day to see if we can.
-        $use_https = get_site_transient( 'bruteprotect_use_https' );
+        $use_https =  $this->get_transient( 'bruteprotect_use_https' );
         $api_url = get_site_option( 'brute_api_url', 'api.bruteprotect.com/' );
         if ( $use_https == 'yes' ) {
             $this->api_endpoint = 'https://' . $api_url;
@@ -493,7 +571,7 @@ class BruteProtect
             if ( !is_wp_error( $test ) && $test[ 'body' ] == 'ok' ) {
                 $use_https = 'yes';
             }
-            set_site_transient( 'bruteprotect_use_https', $use_https, 86400 );
+            $this->set_transient( 'bruteprotect_use_https', $use_https, 86400 );
         }
 
         return $this->api_endpoint;
@@ -647,7 +725,7 @@ class BruteProtect
 		$header_hash = md5( json_encode( $headers ) );
         $transient_name = 'brute_loginable_' . $header_hash;
 		
-        delete_site_transient( $transient_name );
+        $this->delete_transient( $transient_name );
 
         if ( is_array( $response_json ) ) {
             $response = json_decode( $response_json[ 'body' ], true );
@@ -655,13 +733,13 @@ class BruteProtect
 
         if ( isset( $response[ 'status' ] ) && !isset( $response[ 'error' ] ) ) :
             $response[ 'expire' ] = time() + $response[ 'seconds_remaining' ];
-            set_site_transient( $transient_name, $response, $response[ 'seconds_remaining' ] );
+            $this->set_transient( $transient_name, $response, $response[ 'seconds_remaining' ] );
 
-            delete_site_transient( 'brute_use_math' );
+            $this->delete_transient( 'brute_use_math' );
 
         else : //no response from the API host?  Let's use math!
         {
-            set_site_transient( 'brute_use_math', 1, 600 );
+            $this->set_transient( 'brute_use_math', 1, 600 );
             $response[ 'status' ] = 'ok';
             $response[ 'math' ] = true;
         }

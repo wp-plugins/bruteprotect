@@ -1,89 +1,31 @@
 === BruteProtect ===
-Contributors: automattic, samhotchkiss, roccotripaldi, professor44, sdquirk, maverick3x6, magicbean, dsmartdesign
+Contributors: automattic, samhotchkiss, roccotripaldi, professor44, sdquirk, maverick3x6, dsmartdesign
 Tags: security, bruteforce, brute force, brute force attack, harden wp, login lockdown, multisite, botnet, wordfence, best security
 Requires at least: 3.0
 Tested up to: 4.1
 Stable tag: trunk
 
-BruteProtect is a cloud-powered Brute Force attack prevention plugin and the best protection against botnet attacks.
+BruteProtect is no longer actively supported.  All new development is now being done on the Protect feature in Jetpack.
 
 
 == Description ==
 
-= Botnets attack millions of websites everyday using their Internet-connected programs =
+= BruteProtect is no longer supported or under active development =
 
-BruteProtect is a security plugin that guards against botnets by connecting its users to track every failed login attempt across all installed users of the plugin. When you activate BruteProtect you become a part of an Internet-connected counter force that works against botnets.
-
-= BruteProtect logs every failed attempt community-wide =
-
-When an IP has too many failed attempts in a specific period of time, BruteProtect logs and blocks that IP across the entire BruteProtect network (your site included). The more users of BruteProtect, the safer we all are from traditional brute force attacks, and distributed brute force attacks that use many different servers and IP addresses.
-
-= BruteProtect is safe for MultiSite and compatible with other security plugins =
-
-BruteProtect FULLY SUPPORTS multisite networks, and you’ll only need one API key. Go to the Installation tab to learn more about how easy it is to install and use BruteProtect. You can even use it alongside other security plugins, if you so desire.
-
-== Installation ==
-
-Figures for the below instructions can be found under the Screenshots tab <http://wordpress.org/plugins/bruteprotect/screenshots>
-
-1. Under the Plugins tab in your WordPress admin click the Add New Button - Figure 1
-2. Type BruteProtect into the search field - Figure 2
-3. Click “Install Now” under the BruteProtect plugin name - Figure 3
-4. Once the plugin is installed click “Activate Now”
-5. Now you’ll see the new “BruteProtect” tab on the left, click the “API Key” button - Figure 5
-6. To get your required API Key confirm your email address in the green box and click “Get an API Key” - Figure 6
-7. Your API key is free and will be emailed to you - Figure 7
-8. Simply copy your API key out of your email and paste it into the blue box on the right. Once you click “Save API Key” BruteProtect will be up and running
-9. Watch for BruteProtect data on failed attempts in your dashboard - Figure 9
-
-== Screenshots ==
-
-1. Figure 1
-2. Figure 2
-3. Figure 3
-4. Figure 5
-5. Figure 6
-6. Figure 7
-7. Figure 9
-8. The message shown to those locked out by BruteProtect
+In August of 2014, BruteProtect became a part of the Automattic family, and our technology has been integrated into Jetpack.  Please upgrade to Jetpack to continue using BruteProtect.
 
 
 == Frequently Asked Questions ==
 
-= How do I get an API Key? =
+= Is Jetpack good? =
 
-Once the plugin is installed, you’ll be prompted to request an API Key via the Dashboard.  If you do not receive an API Key, please visit the BruteProtect WordPress support forum to let us know.
-
-= Do I need a different key for each site? =
-
-Yes, each site needs a different key (this is not the case with multisite networks).  Many API keys can be associated with one email address.
-
-= Does it work with other WordPress security plugins? = 
-
-Yes! We haven’t received any reports of plugin incompatibility.  Please visit the BruteProtect WordPress support forum to report any issues.
-
-= Are there any known compatibility issues? = 
-
-No!  We've had no reported compatibility issues with any plugins.
-
-= Is it free? =
-
-Everything that we currently offer will always be free to individuals and small businesses. We may, some day, ask for a (very small) fee from our highest-activity users. We will offer additional “premium” services in spring 2014.
-
-= Does BruteProtect support Multisite Networks? =
-
-Yes.
-
-= How many failed attempts before an IP address will be blocked? =
-
-This number varies based on a number of factors, there isn't a fixed number of failed attempts that equal a block.
-
-= Can I whitelist certain IP addresses? =
-
-Yes, you may add IP addresses under the “whitelist” setting of BruteProtect.  This list only applies to your installation of WordPress.
+So good.  You won't regret it.
 
 
 == Changelog ==
+
+= 2.4.1 =
+* Fix potential circumvention method (Props Ruben van Vreeland - bitsaver.nl)
 
 = 2.4 =
 * Improve casting in API calls

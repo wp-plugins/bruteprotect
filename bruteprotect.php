@@ -8,7 +8,7 @@ Plugin Name: BruteProtect
 Plugin URI: http://bruteprotect.com/
 Description: BruteProtect allows the millions of WordPress bloggers to work together to defeat Brute Force attacks. It keeps your site protected from brute force security attacks even while you sleep. To get started: 1) Click the "Activate" link to the left of this description, 2) Sign up for a BruteProtect API key, and 3) Go to your BruteProtect configuration page, and save your API key.
 
-Version: 2.4
+Version: 2.4.1
 Author: Automattic
 Author URI: http://automattic.com/
 License: GPLv2 or later
@@ -30,7 +30,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-define( 'BRUTEPROTECT_VERSION', '2.4' );
+define( 'BRUTEPROTECT_VERSION', '2.4.1' );
 
 define( 'BRUTEPROTECT_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 
@@ -76,6 +76,8 @@ class BruteProtect
         add_action( 'wp_login_failed', array( &$this, 'brute_log_failed_attempt' ) );
         add_action( 'wp_footer', array( &$this, 'brute_pro_ping_checkval' ) );
         add_action( 'login_footer', array( &$this, 'brute_pro_ping_checkval' ) );
+		add_action( 'admin_init', array( $this, 'maybe_update_headers' ) );
+		
 
         //conditional hooks
         if ( isset( $_GET[ 'bruteprotect_pro' ] ) ) {
@@ -161,73 +163,87 @@ class BruteProtect
             return $this->user_ip;
         }
 
-        $server_headers = array(
-            'HTTP_CLIENT_IP',
-            'HTTP_CF_CONNECTING_IP',
-            'HTTP_X_FORWARDED_FOR',
-            'HTTP_X_FORWARDED',
-            'HTTP_X_CLUSTER_CLIENT_IP',
-            'HTTP_FORWARDED_FOR',
-            'HTTP_FORWARDED',
-            'REMOTE_ADDR'
-        );
+		$trusted_header = get_site_option( 'trusted_ip_header' );
 
-        if ( function_exists( 'filter_var' ) ) :
-            foreach ( $server_headers as $key ) :
-                if ( array_key_exists( $key, $_SERVER ) === true ) :
-                    foreach ( explode( ',', $_SERVER[ $key ] ) as $ip ) :
-                        $ip = trim( $ip ); // just to be safe
-						
-						//Check for IPv4 IP cast as IPv6
-						if ( preg_match('/^::ffff:(\d+\.\d+\.\d+\.\d+)$/', $ip, $matches ) )
-						{
-							$ip = $matches[1];
-						}
-
-                        //if the IP is private, return REMOTE_ADDR to help prevent spoofing
-                        if ( $ip == '127.0.0.1' || $ip == '::1' || $this->ip_is_private( $ip ) ) {
-                            $this->user_ip = $_SERVER[ 'REMOTE_ADDR' ];
-
-                            return $_SERVER[ 'REMOTE_ADDR' ];
-                        }
-
-                        if ( filter_var( $ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE ) !== false ) :
-                            $this->user_ip = $ip;
-
-                            return $this->user_ip;
-                        endif;
-                    endforeach;
-                endif;
-            endforeach;
-        else : // PHP filter extension isn't available
-        {
-            foreach ( $server_headers as $key ) :
-                if ( array_key_exists( $key, $_SERVER ) === true ) :
-                    foreach ( explode( ',', $_SERVER[ $key ] ) as $ip ) :
-                        $ip = trim( $ip ); // just to be safe
-						
-						//Check for IPv4 IP cast as IPv6
-						if ( preg_match('/^::ffff:(\d+\.\d+\.\d+\.\d+)$/', $ip, $matches ) )
-						{
-							$ip = $matches[1];
-						}
-
-                        //if the IP is private, return REMOTE_ADDR to help prevent spoofing
-                        if ( $ip == '127.0.0.1' || $ip == '::1' || $this->ip_is_private( $ip ) ) {
-                            $this->user_ip = $_SERVER[ 'REMOTE_ADDR' ];
-
-                            return $_SERVER[ 'REMOTE_ADDR' ];
-                        }
-
-                        $this->user_ip = $ip;
-
-                        return $this->user_ip;
-                    endforeach;
-                endif;
-            endforeach;
-        }
-        endif;
+		if( isset( $trusted_header ) && isset( $_SERVER[ $trusted_header ] ) ) {
+			$ip = $_SERVER[ $trusted_header ];
+		} else {
+			$ip = $_SERVER['REMOTE_ADDR'];
+		}
+	
+		$ips = array_reverse( explode( ', ', $ip ) );
+	
+		$ip_list_has_nonprivate_ip = false;
+		foreach( $ips as $ip ) {
+			$ip = $this->clean_ip( $ip );
+		
+			// If the IP is in a private or reserved range, keep looking
+			if ( $ip == '127.0.0.1' || $ip == '::1' || $this->ip_is_private( $ip ) ) {
+				continue;
+			} else {
+				return $ip;
+			}
+		}
+	
+		return $this->clean_ip( $_SERVER['REMOTE_ADDR'] );
     }
+	
+	public function maybe_update_headers() {
+		$updated_recently = $this->get_transient( 'brute_headers_updated_recently' );
+		
+		// check that current user is admin so we prevent a lower level user from adding
+		// a trusted header, allowing them to brute force an admin account
+		if ( ! $updated_recently && current_user_can( 'update_plugins' ) ) {
+
+			$this->set_transient( 'brute_headers_updated_recently', 1, DAY_IN_SECONDS );
+			
+			$headers = $this->brute_get_headers();
+			$trusted_header = 'REMOTE_ADDR';
+			
+			if ( count( $headers ) == 1 ) {
+				$trusted_header = key( $headers );
+			} elseif ( count( $headers ) > 1 ) {
+				foreach( $headers as $header => $ip ) {
+					
+					$ips = explode( ', ', $ip );
+					
+					$ip_list_has_nonprivate_ip = false;
+					foreach( $ips as $ip ) {
+						$ip = $this->clean_ip( $ip );
+						
+						// If the IP is in a private or reserved range, return REMOTE_ADDR to help prevent spoofing
+						if ( $ip == '127.0.0.1' || $ip == '::1' || $this->ip_is_private( $ip ) ) {
+							continue;
+						} else {
+							$ip_list_has_nonprivate_ip = true;
+							break;
+						}
+					}
+					
+					if( ! $ip_list_has_nonprivate_ip ) {
+						continue;
+					}
+					
+					// IP is not local, we'll trust this header
+					$trusted_header = $header;
+					break;
+				}
+			}
+			update_site_option( 'trusted_ip_header', $trusted_header );
+		}
+	}
+	
+	function clean_ip( $ip ) {
+		$ip = trim( $ip );
+	
+		// Check for IPv4 IP cast as IPv6
+		if ( preg_match('/^::ffff:(\d+\.\d+\.\d+\.\d+)$/', $ip, $matches ) ) {
+			$ip = $matches[1];
+		}
+	
+		return $ip;
+	}
+	
 
     /**
      * Checks an IP to see if it is within a private range
